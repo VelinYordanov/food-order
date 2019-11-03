@@ -3,6 +3,7 @@ package com.github.velinyordanov.foodorder.entities;
 import java.math.BigDecimal;
 import java.util.Collection;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -10,10 +11,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Foods")
 public class Food extends BaseEntity {
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private BigDecimal price;
 
     @ManyToMany(mappedBy = "foods")

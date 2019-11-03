@@ -2,6 +2,7 @@ package com.github.velinyordanov.foodorder.entities;
 
 import java.util.Collection;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -10,6 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Restaurants")
 public class Restaurant extends BaseEntity {
+    @Column(nullable = false)
     private String name;
 
     private String description;

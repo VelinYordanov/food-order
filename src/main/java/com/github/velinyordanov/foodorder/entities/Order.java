@@ -2,6 +2,7 @@ package com.github.velinyordanov.foodorder.entities;
 
 import java.util.Collection;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -12,12 +13,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Orders")
 public class Order extends BaseEntity {
+    @Column(nullable = false)
     private Status status;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Restaurant restaurant;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private User user;
 
     @ManyToMany()

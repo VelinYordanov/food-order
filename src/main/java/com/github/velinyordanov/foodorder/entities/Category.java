@@ -2,6 +2,7 @@ package com.github.velinyordanov.foodorder.entities;
 
 import java.util.Collection;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Categories")
 public class Category extends BaseEntity {
+    @Column(nullable = false)
     private String name;
 
     @ManyToMany()

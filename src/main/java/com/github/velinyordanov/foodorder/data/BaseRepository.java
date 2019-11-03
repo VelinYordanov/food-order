@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.velinyordanov.foodorder.entities.BaseEntity;
@@ -32,7 +31,6 @@ public interface BaseRepository<T extends BaseEntity> extends CrudRepository<T, 
     // Look up deleted entities
     @Query("select e from #{#entityName} e where e.isDeleted = true")
     @Transactional(readOnly = true)
-    @RestResource(exported = false)
     List<T> findDeleted();
 
     @Override
@@ -54,14 +52,12 @@ public interface BaseRepository<T extends BaseEntity> extends CrudRepository<T, 
 
     @Override
     @Transactional
-    @RestResource(exported = false)
     default void delete(T entity) {
 	deleteById(entity.getId());
     }
 
     @Override
     @Transactional
-    @RestResource(exported = false)
     default void deleteAll(Iterable<? extends T> entities) {
 	entities.forEach(entitiy -> deleteById(entitiy.getId()));
     }
@@ -70,6 +66,5 @@ public interface BaseRepository<T extends BaseEntity> extends CrudRepository<T, 
     @Query("update #{#entityName} e set e.isDeleted=true")
     @Transactional
     @Modifying
-    @RestResource(exported = false)
     void deleteAll();
 }
