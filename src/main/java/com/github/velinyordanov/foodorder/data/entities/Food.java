@@ -1,7 +1,7 @@
-package com.github.velinyordanov.foodorder.entities;
+package com.github.velinyordanov.foodorder.data.entities;
 
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,10 +21,10 @@ public class Food extends BaseEntity {
     private BigDecimal price;
 
     @ManyToMany(mappedBy = "foods")
-    private Collection<Category> categories;
+    private Set<Category> categories;
 
     @ManyToMany(mappedBy = "foods")
-    private Collection<Order> orders;
+    private Set<Order> orders;
 
     public BigDecimal getPrice() {
 	return price;
@@ -50,17 +50,31 @@ public class Food extends BaseEntity {
 	this.description = description;
     }
 
-    public Collection<Category> getCategories() {
+    public Set<Category> getCategories() {
 	return categories;
     }
 
-    public void setCategories(Collection<Category> categories) {
+    public void setCategories(Set<Category> categories) {
 	this.categories = categories;
+    }
+
+    public Set<Order> getOrders() {
+	return orders;
+    }
+
+    public void setOrders(Set<Order> orders) {
+	this.orders = orders;
     }
 
     @Override
     public String toString() {
-	return "Food [getPrice()=" + getPrice() + ", getName()=" + getName() + ", getDescription()=" + getDescription()
-		+ ", getCategories()=" + getCategories() + "]";
+	return "Food [getPrice()=" + getPrice()
+		+ ", getName()="
+		+ getName()
+		+ ", getDescription()="
+		+ getDescription()
+		+ ", getCategories()="
+		+ getCategories()
+		+ "]";
     }
 }

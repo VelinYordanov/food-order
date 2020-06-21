@@ -1,7 +1,10 @@
 package com.github.velinyordanov.foodorder.data;
 
-import com.github.velinyordanov.foodorder.entities.Food;
+import org.springframework.stereotype.Repository;
 
+import com.github.velinyordanov.foodorder.data.entities.Food;
+
+@Repository
 public interface FoodsRepository extends BaseRepository<Food> {
 
 }

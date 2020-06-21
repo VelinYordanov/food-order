@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.velinyordanov.foodorder.entities.BaseEntity;
+import com.github.velinyordanov.foodorder.data.entities.BaseEntity;
 
 @NoRepositoryBean
 public interface BaseRepository<T extends BaseEntity> extends CrudRepository<T, String> {

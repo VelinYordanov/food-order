@@ -1,4 +1,4 @@
-package com.github.velinyordanov.foodorder.entities;
+package com.github.velinyordanov.foodorder.data.entities;
 
 public enum Status {
     Pending(0), Delivered(1);

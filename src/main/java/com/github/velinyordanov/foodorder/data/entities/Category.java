@@ -1,6 +1,7 @@
-package com.github.velinyordanov.foodorder.entities;
+package com.github.velinyordanov.foodorder.data.entities;
 
 import java.util.Collection;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,18 +10,24 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "Categories")
 public class Category extends BaseEntity {
     @Column(nullable = false)
+    @Size(min = 3, max = 35, message = "Category name must be between 3 and 35 symbols.")
     private String name;
 
     @ManyToMany()
-    @JoinTable(name = "Category_Food", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "food_id"))
-    private Collection<Food> foods;
+    @JoinTable(
+	    name = "Categories_Foods",
+	    joinColumns = @JoinColumn(name = "CategoryId"),
+	    inverseJoinColumns = @JoinColumn(name = "FoodId"))
+    private Set<Food> foods;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "RestaurantId")
     private Restaurant restaurant;
 
     public String getName() {
@@ -33,15 +40,19 @@ public class Category extends BaseEntity {
 
     @Override
     public String toString() {
-	return "Category [getName()=" + getName() + ", getFoods()=" + getFoods() + ", getRestaurant()="
-		+ getRestaurant() + "]";
+	return "Category [getName()=" + getName()
+		+ ", getFoods()="
+		+ getFoods()
+		+ ", getRestaurant()="
+		+ getRestaurant()
+		+ "]";
     }
 
     public Collection<Food> getFoods() {
 	return foods;
     }
 
-    public void setFoods(Collection<Food> foods) {
+    public void setFoods(Set<Food> foods) {
 	this.foods = foods;
     }
 

@@ -1,8 +1,11 @@
-package com.github.velinyordanov.foodorder.entities;
+package com.github.velinyordanov.foodorder.data.entities;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
@@ -11,18 +14,24 @@ import javax.persistence.TemporalType;
 @MappedSuperclass
 public abstract class BaseEntity {
     @Id
+    @Column(name = "Id")
     private String id;
 
+    @Column(name = "IsDeleted")
     private boolean isDeleted;
 
+    @Column(name = "CreatedOn")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdOn;
 
+    @Column(name = "DeletedOn")
     @Temporal(TemporalType.TIMESTAMP)
     private Date deletedOn;
 
     public BaseEntity() {
 	this.setId(UUID.randomUUID().toString());
+	OffsetDateTime utc = OffsetDateTime.now(ZoneOffset.UTC);
+	this.setCreatedOn(Date.from(utc.toInstant()));
     }
 
     public String getId() {
@@ -39,8 +48,14 @@ public abstract class BaseEntity {
 
     @Override
     public String toString() {
-	return "BaseEntity [getId()=" + getId() + ", getIsDeleted()=" + getIsDeleted() + ", getCreatedOn()="
-		+ getCreatedOn() + ", getDeletedOn()=" + getDeletedOn() + "]";
+	return "BaseEntity [getId()=" + getId()
+		+ ", getIsDeleted()="
+		+ getIsDeleted()
+		+ ", getCreatedOn()="
+		+ getCreatedOn()
+		+ ", getDeletedOn()="
+		+ getDeletedOn()
+		+ "]";
     }
 
     public void setIsDeleted(boolean isDeleted) {
