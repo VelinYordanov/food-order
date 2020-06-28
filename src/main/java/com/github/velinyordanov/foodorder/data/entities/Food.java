@@ -1,10 +1,13 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -20,11 +23,19 @@ public class Food extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @ManyToMany(mappedBy = "foods")
+    @ManyToMany(mappedBy = "foods",
+	    fetch = FetchType.EAGER,
+	    cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     private Set<Category> categories;
 
     @ManyToMany(mappedBy = "foods")
     private Set<Order> orders;
+
+    public Food() {
+	super();
+	this.setCategories(new HashSet<>());
+	this.setOrders(new HashSet<>());
+    }
 
     public BigDecimal getPrice() {
 	return price;

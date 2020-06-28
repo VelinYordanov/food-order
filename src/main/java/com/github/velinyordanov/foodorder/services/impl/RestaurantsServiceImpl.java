@@ -15,9 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.data.AuthoritiesRepository;
+import com.github.velinyordanov.foodorder.data.CategoriesRepository;
 import com.github.velinyordanov.foodorder.data.RestaurantsRepository;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
+import com.github.velinyordanov.foodorder.data.entities.Category;
+import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
+import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
@@ -31,6 +35,7 @@ import com.github.velinyordanov.foodorder.services.RestaurantsService;
 public class RestaurantsServiceImpl implements RestaurantsService {
     private final RestaurantsRepository restaurantsRepository;
     private final AuthoritiesRepository authoritiesRepository;
+    private final CategoriesRepository categoriesRepository;
     private final JwtTokenService jwtTokenService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -40,12 +45,14 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     public RestaurantsServiceImpl(
 	    RestaurantsRepository restaurantsRepository,
 	    AuthoritiesRepository authoritiesRepository,
+	    CategoriesRepository categoriesRepository,
 	    JwtTokenService jwtTokenService,
 	    AuthenticationManager authenticationManager,
 	    PasswordEncoder passwordEncoder,
 	    Mapper mapper) {
 	this.restaurantsRepository = restaurantsRepository;
 	this.authoritiesRepository = authoritiesRepository;
+	this.categoriesRepository = categoriesRepository;
 	this.authenticationManager = authenticationManager;
 	this.jwtTokenService = jwtTokenService;
 	this.passwordEncoder = passwordEncoder;
@@ -95,6 +102,28 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
 	Restaurant savedRestaurant = this.restaurantsRepository.save(restaurant);
 	return this.jwtTokenService.generateToken(savedRestaurant);
+    }
+
+    @Override
+    public void addFoodsToRestaurant(String restaurantId, FoodCreateDto foodCreateDto) {
+	this.restaurantsRepository.findById(restaurantId).ifPresent(restaurant -> {
+	    Food food = this.mapper.map(foodCreateDto, Food.class);
+	    food.getCategories().forEach(foodCategory -> {
+		Optional<Category> categoryOptional = this.categoriesRepository.findById(foodCategory.getId());
+		food.setCategories(null);
+		if (!categoryOptional.isPresent()) {
+		    restaurant.getCategories().add(foodCategory);
+		    foodCategory.setRestaurant(restaurant);
+		    foodCategory.getFoods().add(food);
+		} else {
+		    Category category = categoryOptional.get();
+		    category.setRestaurant(restaurant);
+		    category.getFoods().add(food);
+		}
+	    });
+
+	    this.restaurantsRepository.save(restaurant);
+	});
     }
 
     @Override

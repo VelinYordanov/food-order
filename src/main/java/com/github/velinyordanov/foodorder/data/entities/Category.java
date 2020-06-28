@@ -1,10 +1,13 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -19,16 +22,23 @@ public class Category extends BaseEntity {
     @Size(min = 3, max = 35, message = "Category name must be between 3 and 35 symbols.")
     private String name;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER,
+	    cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(
 	    name = "Categories_Foods",
 	    joinColumns = @JoinColumn(name = "CategoryId"),
 	    inverseJoinColumns = @JoinColumn(name = "FoodId"))
     private Set<Food> foods;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false,
+	    cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "RestaurantId")
     private Restaurant restaurant;
+
+    public Category() {
+	super();
+	this.setFoods(new HashSet<>());
+    }
 
     public String getName() {
 	return name;

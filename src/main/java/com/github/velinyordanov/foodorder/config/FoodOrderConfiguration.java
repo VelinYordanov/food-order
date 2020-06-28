@@ -10,7 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class FoodOrderConfiguration {
     @Bean
     public ModelMapper modelMapper() {
-	return new ModelMapper();
+	ModelMapper mapper = new ModelMapper();
+	mapper.getConfiguration().setSkipNullEnabled(true);
+	return mapper;
     }
 
     @Bean
