@@ -1,9 +1,11 @@
 package com.github.velinyordanov.foodorder.services.impl;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -26,6 +28,7 @@ import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
+import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
@@ -108,20 +111,42 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     public void addFoodsToRestaurant(String restaurantId, FoodCreateDto foodCreateDto) {
 	this.restaurantsRepository.findById(restaurantId).ifPresent(restaurant -> {
 	    Food food = this.mapper.map(foodCreateDto, Food.class);
-	    food.getCategories().forEach(foodCategory -> {
-		Optional<Category> categoryOptional = this.categoriesRepository.findById(foodCategory.getId());
-		food.setCategories(null);
-		if (!categoryOptional.isPresent()) {
-		    restaurant.getCategories().add(foodCategory);
-		    foodCategory.setRestaurant(restaurant);
-		    foodCategory.getFoods().add(food);
-		} else {
-		    Category category = categoryOptional.get();
-		    category.setRestaurant(restaurant);
-		    category.getFoods().add(food);
+
+	    Collection<String> categoryIds =
+		    food.getCategories()
+			    .stream()
+			    .map(x -> x.getId())
+			    .collect(Collectors.toList());
+
+	    Set<Category> categories = new HashSet<>();
+	    this.categoriesRepository
+		    .findAllById(categoryIds)
+		    .forEach(categories::add);
+
+	    categories.forEach(category -> {
+		if (!restaurant.getId().equals(category.getRestaurant().getId())) {
+		    throw new RuntimeException("Category belongs to another restaurant");
 		}
+
+		category.getFoods().add(food);
 	    });
 
+	    food.getCategories().removeAll(categories);
+	    Set<Category> restaurantCategories = restaurant.getCategories();
+	    food.getCategories().forEach(category -> {
+		if (restaurantCategories.stream().anyMatch(x -> x.getName().equals(category.getName()))) {
+		    throw new DuplicateCategoryException(
+			    MessageFormat.format(
+				    "Category with name: {0} already exists for this restaurant.",
+				    category.getName()));
+		}
+
+		restaurant.getCategories().add(category);
+		category.setRestaurant(restaurant);
+		category.getFoods().add(food);
+	    });
+
+	    food.setCategories(null);
 	    this.restaurantsRepository.save(restaurant);
 	});
     }

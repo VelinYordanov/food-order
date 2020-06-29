@@ -13,10 +13,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "Categories")
+@Table(name = "Categories", uniqueConstraints = @UniqueConstraint(columnNames = { "RestaurantId", "name" }))
 public class Category extends BaseEntity {
     @Column(nullable = false)
     @Size(min = 3, max = 35, message = "Category name must be between 3 and 35 symbols.")

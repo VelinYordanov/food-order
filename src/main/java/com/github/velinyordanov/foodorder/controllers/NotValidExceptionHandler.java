@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
 
 @ControllerAdvice
@@ -64,6 +65,16 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<Map<String, String>> handleUserDuplicate(DuplicateUserException ex) {
 	return this.buildResponse(ex, "User already exists", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateCategoryException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicateCategory(DuplicateCategoryException ex) {
+	return this.buildResponse(ex, "Category already exists", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
+	return this.buildResponse(ex, "An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResponseEntity<Map<String, String>> buildResponse(Exception ex, String title, HttpStatus httpStatus) {
