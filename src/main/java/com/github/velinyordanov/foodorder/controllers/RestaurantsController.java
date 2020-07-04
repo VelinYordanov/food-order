@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,8 +68,17 @@ public class RestaurantsController {
 
     @PutMapping("{restaurantId}")
     @PreAuthorize("hasAuthority('ROLE_RESTAURANT') and principal.id == #restaurantId")
-    public void editRestaurant(@PathVariable String restaurantId,
+    public void editRestaurant(
+	    @PathVariable String restaurantId,
 	    @RequestBody @Valid RestaurantEditDto restaurantEditDto) {
 	this.restaurantsService.editRestaurant(restaurantId, restaurantEditDto);
+    }
+
+    @DeleteMapping("{restaurantId}/categories/{categoryId}")
+    @PreAuthorize("hasAuthority('ROLE_RESTAURANT') and principal.id == #restaurantId")
+    public void deleteCategoryFromRestaurant(
+	    @PathVariable String restaurantId,
+	    @PathVariable String categoryId) {
+	this.restaurantsService.deleteCategory(restaurantId, categoryId);
     }
 }

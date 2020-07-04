@@ -29,6 +29,8 @@ import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
+import com.github.velinyordanov.foodorder.exceptions.NonEmptyCategoryException;
+import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
 import com.github.velinyordanov.foodorder.services.RestaurantsService;
@@ -103,7 +105,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
     @Override
     public void addFoodsToRestaurant(String restaurantId, FoodCreateDto foodCreateDto) {
-	this.foodOrderData.restaurants().findById(restaurantId).ifPresent(restaurant -> {
+	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse((restaurant -> {
 	    Food food = this.mapper.map(foodCreateDto, Food.class);
 
 	    Collection<String> categoryIds =
@@ -142,6 +144,8 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
 	    food.setCategories(null);
 	    this.foodOrderData.restaurants().save(restaurant);
+	}), () -> {
+	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId));
 	});
     }
 
@@ -157,7 +161,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
     @Override
     public void editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto) {
-	this.foodOrderData.foods().findById(foodId).ifPresent(food -> {
+	this.foodOrderData.foods().findById(foodId).ifPresentOrElse((food -> {
 	    food.setName(foodCreateDto.getName());
 	    food.setPrice(foodCreateDto.getPrice());
 	    food.setDescription(foodCreateDto.getDescription());
@@ -176,16 +180,45 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	    });
 
 	    this.foodOrderData.foods().save(food);
+	}), () -> {
+	    throw new NotFoundException(MessageFormat.format("Food with id {0} not found", foodId));
 	});
     }
 
     @Override
     public void editRestaurant(String restaurantId, RestaurantEditDto restaurantEditDto) {
-	this.foodOrderData.restaurants().findById(restaurantId).ifPresent(restaurant -> {
+	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse((restaurant -> {
 	    restaurant.setName(restaurantEditDto.getName());
 	    restaurant.setDescription(restaurantEditDto.getDescription());
 
 	    this.foodOrderData.restaurants().save(restaurant);
+	}), () -> {
+	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId));
 	});
+    }
+
+    @Override
+    public void deleteCategory(String restaurantId, String categoryId) {
+	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse(restaurant -> {
+	    restaurant
+		    .getCategories()
+		    .stream()
+		    .filter(category -> categoryId.equals(category.getId()))
+		    .findFirst()
+		    .ifPresentOrElse(category -> {
+			if (category.getFoods().isEmpty()) {
+			    this.foodOrderData.categories().delete(category);
+			} else {
+			    throw new NonEmptyCategoryException(MessageFormat
+				    .format("Category {0} has foods associated with it!", category.getName()));
+			}
+		    }, () -> {
+			throw new NotFoundException(
+				MessageFormat.format("Cateogry with id {0} not found!", categoryId));
+		    });
+	}, () -> {
+	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId));
+	});
+
     }
 }

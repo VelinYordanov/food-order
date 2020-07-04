@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
+import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 
 @ControllerAdvice
 public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
@@ -72,10 +73,16 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 	return this.buildResponse(ex, "Category already exists", HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
-	return this.buildResponse(ex, "An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException ex) {
+	return this.buildResponse(ex, "Entity not found", HttpStatus.NOT_FOUND);
     }
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
+//	ex.printStackTrace();
+//	return this.buildResponse(ex, "An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     private ResponseEntity<Map<String, String>> buildResponse(Exception ex, String title, HttpStatus httpStatus) {
 	Map<String, String> body = new HashMap<String, String>();
