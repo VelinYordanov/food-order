@@ -1,13 +1,26 @@
 package com.github.velinyordanov.foodorder.dto;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+
 public class FoodCreateDto {
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String description;
+
+    @Positive
     private BigDecimal price;
     private Set<CategoryCreateDto> categories;
+
+    public FoodCreateDto() {
+	this.categories = new HashSet<>();
+    }
 
     public String getName() {
 	return name;

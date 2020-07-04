@@ -19,4 +19,6 @@ public interface RestaurantsService {
     Optional<Restaurant> findById(String id);
 
     void addFoodsToRestaurant(String restaurantId, FoodCreateDto foodCreateDto);
+
+    void editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto);
 }

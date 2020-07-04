@@ -16,9 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.github.velinyordanov.foodorder.data.AuthoritiesRepository;
-import com.github.velinyordanov.foodorder.data.CategoriesRepository;
-import com.github.velinyordanov.foodorder.data.RestaurantsRepository;
+import com.github.velinyordanov.foodorder.data.FoodOrderData;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Category;
 import com.github.velinyordanov.foodorder.data.entities.Food;
@@ -36,9 +34,7 @@ import com.github.velinyordanov.foodorder.services.RestaurantsService;
 
 @Service
 public class RestaurantsServiceImpl implements RestaurantsService {
-    private final RestaurantsRepository restaurantsRepository;
-    private final AuthoritiesRepository authoritiesRepository;
-    private final CategoriesRepository categoriesRepository;
+    private final FoodOrderData foodOrderData;
     private final JwtTokenService jwtTokenService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -46,16 +42,12 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
     @Autowired
     public RestaurantsServiceImpl(
-	    RestaurantsRepository restaurantsRepository,
-	    AuthoritiesRepository authoritiesRepository,
-	    CategoriesRepository categoriesRepository,
+	    FoodOrderData foodOrderData,
 	    JwtTokenService jwtTokenService,
 	    AuthenticationManager authenticationManager,
 	    PasswordEncoder passwordEncoder,
 	    Mapper mapper) {
-	this.restaurantsRepository = restaurantsRepository;
-	this.authoritiesRepository = authoritiesRepository;
-	this.categoriesRepository = categoriesRepository;
+	this.foodOrderData = foodOrderData;
 	this.authenticationManager = authenticationManager;
 	this.jwtTokenService = jwtTokenService;
 	this.passwordEncoder = passwordEncoder;
@@ -64,32 +56,33 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
     @Override
     public Collection<RestaurantDto> getAll() {
-	return this.restaurantsRepository.getRestaurantsList();
+	return this.foodOrderData.restaurants().getRestaurantsList();
     }
 
     public Optional<Restaurant> getById(String id) {
-	return this.restaurantsRepository.findById(id);
+	return this.foodOrderData.restaurants().findById(id);
     }
 
     public void createRestaurant(Restaurant restaurant) {
-	this.restaurantsRepository.save(restaurant);
+	this.foodOrderData.restaurants().save(restaurant);
     }
 
     @Override
     public Optional<Restaurant> findById(String id) {
-	return this.restaurantsRepository.findById(id);
+	return this.foodOrderData.restaurants().findById(id);
     }
 
     @Override
     @Transactional
     public String register(RestaurantRegisterDto user) {
-	if (this.restaurantsRepository.existsByUsernameOrName(user.getUsername(), user.getName())) {
+	if (this.foodOrderData.restaurants().existsByUsernameOrName(user.getUsername(), user.getName())) {
 	    throw new DuplicateUserException("Username or restaurant name already exists!");
 	}
 
 	Restaurant restaurant = this.mapper.map(user, Restaurant.class);
 	restaurant.setPassword(this.passwordEncoder.encode(user.getPassword()));
-	Optional<Authority> authorityOptional = this.authoritiesRepository.findFirstByAuthority("ROLE_RESTAURANT");
+	Optional<Authority> authorityOptional =
+		this.foodOrderData.authorities().findFirstByAuthority("ROLE_RESTAURANT");
 	Authority authority = null;
 	if (authorityOptional.isPresent()) {
 	    authority = authorityOptional.get();
@@ -103,13 +96,13 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	restaurant.setAuthorities(authorities);
 	authority.getRestaurants().add(restaurant);
 
-	Restaurant savedRestaurant = this.restaurantsRepository.save(restaurant);
+	Restaurant savedRestaurant = this.foodOrderData.restaurants().save(restaurant);
 	return this.jwtTokenService.generateToken(savedRestaurant);
     }
 
     @Override
     public void addFoodsToRestaurant(String restaurantId, FoodCreateDto foodCreateDto) {
-	this.restaurantsRepository.findById(restaurantId).ifPresent(restaurant -> {
+	this.foodOrderData.restaurants().findById(restaurantId).ifPresent(restaurant -> {
 	    Food food = this.mapper.map(foodCreateDto, Food.class);
 
 	    Collection<String> categoryIds =
@@ -119,7 +112,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 			    .collect(Collectors.toList());
 
 	    Set<Category> categories = new HashSet<>();
-	    this.categoriesRepository
+	    this.foodOrderData.categories()
 		    .findAllById(categoryIds)
 		    .forEach(categories::add);
 
@@ -147,7 +140,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	    });
 
 	    food.setCategories(null);
-	    this.restaurantsRepository.save(restaurant);
+	    this.foodOrderData.restaurants().save(restaurant);
 	});
     }
 
@@ -159,5 +152,29 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
 	Authentication authentication = this.authenticationManager.authenticate(token);
 	return this.jwtTokenService.generateToken((Restaurant) authentication.getPrincipal());
+    }
+
+    @Override
+    public void editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto) {
+	this.foodOrderData.foods().findById(foodId).ifPresent(food -> {
+	    food.setName(foodCreateDto.getName());
+	    food.setPrice(foodCreateDto.getPrice());
+	    food.setDescription(foodCreateDto.getDescription());
+
+	    Collection<Category> categories = this.foodOrderData.categories().findByRestaurantId(restaurantId);
+	    Collection<String> selectedCategoryIds =
+		    foodCreateDto.getCategories().stream().map(x -> x.getId()).collect(Collectors.toList());
+	    categories.forEach(category -> {
+		if (selectedCategoryIds.contains(category.getId())) {
+		    food.getCategories().add(category);
+		    category.getFoods().add(food);
+		} else {
+		    food.getCategories().remove(category);
+		    category.getFoods().remove(food);
+		}
+	    });
+
+	    this.foodOrderData.foods().save(food);
+	});
     }
 }
