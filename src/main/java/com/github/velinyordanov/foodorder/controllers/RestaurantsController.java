@@ -28,6 +28,9 @@ import com.github.velinyordanov.foodorder.services.RestaurantsService;
 @RestController
 @RequestMapping("restaurants")
 public class RestaurantsController {
+    private static final String ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION =
+	    "hasAuthority('ROLE_RESTAURANT') and principal.id == #restaurantId";
+
     private final RestaurantsService restaurantsService;
 
     public RestaurantsController(RestaurantsService restaurantsService, JwtTokenService jwtTokenService) {
@@ -58,7 +61,7 @@ public class RestaurantsController {
     }
 
     @PutMapping("{restaurantId}/foods/{foodId}")
-    @PreAuthorize("hasAuthority('ROLE_RESTAURANT') and principal.id == #restaurantId")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public void editFood(
 	    @PathVariable String restaurantId,
 	    @PathVariable String foodId,
@@ -67,7 +70,7 @@ public class RestaurantsController {
     }
 
     @PutMapping("{restaurantId}")
-    @PreAuthorize("hasAuthority('ROLE_RESTAURANT') and principal.id == #restaurantId")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public void editRestaurant(
 	    @PathVariable String restaurantId,
 	    @RequestBody @Valid RestaurantEditDto restaurantEditDto) {
@@ -75,10 +78,18 @@ public class RestaurantsController {
     }
 
     @DeleteMapping("{restaurantId}/categories/{categoryId}")
-    @PreAuthorize("hasAuthority('ROLE_RESTAURANT') and principal.id == #restaurantId")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public void deleteCategoryFromRestaurant(
 	    @PathVariable String restaurantId,
 	    @PathVariable String categoryId) {
 	this.restaurantsService.deleteCategory(restaurantId, categoryId);
+    }
+
+    @DeleteMapping("{restaurantId}/foods/{foodId}")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public void deleteFoodFromRestaurant(
+	    @PathVariable String restaurantId,
+	    @PathVariable String foodId) {
+	this.restaurantsService.deleteFood(restaurantId, foodId);
     }
 }

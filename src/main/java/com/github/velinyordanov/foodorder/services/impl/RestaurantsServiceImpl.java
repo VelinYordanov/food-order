@@ -221,4 +221,25 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	});
 
     }
+
+    @Override
+    public void deleteFood(String restaurantId, String foodId) {
+	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse(restaurant -> {
+	    restaurant
+		    .getCategories()
+		    .stream()
+		    .flatMap(category -> category.getFoods().stream())
+		    .filter(food -> food.getId().equals(foodId))
+		    .findFirst()
+		    .ifPresentOrElse(
+			    food -> this.foodOrderData.foods().delete(food),
+			    () -> {
+				throw new NotFoundException(
+					MessageFormat.format("Could not find food with id {0}", foodId));
+			    });
+	}, () -> {
+	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
+	});
+
+    }
 }
