@@ -23,6 +23,7 @@ import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
+import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
@@ -175,6 +176,16 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	    });
 
 	    this.foodOrderData.foods().save(food);
+	});
+    }
+
+    @Override
+    public void editRestaurant(String restaurantId, RestaurantEditDto restaurantEditDto) {
+	this.foodOrderData.restaurants().findById(restaurantId).ifPresent(restaurant -> {
+	    restaurant.setName(restaurantEditDto.getName());
+	    restaurant.setDescription(restaurantEditDto.getDescription());
+
+	    this.foodOrderData.restaurants().save(restaurant);
 	});
     }
 }

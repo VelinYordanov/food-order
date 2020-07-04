@@ -10,7 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -20,7 +19,6 @@ public class Restaurant extends BaseUser {
     private static final long serialVersionUID = 7321303086507184708L;
 
     @Column(unique = true, nullable = false)
-    @Size(min = 3, max = 35, message = "Name must be between 3 and 35 symbols.")
     private String name;
 
     @Column(name = "Description")

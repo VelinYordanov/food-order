@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
+import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
@@ -60,7 +61,14 @@ public class RestaurantsController {
     public void editFood(
 	    @PathVariable String restaurantId,
 	    @PathVariable String foodId,
-	    @RequestBody FoodCreateDto foodCreateDto) {
+	    @RequestBody @Valid FoodCreateDto foodCreateDto) {
 	this.restaurantsService.editFood(restaurantId, foodId, foodCreateDto);
+    }
+
+    @PutMapping("{restaurantId}")
+    @PreAuthorize("hasAuthority('ROLE_RESTAURANT') and principal.id == #restaurantId")
+    public void editRestaurant(@PathVariable String restaurantId,
+	    @RequestBody @Valid RestaurantEditDto restaurantEditDto) {
+	this.restaurantsService.editRestaurant(restaurantId, restaurantEditDto);
     }
 }

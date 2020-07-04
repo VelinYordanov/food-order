@@ -5,17 +5,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
 public class FoodCreateDto {
-    @NotBlank
+    @NotBlank(message = "Name is required")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Description is required")
     private String description;
 
-    @Positive
+    @Positive(message = "Price must be above 0")
     private BigDecimal price;
+
+    @NotEmpty(message = "At least one cateogry must be present")
     private Set<CategoryCreateDto> categories;
 
     public FoodCreateDto() {
