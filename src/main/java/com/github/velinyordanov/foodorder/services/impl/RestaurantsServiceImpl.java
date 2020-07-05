@@ -21,6 +21,7 @@ import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Category;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
+import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
@@ -128,7 +129,8 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	    });
 
 	    food.getCategories().removeAll(categories);
-	    Set<Category> restaurantCategories = restaurant.getCategories();
+	    Collection<Category> restaurantCategories =
+		    this.foodOrderData.categories().findByRestaurantId(restaurantId);
 	    food.getCategories().forEach(category -> {
 		if (restaurantCategories.stream().anyMatch(x -> x.getName().equals(category.getName()))) {
 		    throw new DuplicateCategoryException(
@@ -200,8 +202,8 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     @Override
     public void deleteCategory(String restaurantId, String categoryId) {
 	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse(restaurant -> {
-	    restaurant
-		    .getCategories()
+	    this.foodOrderData.categories()
+		    .findByRestaurantId(restaurantId)
 		    .stream()
 		    .filter(category -> categoryId.equals(category.getId()))
 		    .findFirst()
@@ -219,14 +221,13 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	}, () -> {
 	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId));
 	});
-
     }
 
     @Override
     public void deleteFood(String restaurantId, String foodId) {
 	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse(restaurant -> {
-	    restaurant
-		    .getCategories()
+	    this.foodOrderData.categories()
+		    .findByRestaurantId(restaurantId)
 		    .stream()
 		    .flatMap(category -> category.getFoods().stream())
 		    .filter(food -> food.getId().equals(foodId))
@@ -240,6 +241,32 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	}, () -> {
 	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
 	});
+    }
 
+    @Override
+    public void addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto) {
+	this.foodOrderData
+		.restaurants()
+		.findById(restaurantId)
+		.ifPresentOrElse(restaurant -> {
+		    this.foodOrderData
+			    .categories()
+			    .findByNameIncludingDeleted(categoryCreateDto.getName())
+			    .ifPresentOrElse(category -> {
+				if (category.getIsDeleted()) {
+				    category.setIsDeleted(false);
+				    this.foodOrderData.categories().save(category);
+				} else {
+				    throw new DuplicateCategoryException(MessageFormat
+					    .format("Category {0} already exists", categoryCreateDto.getName()));
+				}
+			    }, () -> {
+				Category category = this.mapper.map(categoryCreateDto, Category.class);
+				category.setRestaurant(restaurant);
+				this.foodOrderData.categories().save(category);
+			    });
+		}, () -> {
+		    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
+		});
     }
 }

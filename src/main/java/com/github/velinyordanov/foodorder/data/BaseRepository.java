@@ -28,7 +28,6 @@ public interface BaseRepository<T extends BaseEntity> extends CrudRepository<T, 
     @Query("select e from #{#entityName} e where e.id = ?1 and e.isDeleted = false")
     Optional<T> findById(String id);
 
-    // Look up deleted entities
     @Query("select e from #{#entityName} e where e.isDeleted = true")
     @Transactional(readOnly = true)
     List<T> findDeleted();

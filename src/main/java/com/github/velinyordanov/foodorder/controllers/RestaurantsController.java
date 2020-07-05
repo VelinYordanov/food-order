@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
+import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
@@ -56,7 +57,7 @@ public class RestaurantsController {
     @PostMapping("foods")
     @Secured("ROLE_RESTAURANT")
     public void addFoodToRestaurant(@AuthenticationPrincipal Restaurant restaurant,
-	    @RequestBody FoodCreateDto foodCreateDto) {
+	    @RequestBody @Valid FoodCreateDto foodCreateDto) {
 	this.restaurantsService.addFoodsToRestaurant(restaurant.getId(), foodCreateDto);
     }
 
@@ -91,5 +92,13 @@ public class RestaurantsController {
 	    @PathVariable String restaurantId,
 	    @PathVariable String foodId) {
 	this.restaurantsService.deleteFood(restaurantId, foodId);
+    }
+
+    @PostMapping("{restaurantId}/categories")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public void addCategoryToRestaurant(
+	    @PathVariable String restaurantId,
+	    @RequestBody @Valid CategoryCreateDto categoryCreateDto) {
+	this.restaurantsService.addCategoryForRestaurant(restaurantId, categoryCreateDto);
     }
 }

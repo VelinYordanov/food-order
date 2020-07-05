@@ -19,7 +19,7 @@ public class FoodCreateDto {
     private BigDecimal price;
 
     @NotEmpty(message = "At least one cateogry must be present")
-    private Set<CategoryCreateDto> categories;
+    private Set<CategoryDto> categories;
 
     public FoodCreateDto() {
 	this.categories = new HashSet<>();
@@ -49,11 +49,11 @@ public class FoodCreateDto {
 	this.price = price;
     }
 
-    public Set<CategoryCreateDto> getCategories() {
+    public Set<CategoryDto> getCategories() {
 	return categories;
     }
 
-    public void setCategories(Set<CategoryCreateDto> categories) {
+    public void setCategories(Set<CategoryDto> categories) {
 	this.categories = categories;
     }
 }

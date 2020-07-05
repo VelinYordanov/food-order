@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
+import com.github.velinyordanov.foodorder.exceptions.NonEmptyCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 
 @ControllerAdvice
@@ -71,6 +72,11 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DuplicateCategoryException.class)
     public ResponseEntity<Map<String, String>> handleDuplicateCategory(DuplicateCategoryException ex) {
 	return this.buildResponse(ex, "Category already exists", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NonEmptyCategoryException.class)
+    public ResponseEntity<Map<String, String>> handleNonEmptyCategoryException(NonEmptyCategoryException ex) {
+	return this.buildResponse(ex, "Category has foods associated with it", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NotFoundException.class)
