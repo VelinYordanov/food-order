@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
+import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
@@ -45,13 +46,13 @@ public class RestaurantsController {
     }
 
     @PostMapping()
-    public String register(@Valid @RequestBody RestaurantRegisterDto userDto) {
-	return this.restaurantsService.register(userDto);
+    public JwtTokenDto register(@Valid @RequestBody RestaurantRegisterDto userDto) {
+	return new JwtTokenDto(restaurantsService.register(userDto));
     }
 
     @PostMapping("tokens")
-    public String login(@Valid @RequestBody UserDto user) {
-	return this.restaurantsService.login(user);
+    public JwtTokenDto login(@Valid @RequestBody UserDto user) {
+	return new JwtTokenDto(restaurantsService.login(user));
     }
 
     @PostMapping("foods")

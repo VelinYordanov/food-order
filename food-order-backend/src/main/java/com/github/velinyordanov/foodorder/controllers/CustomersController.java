@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.velinyordanov.foodorder.data.entities.Customer;
+import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.services.CustomersService;
@@ -35,17 +36,17 @@ public class CustomersController {
     }
 
     @PostMapping("")
-    public String registerUser(@Valid @RequestBody UserDto data) {
-	return this.customersService.registerCustomer(data);
+    public JwtTokenDto registerUser(@Valid @RequestBody UserDto data) {
+	return new JwtTokenDto(this.customersService.registerCustomer(data));
     }
 
     @PostMapping("tokens")
-    public String loginUser(@Valid @RequestBody UserDto data) {
+    public JwtTokenDto loginUser(@Valid @RequestBody UserDto data) {
 	UsernamePasswordAuthenticationToken token =
 		new UsernamePasswordAuthenticationToken(data.getUsername(), data.getPassword());
 	token.setDetails(UserType.Customer);
 
 	Authentication authentication = this.authenticationManager.authenticate(token);
-	return this.jwtTokenUtil.generateToken((Customer) authentication.getPrincipal());
+	return new JwtTokenDto(this.jwtTokenUtil.generateToken((Customer) authentication.getPrincipal()));
     }
 }
