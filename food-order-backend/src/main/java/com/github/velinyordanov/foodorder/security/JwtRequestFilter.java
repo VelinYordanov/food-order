@@ -63,7 +63,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		return;
 	    }
 	} else {
-	    logger.warn("JWT Token does not begin with Bearer String");
+	    logger.warn("Missing bearer token");
 	    chain.doFilter(request, response);
 	    return;
 	}

@@ -23,6 +23,8 @@ import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
+import com.github.velinyordanov.foodorder.dto.FoodDto;
+import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
@@ -268,5 +270,26 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 		}, () -> {
 		    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
 		});
+    }
+
+    @Override
+    public RestaurantDataDto getRestaurantData(String restaurantId) {
+	Optional<Restaurant> restaurantOptional =
+		this.foodOrderData.restaurants()
+			.findById(restaurantId);
+
+	if (restaurantOptional.isPresent()) {
+	    Restaurant restaurant = restaurantOptional.get();
+	    RestaurantDataDto restaurantData = this.mapper.map(restaurant, RestaurantDataDto.class);
+	    restaurantData.setFoods(
+		    restaurant.getCategories()
+			    .stream()
+			    .flatMap(category -> category.getFoods().stream())
+			    .map(food -> this.mapper.map(food, FoodDto.class))
+			    .collect(Collectors.toList()));
+	    return restaurantData;
+	} else {
+	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
+	}
     }
 }
