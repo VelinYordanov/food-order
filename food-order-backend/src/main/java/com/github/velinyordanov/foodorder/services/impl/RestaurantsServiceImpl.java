@@ -127,7 +127,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 		    throw new RuntimeException("Category belongs to another restaurant");
 		}
 
-		category.getFoods().add(food);
+		category.addFood(food);
 	    });
 
 	    food.getCategories().removeAll(categories);

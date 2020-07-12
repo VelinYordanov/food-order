@@ -79,8 +79,10 @@ public class Category extends BaseEntity {
     }
 
     public void removeFood(Food food) {
-	this.foods.remove(food);
-	food.removeCategory(this);
+	if (this.foods.contains(food)) {
+	    this.foods.remove(food);
+	    food.removeCategory(this);
+	}
     }
 
     public void setFoods(Set<Food> foods) {
