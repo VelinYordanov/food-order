@@ -84,8 +84,6 @@ public class Food extends BaseEntity {
 		+ getName()
 		+ ", getDescription()="
 		+ getDescription()
-		+ ", getCategories()="
-		+ getCategories()
 		+ "]";
     }
 }

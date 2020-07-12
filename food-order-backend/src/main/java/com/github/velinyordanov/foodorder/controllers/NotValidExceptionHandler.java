@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 
 @ControllerAdvice
 public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
+    private static final Log LOGGER = LogFactory.getLog(NotValidExceptionHandler.class);
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 	    HttpHeaders headers,
@@ -83,11 +87,11 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 	return this.buildResponse(ex, "Entity not found", HttpStatus.NOT_FOUND);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
-//	ex.printStackTrace();
-//	return this.buildResponse(ex, "An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
+	LOGGER.error("Internal server error", ex);
+	return this.buildResponse(ex, "An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     private ResponseEntity<Map<String, String>> buildResponse(Exception ex, String title, HttpStatus httpStatus) {
 	Map<String, String> body = new HashMap<String, String>();

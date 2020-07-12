@@ -228,18 +228,20 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     @Override
     public void deleteFood(String restaurantId, String foodId) {
 	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse(restaurant -> {
-	    this.foodOrderData.categories()
-		    .findByRestaurantId(restaurantId)
-		    .stream()
-		    .flatMap(category -> category.getFoods().stream())
-		    .filter(food -> food.getId().equals(foodId))
-		    .findFirst()
-		    .ifPresentOrElse(
-			    food -> this.foodOrderData.foods().delete(food),
-			    () -> {
-				throw new NotFoundException(
-					MessageFormat.format("Could not find food with id {0}", foodId));
-			    });
+	    this.foodOrderData.foods()
+		    .findById(foodId)
+		    .ifPresentOrElse(food -> {
+			if (food.getCategories()
+				.stream()
+				.allMatch(category -> restaurantId.equals(category.getRestaurant().getId()))) {
+			    this.foodOrderData.foods().delete(food);
+			} else {
+			    throw new NotFoundException("Could not find food for restaurant");
+			}
+		    }, () -> {
+			throw new NotFoundException(
+				MessageFormat.format("Could not find food with id {0}", foodId));
+		    });
 	}, () -> {
 	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
 	});
@@ -281,12 +283,14 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	if (restaurantOptional.isPresent()) {
 	    Restaurant restaurant = restaurantOptional.get();
 	    RestaurantDataDto restaurantData = this.mapper.map(restaurant, RestaurantDataDto.class);
+
 	    restaurantData.setFoods(
-		    restaurant.getCategories()
+		    this.foodOrderData.foods()
+			    .findByRestaurantId(restaurantId)
 			    .stream()
-			    .flatMap(category -> category.getFoods().stream())
 			    .map(food -> this.mapper.map(food, FoodDto.class))
 			    .collect(Collectors.toList()));
+
 	    return restaurantData;
 	} else {
 	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));

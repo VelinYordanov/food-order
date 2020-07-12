@@ -12,7 +12,7 @@ import com.github.velinyordanov.foodorder.data.entities.Category;
 @Repository
 public interface CategoriesRepository extends BaseRepository<Category> {
     @Transactional(readOnly = true)
-    @Query("select e from #{#entityName} e where RestaurantId = ?1 and e.isDeleted = false")
+    @Query("select e from #{#entityName} e where e.restaurant.id = ?1 and e.isDeleted = false")
     Collection<Category> findByRestaurantId(String restaurantId);
 
     @Transactional(readOnly = true)

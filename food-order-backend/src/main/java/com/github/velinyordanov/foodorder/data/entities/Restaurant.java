@@ -2,6 +2,7 @@ package com.github.velinyordanov.foodorder.data.entities;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -71,6 +72,13 @@ public class Restaurant extends BaseUser {
     }
 
     public Set<Category> getCategories() {
+	return categories
+		.stream()
+		.filter(category -> !category.getIsDeleted())
+		.collect(Collectors.toSet());
+    }
+
+    public Set<Category> getCategoriesWithDeleted() {
 	return categories;
     }
 

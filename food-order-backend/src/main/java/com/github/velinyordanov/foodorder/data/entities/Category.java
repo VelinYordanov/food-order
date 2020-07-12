@@ -3,6 +3,7 @@ package com.github.velinyordanov.foodorder.data.entities;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ public class Category extends BaseEntity {
     @Size(min = 3, max = 35, message = "Category name must be between 3 and 35 symbols.")
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER,
+    @ManyToMany(fetch = FetchType.LAZY,
 	    cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(
 	    name = "Categories_Foods",
@@ -60,6 +61,13 @@ public class Category extends BaseEntity {
     }
 
     public Collection<Food> getFoods() {
+	return foods
+		.stream()
+		.filter(food -> !food.getIsDeleted())
+		.collect(Collectors.toList());
+    }
+
+    public Collection<Food> getFoodsWithDeleted() {
 	return foods;
     }
 
