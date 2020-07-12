@@ -82,6 +82,11 @@ public class Restaurant extends BaseUser {
 	return categories;
     }
 
+    public void addCategory(Category category) {
+	this.categories.add(category);
+	category.setRestaurant(this);
+    }
+
     public void setCategories(Set<Category> categories) {
 	this.categories = categories;
     }

@@ -3,6 +3,7 @@ package com.github.velinyordanov.foodorder.data.entities;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -62,7 +63,28 @@ public class Food extends BaseEntity {
     }
 
     public Set<Category> getCategories() {
+	return this.categories
+		.stream()
+		.filter(category -> !category.getIsDeleted())
+		.collect(Collectors.toSet());
+    }
+
+    public Set<Category> getCategoriesWithDeleted() {
 	return categories;
+    }
+
+    public void addCategory(Category category) {
+	if (!this.categories.contains(category)) {
+	    this.categories.add(category);
+	    category.addFood(this);
+	}
+    }
+
+    public void removeCategory(Category category) {
+	if (this.categories.contains(category)) {
+	    this.categories.remove(category);
+	    category.removeFood(this);
+	}
     }
 
     public void setCategories(Set<Category> categories) {

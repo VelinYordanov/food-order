@@ -141,9 +141,8 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 				    category.getName()));
 		}
 
-		restaurant.getCategories().add(category);
-		category.setRestaurant(restaurant);
-		category.getFoods().add(food);
+		restaurant.addCategory(category);
+		category.addFood(food);
 	    });
 
 	    food.setCategories(null);
@@ -175,11 +174,9 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 		    foodCreateDto.getCategories().stream().map(x -> x.getId()).collect(Collectors.toList());
 	    categories.forEach(category -> {
 		if (selectedCategoryIds.contains(category.getId())) {
-		    food.getCategories().add(category);
-		    category.getFoods().add(food);
+		    category.addFood(food);
 		} else {
-		    food.getCategories().remove(category);
-		    category.getFoods().remove(food);
+		    category.removeFood(food);
 		}
 	    });
 
