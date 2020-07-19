@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     this.loginFormSubmitsSubject
       .pipe(
         tap({
-          complete: () => this.loginForm.disable()
+          next: _ => this.loginForm.disable()
         }),
         exhaustMap(
           data => data.isRestaurant ?
@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
             this.loginService.loginCustomer(data).pipe(catchError(error => of(error)))
         ),
         tap({
-          complete: () => this.loginForm.enable()
+          next: _ => this.loginForm.enable()
         }),
       ).subscribe(result => {
         if (!result.error) {
