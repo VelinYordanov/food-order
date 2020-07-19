@@ -22,7 +22,6 @@
     "@angular/platform-browser-dynamic": "~10.0.2",
     "@angular/router": "~10.0.2",
     "@auth0/angular-jwt": "^4.2.0",
-    "@sweetalert2/ngx-sweetalert2": "^8.1.1",
     "rxjs": "~6.5.5",
     "sweetalert2": "^9.17.0",
     "tslib": "^2.0.0",

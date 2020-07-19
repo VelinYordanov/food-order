@@ -18,26 +18,10 @@
             <mat-chip-list aria-label="Categories">
                 <mat-chip *ngFor="let category of getCategories(restaurant.categories)"
                     [removable]="true"
-                    (removed)="setCategoryToBeDeleted(category.id); deleteCategorySwal.fire()"
+                    (removed)="openCategoryDeleteConfirmation(category)"
                     [value]="category.id">
                     {{category.name}}
                     <mat-icon matChipRemove>cancel</mat-icon>
-                    <swal #deleteCategorySwal
-                        title="Delete category {{category.name}}"
-                        text="Are you sure you want to delete category {{category.name}}?"
-                        [showCancelButton]="true"
-                        [showLoaderOnConfirm]="true"
-                        [preConfirm]="deleteCategoryFunction"
-                        (confirm)="$event ? deletedCategorySwal.fire() : deleteErrorSwal.fire()"
-                        icon="question"></swal>
-                    <swal #deletedCategorySwal
-                        title="Success!"
-                        text="Category {{category.name}} deleted successfully!"
-                        icon="success"></swal>
-                    <swal #deleteErrorSwal
-                        title="Error!"
-                        text="Error occurred when deleting category {{category.name}}. Try again later."
-                        icon="error"></swal>
                 </mat-chip>
             </mat-chip-list>
         </div>

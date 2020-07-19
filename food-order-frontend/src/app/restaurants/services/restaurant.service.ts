@@ -6,10 +6,14 @@ import { Restaurant } from '../models/restaurant';
   providedIn: 'root'
 })
 export class RestaurantService {
-  private BASE_URL: string = 'api/restaurants';
+  private readonly BASE_URL: string = 'api/restaurants';
   constructor(private httpClient: HttpClient) { }
 
   getRestaurantData(restaurantId: string) {
     return this.httpClient.get<Restaurant>(`${this.BASE_URL}/${restaurantId}`);
+  }
+
+  deleteCategoryFromRestaurant(restaurantId: string, categoryId: string) {
+    return this.httpClient.delete(`${this.BASE_URL}/${restaurantId}/categories/${categoryId}`);
   }
 }
