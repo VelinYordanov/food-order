@@ -1,11 +1,11 @@
 <article>
     <section *ngIf="restaurant$ | async; let restaurant">
-        <form>
+        <form [formGroup]="restaurantForm">
             <div>
                 <mat-form-field class="form-field">
                     <mat-label>Name</mat-label>
                     <input matInput
-                        [value]="restaurant.name">
+                        formControlName="name">
                 </mat-form-field>
             </div>
             <div>
@@ -13,19 +13,36 @@
                     <mat-label>Description</mat-label>
                     <textarea matInput
                         cdkTextareaAutosize
-                        [value]="restaurant.description"></textarea>
+                        formControlName="description"></textarea>
                 </mat-form-field>
             </div>
             <div>
-                <mat-chip-list aria-label="Categories">
-                    <mat-chip *ngFor="let category of getCategories(restaurant.categories)"
-                        [removable]="true"
-                        (removed)="openCategoryDeleteConfirmation(category)"
-                        [value]="category.id">
-                        {{category.name}}
-                        <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-                </mat-chip-list>
+                <button mat-raised-button
+                    [color]="restaurantForm.enabled ? 'error' : 'primary'"
+                    (click)="toggleForm()">{{restaurantForm.enabled ? 'Cancel' : 'Edit'}}</button>
+            </div>
+            <div *ngIf="restaurantForm.enabled">
+                <button mat-raised-button
+                    (click)="editRestaurant()"
+                    color="primary">Submit</button>
+            </div>
+            <div>
+                <mat-form-field>
+                    <mat-chip-list #chipList
+                        aria-label="Categories">
+                        <mat-chip *ngFor="let category of getCategories()"
+                            [removable]="true"
+                            (removed)="openCategoryDeleteConfirmation(category)"
+                            [value]="category.id">
+                            {{category.name | titlecase}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>
+                        <input placeholder="Add Category"
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            (matChipInputTokenEnd)="openCategoryAdditionConfirmation($event)">
+                    </mat-chip-list>
+                </mat-form-field>
             </div>
             <div>
                 <div *ngFor="let food of restaurant.foods">

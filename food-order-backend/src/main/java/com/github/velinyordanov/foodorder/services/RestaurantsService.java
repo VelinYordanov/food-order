@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
+import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
@@ -31,7 +32,7 @@ public interface RestaurantsService {
 
     void deleteFood(String restaurantId, String foodId);
 
-    void addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto);
+    Optional<CategoryDto> addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto);
 
     RestaurantDataDto getRestaurantData(String restaurantId);
 }

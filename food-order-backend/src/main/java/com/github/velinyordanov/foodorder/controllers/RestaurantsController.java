@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
+import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
@@ -104,9 +105,10 @@ public class RestaurantsController {
 
     @PostMapping("{restaurantId}/categories")
     @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public void addCategoryToRestaurant(
+    public CategoryDto addCategoryToRestaurant(
 	    @PathVariable String restaurantId,
 	    @RequestBody @Valid CategoryCreateDto categoryCreateDto) {
-	this.restaurantsService.addCategoryForRestaurant(restaurantId, categoryCreateDto);
+	return this.restaurantsService.addCategoryForRestaurant(restaurantId, categoryCreateDto)
+		.orElseThrow(() -> new IllegalStateException("An error occurred while creating category"));
     }
 }

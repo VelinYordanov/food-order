@@ -11,6 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -41,6 +42,7 @@ import { SwalToken } from 'src/app/shared/injection-tokens/swal-injection-token'
     MatButtonModule,
     MatChipsModule,
     MatIconModule,
+    MatAutocompleteModule,
 
     BrowserModule,
     AppRoutingModule,

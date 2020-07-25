@@ -22,6 +22,7 @@ import com.github.velinyordanov.foodorder.data.entities.Category;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
+import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
@@ -245,30 +246,35 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     }
 
     @Override
-    public void addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto) {
-	this.foodOrderData
+    public Optional<CategoryDto> addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto) {
+	Optional<Restaurant> restaurantOptional = this.foodOrderData
 		.restaurants()
-		.findById(restaurantId)
-		.ifPresentOrElse(restaurant -> {
-		    this.foodOrderData
-			    .categories()
-			    .findByNameIncludingDeleted(categoryCreateDto.getName())
-			    .ifPresentOrElse(category -> {
-				if (category.getIsDeleted()) {
-				    category.setIsDeleted(false);
-				    this.foodOrderData.categories().save(category);
-				} else {
-				    throw new DuplicateCategoryException(MessageFormat
-					    .format("Category {0} already exists", categoryCreateDto.getName()));
-				}
-			    }, () -> {
-				Category category = this.mapper.map(categoryCreateDto, Category.class);
-				category.setRestaurant(restaurant);
-				this.foodOrderData.categories().save(category);
-			    });
-		}, () -> {
-		    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
-		});
+		.findById(restaurantId);
+
+	if (restaurantOptional.isEmpty()) {
+	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
+	}
+
+	Optional<Category> categoryOptional =
+		restaurantOptional
+			.flatMap(restaurant -> this.foodOrderData
+				.categories()
+				.findByNameIncludingDeleted(categoryCreateDto.getName()));
+
+	if (categoryOptional.isEmpty()) {
+	    Category category = this.mapper.map(categoryCreateDto, Category.class);
+	    category.setRestaurant(restaurantOptional.get());
+	    return Optional.of(this.mapper.map(this.foodOrderData.categories().save(category), CategoryDto.class));
+	} else {
+	    Category category = categoryOptional.get();
+	    if (category.getIsDeleted()) {
+		category.setIsDeleted(false);
+		return Optional.of(this.mapper.map(this.foodOrderData.categories().save(category), CategoryDto.class));
+	    } else {
+		throw new DuplicateCategoryException(MessageFormat
+			.format("Category {0} already exists", categoryCreateDto.getName()));
+	    }
+	}
     }
 
     @Override
