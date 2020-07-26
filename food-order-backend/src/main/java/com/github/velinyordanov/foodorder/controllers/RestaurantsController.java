@@ -79,6 +79,12 @@ public class RestaurantsController {
 	return this.restaurantsService.getRestaurantData(restaurantId);
     }
 
+    @GetMapping("{restaurantId}/categories")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public Collection<CategoryDto> getCategories(@PathVariable String restaurantId) {
+	return this.restaurantsService.getCategoriesForRestaurant(restaurantId);
+    }
+
     @PutMapping("{restaurantId}")
     @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public void editRestaurant(

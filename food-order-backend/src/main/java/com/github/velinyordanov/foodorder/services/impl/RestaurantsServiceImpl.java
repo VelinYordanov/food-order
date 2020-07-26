@@ -40,6 +40,7 @@ import com.github.velinyordanov.foodorder.services.JwtTokenService;
 import com.github.velinyordanov.foodorder.services.RestaurantsService;
 
 @Service
+@Transactional
 public class RestaurantsServiceImpl implements RestaurantsService {
     private final FoodOrderData foodOrderData;
     private final JwtTokenService jwtTokenService;
@@ -80,7 +81,6 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     }
 
     @Override
-    @Transactional
     public String register(RestaurantRegisterDto user) {
 	if (this.foodOrderData.restaurants().existsByUsernameOrName(user.getUsername(), user.getName())) {
 	    throw new DuplicateUserException("Username or restaurant name already exists!");
@@ -298,5 +298,25 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	} else {
 	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
 	}
+    }
+
+    @Override
+    public Collection<CategoryDto> getCategoriesForRestaurant(String restaurantId) {
+	Optional<Restaurant> restaurantOptional =
+		this.foodOrderData.restaurants()
+			.findById(restaurantId);
+
+	if (restaurantOptional.isEmpty()) {
+	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
+	}
+
+	return restaurantOptional
+		.map(restaurant -> this.foodOrderData.categories()
+			.findByRestaurantId(restaurant.getId())
+			.stream()
+			.map(category -> this.mapper.map(category, CategoryDto.class))
+			.collect(Collectors.toList()))
+		.orElseThrow(() -> new IllegalStateException(
+			"An error occurred while loading categories. Try again later."));
     }
 }

@@ -35,4 +35,6 @@ public interface RestaurantsService {
     Optional<CategoryDto> addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto);
 
     RestaurantDataDto getRestaurantData(String restaurantId);
+
+    Collection<CategoryDto> getCategoriesForRestaurant(String restaurantId);
 }
