@@ -21,12 +21,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RestaurantProfileComponent } from './restaurants/restaurant-profile/restaurant-profile.component';
 import { SwalToken } from 'src/app/shared/injection-tokens/swal-injection-token';
+import { RestaurantFoodComponent } from './restaurants/restaurant-food/restaurant-food.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RestaurantProfileComponent
+    RestaurantProfileComponent,
+    RestaurantFoodComponent
   ],
   imports: [
     JwtModule.forRoot({

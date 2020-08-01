@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Category } from '../models/category';
+import { Food } from '../models/food';
 import { Restaurant } from '../models/restaurant';
 import { RestaurantEdit } from '../models/restaurant-edit';
 
@@ -25,5 +26,13 @@ export class RestaurantService {
 
   editRestaurant(restaurantId: string, restaurant: RestaurantEdit) {
     return this.httpClient.put(`${this.BASE_URL}/${restaurantId}`, restaurant);
+  }
+
+  editFood(restaurantId: string, foodId: string, food: Food) {
+    return this.httpClient.put(`${this.BASE_URL}/${restaurantId}/foods/${foodId}`, food);
+  }
+
+  deleteFood(restaurantId:string, foodId:string) {
+    return this.httpClient.delete(`${this.BASE_URL}/${restaurantId}/foods/${foodId}`);
   }
 }

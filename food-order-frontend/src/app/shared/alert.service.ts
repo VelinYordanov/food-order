@@ -7,7 +7,7 @@ import { SwalToken } from './injection-tokens/swal-injection-token';
 export class AlertService {
   constructor(@Inject(SwalToken) private swal) { }
 
-  displayRequestQuestion(questionTitle: string, preConfirm: Function, successTitle: string, errorBackupTitle: string, successFunction?: Function, errorFunction? : Function) {
+  displayRequestQuestion(questionTitle: string, preConfirm: Function, successTitle: string, errorBackupTitle: string, successFunction?: Function, errorFunction?: Function) {
     this.swal.fire({
       title: questionTitle,
       icon: 'question',
@@ -31,6 +31,13 @@ export class AlertService {
           })
         }
       }
+    })
+  }
+
+  displayMessage(message:string, type: 'success' | 'error' | 'info') {
+    this.swal.fire({
+      title: message || 'An error occurred. Try again later.',
+      icon: type
     })
   }
 }

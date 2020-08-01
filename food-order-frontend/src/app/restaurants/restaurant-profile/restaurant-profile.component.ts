@@ -1,15 +1,15 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, filter, first, map, switchMap, switchMapTo, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/authentication.service';
 import { AlertService } from 'src/app/shared/alert.service';
-import { SwalToken } from 'src/app/shared/injection-tokens/swal-injection-token';
 import { Category } from '../models/category';
 import { Restaurant } from '../models/restaurant';
 import { RestaurantService } from '../services/restaurant.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { Food } from '../models/food';
 
 @Component({
   selector: 'app-restaurant-profile',
@@ -17,20 +17,17 @@ import { MatChipInputEvent } from '@angular/material/chips';
   styleUrls: ['./restaurant-profile.component.scss']
 })
 export class RestaurantProfileComponent implements OnInit, OnDestroy {
-  restaurant$: Observable<Restaurant>;
+  restaurant: Restaurant;
   restaurantForm: FormGroup;
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  categories: Category[];
 
   private editRestaurantClicksSubject = new Subject();
-  private deletedCategories: Category[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private restaurantService: RestaurantService,
     private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-    @Inject(SwalToken) private swal) { }
+    private alertService: AlertService) { }
 
   ngOnInit(): void {
     this.restaurantForm = this.formBuilder.group({
@@ -49,31 +46,23 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
               catchError(error => of(error))
             ))
       ).subscribe(result => {
-        if (result?.error?.description) {
-          this.swal.fire({
-            title: result.error.description,
-            icon: "error"
-          })
+        if (result?.error) {
+          this.alertService.displayMessage(result?.error?.description || 'An error occurred while editting restaurant. Try again later.', 'error');
         } else {
           this.restaurantForm.disable();
-          this.swal.fire({
-            title: "Successfully editted restaurant",
-            icon: "success"
-          })
+          this.alertService.displayMessage('Successfully editted restaurant.', 'success');
         }
       })
 
-    this.restaurant$ = this.authenticationService.user$
+    this.authenticationService.user$
       .pipe(
+        first(user => !!user),
         map(user => user.id),
-        switchMap(id =>
-          this.restaurantService.getRestaurantData(id)
-            .pipe(
-              tap(restaurant => this.restaurantForm.patchValue(restaurant)),
-              tap(restaurant => this.categories = restaurant.categories),
-              catchError(_ => of(null))
-            )
-        ))
+        switchMap(id => this.restaurantService.getRestaurantData(id))
+      ).subscribe(restaurant => {
+        this.restaurant = restaurant;
+        this.restaurantForm.patchValue(restaurant);
+      })
   }
 
   ngOnDestroy(): void {
@@ -96,10 +85,6 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
       `An error occurred while deleting category ${category.name}. Try again later.`);
   }
 
-  getCategories() {
-    return this.categories.filter(category => !this.deletedCategories.includes(category));
-  }
-
   deleteCategory(category: Category) {
     return this.authenticationService.user$
       .pipe(
@@ -108,7 +93,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
         switchMap(user =>
           this.restaurantService.deleteCategoryFromRestaurant(user.id, category.id)
             .pipe(
-              tap(_ => this.remove(category)),
+              tap(_ => this.removeCategory(category)),
               catchError(error => of(error))
             ))
       )
@@ -117,12 +102,11 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   addCategory(categoryName: string) {
     return this.authenticationService.user$
       .pipe(
-        filter(user => !!user),
-        first(),
+        first(user => !!user),
         switchMap(user =>
           this.restaurantService.addCategoryToRestaurant(user.id, categoryName)
             .pipe(
-              tap(category => this.add(category)),
+              tap(category => this.restaurant.categories.push(category)),
               catchError(error => of(error))
             ))
       )
@@ -143,12 +127,17 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
     this.editRestaurantClicksSubject.next();
   }
 
-  private remove(category: Category) {
-    this.deletedCategories.push(category);
-    console.log(category);
+  private removeCategory(category: Category) {
+    const index = this.restaurant.categories.findIndex(x => x.id === category.id);
+    if (index !== -1) {
+      this.restaurant.categories.splice(index, 1);
+    }
   }
 
-  private add(category: Category) {
-    this.categories.push(category);
+  private removeFood(food: Food) {
+    const index = this.restaurant.foods.findIndex(x => x.id === food.id);
+    if (index !== -1) {
+      this.restaurant.foods.splice(index, 1);
+    }
   }
 }

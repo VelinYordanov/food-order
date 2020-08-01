@@ -4,5 +4,11 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .form-field {
-    width:250px;
+    width:500px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom:50px;
 }
