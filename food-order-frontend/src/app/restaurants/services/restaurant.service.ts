@@ -24,6 +24,10 @@ export class RestaurantService {
     return this.httpClient.post<Category>(`${this.BASE_URL}/${restaurantId}/categories`, { name: categoryName });
   }
 
+  addFood(restaurantId, food: Food) {
+    return this.httpClient.post(`${this.BASE_URL}/${restaurantId}/foods`, food);
+  }
+
   editRestaurant(restaurantId: string, restaurant: RestaurantEdit) {
     return this.httpClient.put(`${this.BASE_URL}/${restaurantId}`, restaurant);
   }
@@ -32,7 +36,7 @@ export class RestaurantService {
     return this.httpClient.put(`${this.BASE_URL}/${restaurantId}/foods/${foodId}`, food);
   }
 
-  deleteFood(restaurantId:string, foodId:string) {
+  deleteFood(restaurantId: string, foodId: string) {
     return this.httpClient.delete(`${this.BASE_URL}/${restaurantId}/foods/${foodId}`);
   }
 }

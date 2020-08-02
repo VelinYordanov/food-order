@@ -1,0 +1,65 @@
+<section>
+    <form [formGroup]="foodForm">
+        <div>
+            <mat-form-field class="form-field">
+                <mat-label>Name</mat-label>
+                <input matInput
+                    formControlName="name">
+                <mat-error *ngIf="foodForm.get('name').hasError('required')">Name is required.</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field class="form-field">
+                <mat-label>Description</mat-label>
+                <textarea matInput
+                    cdkTextareaAutosize
+                    formControlName="description"></textarea>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field class="form-field">
+                <mat-label>Price</mat-label>
+                <input matInput
+                    formControlName="price">
+                <mat-error *ngIf="foodForm.get('price').hasError('price')">Please enter a valid price.</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field class="form-field">
+                <mat-chip-list #chipList
+                    aria-label="Categories">
+                    <mat-chip *ngFor="let category of foodForm.get('categories').value"
+                        [removable]="categoryFormControl.enabled"
+                        (removed)="removeCategory(category)"
+                        [value]="category.id">
+                        {{category.name | titlecase}}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <input #categoryInput
+                        placeholder="Categories"
+                        [matAutocomplete]="auto"
+                        [disabled]="categoryFormControl.disabled"
+                        [matChipInputFor]="chipList"
+                        [formControl]="categoryFormControl"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        (matChipInputTokenEnd)="addCategory($event)">
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete"
+                    (optionSelected)="selected($event, categoryInput)">
+                    <mat-option *ngFor="let category of filteredCategories$ | async"
+                        [value]="category.name | titlecase">
+                        {{category.name | titlecase}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+        <div class="buttons">
+            <div *ngIf="foodForm.enabled">
+                <button mat-raised-button
+                    [disabled]="!foodForm.valid"
+                    (click)="add()"
+                    color="primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</section>

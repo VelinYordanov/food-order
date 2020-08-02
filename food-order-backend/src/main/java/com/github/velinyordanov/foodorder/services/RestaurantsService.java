@@ -7,6 +7,7 @@ import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
+import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
@@ -22,7 +23,7 @@ public interface RestaurantsService {
 
     Optional<Restaurant> findById(String id);
 
-    void addFoodsToRestaurant(String restaurantId, FoodCreateDto foodCreateDto);
+    FoodDto addFoodToRestaurant(String restaurantId, FoodCreateDto foodCreateDto);
 
     void editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto);
 

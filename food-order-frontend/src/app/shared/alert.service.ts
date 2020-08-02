@@ -1,4 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
+import { from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { SwalToken } from './injection-tokens/swal-injection-token';
 
 @Injectable({
@@ -34,7 +36,15 @@ export class AlertService {
     })
   }
 
-  displayMessage(message:string, type: 'success' | 'error' | 'info') {
+  displayQuestion(question: string): Promise<boolean> {
+    return this.swal.fire({
+      title: question,
+      showCancelButton: true,
+      icon: 'question',
+    }).then(answer => answer.isConfirmed)
+  }
+
+  displayMessage(message: string, type: 'success' | 'error' | 'info') {
     this.swal.fire({
       title: message || 'An error occurred. Try again later.',
       icon: type

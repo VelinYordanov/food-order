@@ -108,49 +108,64 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     }
 
     @Override
-    public void addFoodsToRestaurant(String restaurantId, FoodCreateDto foodCreateDto) {
-	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse((restaurant -> {
-	    Food food = this.mapper.map(foodCreateDto, Food.class);
-
-	    Collection<String> categoryIds =
-		    food.getCategories()
-			    .stream()
-			    .map(x -> x.getId())
-			    .collect(Collectors.toList());
-
-	    Set<Category> categories = new HashSet<>();
-	    this.foodOrderData.categories()
-		    .findAllById(categoryIds)
-		    .forEach(categories::add);
-
-	    categories.forEach(category -> {
-		if (!restaurant.getId().equals(category.getRestaurant().getId())) {
-		    throw new RuntimeException("Category belongs to another restaurant");
-		}
-
-		category.addFood(food);
-	    });
-
-	    food.getCategories().removeAll(categories);
-	    Collection<Category> restaurantCategories =
-		    this.foodOrderData.categories().findByRestaurantId(restaurantId);
-	    food.getCategories().forEach(category -> {
-		if (restaurantCategories.stream().anyMatch(x -> x.getName().equals(category.getName()))) {
-		    throw new DuplicateCategoryException(
-			    MessageFormat.format(
-				    "Category with name: {0} already exists for this restaurant.",
-				    category.getName()));
-		}
-
-		restaurant.addCategory(category);
-		category.addFood(food);
-	    });
-
-	    food.setCategories(null);
-	    this.foodOrderData.restaurants().save(restaurant);
-	}), () -> {
+    public FoodDto addFoodToRestaurant(String restaurantId, FoodCreateDto foodCreateDto) {
+	Optional<Restaurant> restaurantOptional = this.foodOrderData.restaurants().findById(restaurantId);
+	if (restaurantOptional.isEmpty()) {
 	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId));
+	}
+
+	Restaurant restaurant = restaurantOptional.get();
+
+	Food food = this.mapper.map(foodCreateDto, Food.class);
+
+	Collection<String> categoryIds =
+		food.getCategories()
+			.stream()
+			.map(x -> x.getId())
+			.collect(Collectors.toList());
+
+	Set<Category> existingCategories = new HashSet<>();
+	this.foodOrderData.categories()
+		.findAllById(categoryIds)
+		.forEach(existingCategories::add);
+
+	existingCategories.forEach(category -> {
+	    if (!restaurant.getId().equals(category.getRestaurant().getId())) {
+		throw new RuntimeException("Category belongs to another restaurant");
+	    }
+
+	    food.removeCategory(category);
+	    category.addFood(food);
 	});
+
+	Collection<Category> newCategories = food.getCategoriesWithDeleted()
+		.stream()
+		.filter(category -> !existingCategories.contains(category))
+		.collect(Collectors.toList());
+
+	newCategories.forEach(newCategory -> {
+	    restaurant.getCategoriesWithDeleted()
+		    .stream()
+		    .filter(category -> category.getName().equals(newCategory.getName()))
+		    .findFirst()
+		    .ifPresentOrElse(category -> {
+			if (category.getIsDeleted()) {
+			    category.setIsDeleted(false);
+			    food.removeCategory(newCategory);
+			    category.addFood(food);
+			} else {
+			    throw new DuplicateCategoryException(
+				    MessageFormat.format(
+					    "Category with name: {0} already exists for this restaurant.",
+					    newCategory.getName()));
+			}
+		    }, () -> {
+			restaurant.addCategory(newCategory);
+			newCategory.addFood(food);
+		    });
+	});
+
+	return this.mapper.map(this.foodOrderData.foods().save(food), FoodDto.class);
     }
 
     @Override

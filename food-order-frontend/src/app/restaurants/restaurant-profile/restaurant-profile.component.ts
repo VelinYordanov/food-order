@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, of, Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { catchError, filter, first, map, switchMap, switchMapTo, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/authentication.service';
 import { AlertService } from 'src/app/shared/alert.service';
@@ -10,6 +10,8 @@ import { RestaurantService } from '../services/restaurant.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Food } from '../models/food';
+import { RestaurantAddFoodDialogComponent } from '../restaurant-add-food-dialog/restaurant-add-food-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-restaurant-profile',
@@ -27,6 +29,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private restaurantService: RestaurantService,
     private authenticationService: AuthenticationService,
+    private dialog: MatDialog,
     private alertService: AlertService) { }
 
   ngOnInit(): void {
@@ -58,15 +61,41 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
       .pipe(
         first(user => !!user),
         map(user => user.id),
-        switchMap(id => this.restaurantService.getRestaurantData(id))
+        switchMap(id =>
+          this.restaurantService.getRestaurantData(id)
+            .pipe(
+              catchError(error => {
+                this.alertService.displayMessage(error?.error?.description || 'An error occurred while loading your profile. Try again later.', 'error');
+                return of(null);
+              })
+            ))
       ).subscribe(restaurant => {
-        this.restaurant = restaurant;
-        this.restaurantForm.patchValue(restaurant);
+        if (restaurant) {
+          this.restaurant = restaurant;
+          this.restaurantForm.patchValue(restaurant);
+        }
       })
   }
 
   ngOnDestroy(): void {
     this.editRestaurantClicksSubject.complete();
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(RestaurantAddFoodDialogComponent, {
+      data: this.restaurant.categories
+    });
+
+    dialogRef.afterClosed()
+      .subscribe(food => {
+        if (food) {
+          this.restaurant.foods.push(food);
+          food.categories
+            .filter(category => !this.restaurant.categories
+              .some(c => c.id === category.name))
+            .forEach(category => this.restaurant.categories.push(category));
+        }
+      });
   }
 
   toggleForm() {

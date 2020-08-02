@@ -46,12 +46,17 @@
                         (click)="editRestaurant()"
                         color="primary">Submit</button>
                 </div>
+                <div>
+                    <button mat-raised-button
+                        (click)="openDialog()"
+                        color="primary">Add Food</button>
+                </div>
             </div>
-            <h1>Foods</h1>
+            <h1 *ngIf="restaurant.foods.length">Foods</h1>
             <div>
                 <app-restaurant-food *ngFor="let food of restaurant.foods"
                     [food]="food"
-                    [categories]="categories"
+                    [categories]="restaurant.categories"
                     (delete)="removeFood(food)"></app-restaurant-food>
             </div>
         </form>

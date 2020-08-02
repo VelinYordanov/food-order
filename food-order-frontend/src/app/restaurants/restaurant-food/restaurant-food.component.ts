@@ -12,6 +12,7 @@ import { Food } from '../models/food';
 import { price } from 'src/app/shared/validators/price-validator';
 import { RestaurantService } from '../services/restaurant.service';
 import { AuthenticationService } from 'src/app/shared/authentication.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-restaurant-food',
@@ -144,7 +145,11 @@ export class RestaurantFoodComponent implements OnInit {
     return this.authenticationService.user$
       .pipe(
         first(user => !!user),
-        switchMap(user => this.restaurantService.deleteFood(user.id, this.food.id))
+        switchMap(user =>
+          this.restaurantService.deleteFood(user.id, this.food.id)
+            .pipe(
+              catchError(error => of(error))
+            ))
       )
   }
 
@@ -157,7 +162,6 @@ export class RestaurantFoodComponent implements OnInit {
     }
 
     const categoriesArray = this.foodForm.get('categories') as FormArray;
-    console.log(categoriesArray.value);
     if (categoriesArray.value.find(x => x.name.toLowerCase() === value.toLowerCase())) {
       this.alertService.displayMessage(`Category ${value} is already added.`, 'error');
       return;

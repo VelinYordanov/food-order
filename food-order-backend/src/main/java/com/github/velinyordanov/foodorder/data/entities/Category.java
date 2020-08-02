@@ -24,8 +24,7 @@ public class Category extends BaseEntity {
     @Size(min = 3, max = 35, message = "Category name must be between 3 and 35 symbols.")
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-	    cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
 	    name = "Categories_Foods",
 	    joinColumns = @JoinColumn(name = "CategoryId"),
@@ -33,6 +32,7 @@ public class Category extends BaseEntity {
     private Set<Food> foods;
 
     @ManyToOne(optional = false,
+	    fetch = FetchType.EAGER,
 	    cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "RestaurantId")
     private Restaurant restaurant;

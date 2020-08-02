@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
+import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
@@ -57,11 +56,11 @@ public class RestaurantsController {
 	return new JwtTokenDto(restaurantsService.login(user));
     }
 
-    @PostMapping("foods")
-    @Secured("ROLE_RESTAURANT")
-    public void addFoodToRestaurant(@AuthenticationPrincipal Restaurant restaurant,
+    @PostMapping("{restaurantId}/foods")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public FoodDto addFoodToRestaurant(@PathVariable String restaurantId,
 	    @RequestBody @Valid FoodCreateDto foodCreateDto) {
-	this.restaurantsService.addFoodsToRestaurant(restaurant.getId(), foodCreateDto);
+	return this.restaurantsService.addFoodToRestaurant(restaurantId, foodCreateDto);
     }
 
     @PutMapping("{restaurantId}/foods/{foodId}")

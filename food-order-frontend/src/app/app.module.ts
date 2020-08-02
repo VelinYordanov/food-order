@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,13 +23,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { RestaurantProfileComponent } from './restaurants/restaurant-profile/restaurant-profile.component';
 import { SwalToken } from 'src/app/shared/injection-tokens/swal-injection-token';
 import { RestaurantFoodComponent } from './restaurants/restaurant-food/restaurant-food.component';
+import { RestaurantAddFoodDialogComponent } from './restaurants/restaurant-add-food-dialog/restaurant-add-food-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RestaurantProfileComponent,
-    RestaurantFoodComponent
+    RestaurantFoodComponent,
+    RestaurantAddFoodDialogComponent
   ],
   imports: [
     JwtModule.forRoot({
@@ -45,6 +48,7 @@ import { RestaurantFoodComponent } from './restaurants/restaurant-food/restauran
     MatChipsModule,
     MatIconModule,
     MatAutocompleteModule,
+    MatDialogModule,
 
     BrowserModule,
     AppRoutingModule,
