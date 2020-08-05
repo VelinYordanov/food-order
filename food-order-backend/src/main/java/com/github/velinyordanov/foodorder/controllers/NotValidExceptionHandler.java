@@ -79,7 +79,7 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NonEmptyCategoryException.class)
     public ResponseEntity<Map<String, String>> handleNonEmptyCategoryException(NonEmptyCategoryException ex) {
-	return this.buildResponse(ex, "Category has foods associated with it", HttpStatus.NOT_FOUND);
+	return this.buildResponse(ex, "Category has foods associated with it", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundException.class)

@@ -33,7 +33,7 @@ export class RestaurantService {
   }
 
   editFood(restaurantId: string, foodId: string, food: Food) {
-    return this.httpClient.put(`${this.BASE_URL}/${restaurantId}/foods/${foodId}`, food);
+    return this.httpClient.put<Food>(`${this.BASE_URL}/${restaurantId}/foods/${foodId}`, food);
   }
 
   deleteFood(restaurantId: string, foodId: string) {

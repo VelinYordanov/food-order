@@ -22,7 +22,7 @@
                     <mat-chip-list #chipList
                         aria-label="Categories">
                         <mat-chip *ngFor="let category of restaurant.categories"
-                            [removable]="true"
+                            [removable]="restaurantForm.enabled"
                             (removed)="openCategoryDeleteConfirmation(category)"
                             [value]="category.id">
                             {{category.name | titlecase}}
@@ -30,34 +30,50 @@
                         </mat-chip>
                         <input placeholder="Add Category"
                             [matChipInputFor]="chipList"
+                            [disabled]="!restaurantForm.enabled"
                             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                             (matChipInputTokenEnd)="openCategoryAdditionConfirmation($event)">
                     </mat-chip-list>
                 </mat-form-field>
             </div>
             <div class="buttons">
-                <div>
+                <div *ngIf="!restaurantForm.enabled">
                     <button mat-raised-button
-                        [color]="restaurantForm.enabled ? 'error' : 'primary'"
-                        (click)="toggleForm()">{{restaurantForm.enabled ? 'Cancel' : 'Edit'}}</button>
+                        color="primary"
+                        (click)="toggleForm()">Edit</button>
+                </div>
+                <div *ngIf="restaurantForm.enabled">
+                    <button mat-raised-button
+                        color="error"
+                        (click)="cancel()">Cancel</button>
                 </div>
                 <div *ngIf="restaurantForm.enabled">
                     <button mat-raised-button
                         (click)="editRestaurant()"
                         color="primary">Submit</button>
                 </div>
-                <div>
+                <div *ngIf="!restaurantForm.enabled">
                     <button mat-raised-button
                         (click)="openDialog()"
                         color="primary">Add Food</button>
                 </div>
             </div>
-            <h1 *ngIf="restaurant.foods.length">Foods</h1>
-            <div>
-                <app-restaurant-food *ngFor="let food of restaurant.foods"
-                    [food]="food"
-                    [categories]="restaurant.categories"
-                    (delete)="removeFood(food)"></app-restaurant-food>
+            <div *ngIf="restaurant.foods.length">
+                <h1>Foods</h1>
+                <div class="search">
+                    <mat-form-field class="form-field">
+                        <mat-label>Search foods</mat-label>
+                        <input matInput
+                            [formControl]="search">
+                    </mat-form-field>
+                </div>
+                <div>
+                    <app-restaurant-food *ngFor="let food of filteredFoods$ | async"
+                        [food]="food"
+                        [categories]="restaurant.categories"
+                        (delete)="removeFood(food)"
+                        (edit)="editFood($event)"></app-restaurant-food>
+                </div>
             </div>
         </form>
     </section>

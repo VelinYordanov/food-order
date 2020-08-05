@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, EventEmitter, Input, Output } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -12,17 +12,17 @@ import { Food } from '../models/food';
 import { price } from 'src/app/shared/validators/price-validator';
 import { RestaurantService } from '../services/restaurant.service';
 import { AuthenticationService } from 'src/app/shared/authentication.service';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-restaurant-food',
   templateUrl: './restaurant-food.component.html',
   styleUrls: ['./restaurant-food.component.scss']
 })
-export class RestaurantFoodComponent implements OnInit {
+export class RestaurantFoodComponent implements OnInit, AfterViewInit {
   @Input() food: Food;
   @Input() categories: Category[];
   @Output('delete') onDelete = new EventEmitter<void>();
+  @Output('edit') onEdit = new EventEmitter<Food>();
 
   filteredCategories$: Observable<Category[]>;
 
@@ -37,7 +37,8 @@ export class RestaurantFoodComponent implements OnInit {
     private formBuilder: FormBuilder,
     private restaurantService: RestaurantService,
     private authenticationService: AuthenticationService,
-    private alertService: AlertService) { }
+    private alertService: AlertService,
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.foodForm = this.formBuilder.group({
@@ -57,13 +58,15 @@ export class RestaurantFoodComponent implements OnInit {
         switchMap(user =>
           this.restaurantService.editFood(user.id, this.food.id, this.foodForm.value)
             .pipe(
-              catchError(error => of(error))
+              catchError(error => {
+                this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting food. Try again later.', 'error');
+                return of(null);
+              })
             ))
       ).subscribe(result => {
-        if (result?.error) {
-          this.alertService.displayMessage(result?.error?.description || 'An error occurred while editting food. Try again later.', 'error');
-        } else {
+        if (result) {
           this.alertService.displayMessage('Successfully editted food.', 'success');
+          this.onEdit.emit(result);
           this.toggleForm();
         }
       });
@@ -74,8 +77,11 @@ export class RestaurantFoodComponent implements OnInit {
           this.categories
             .filter(category => category.name.includes(value)))
       );
+  }
 
+  ngAfterViewInit(): void {
     this.toggleForm();
+    this.cdr.detectChanges();
   }
 
   removeCategory(category) {
@@ -127,6 +133,15 @@ export class RestaurantFoodComponent implements OnInit {
         return;
       }
     }
+  }
+
+  cancel() {
+    const categoriesControl = this.foodForm.get('categories') as FormArray;
+    categoriesControl.clear();
+    this.food.categories.forEach(category => categoriesControl.push(this.formBuilder.group(category)));
+
+    this.foodForm.patchValue(this.food);
+    this.toggleForm();
   }
 
   edit() {

@@ -25,9 +25,9 @@ public interface RestaurantsService {
 
     FoodDto addFoodToRestaurant(String restaurantId, FoodCreateDto foodCreateDto);
 
-    void editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto);
+    FoodDto editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto);
 
-    void editRestaurant(String restaurantId, RestaurantEditDto restaurantEditDto);
+    RestaurantDataDto editRestaurant(String restaurantId, RestaurantEditDto restaurantEditDto);
 
     void deleteCategory(String restaurantId, String categoryId);
 

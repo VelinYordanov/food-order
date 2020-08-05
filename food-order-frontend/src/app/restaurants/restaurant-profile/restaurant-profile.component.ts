@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { of, Subject } from 'rxjs';
-import { catchError, filter, first, map, switchMap, switchMapTo, tap } from 'rxjs/operators';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, filter, first, map, startWith, switchMap, switchMapTo, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/authentication.service';
 import { AlertService } from 'src/app/shared/alert.service';
 import { Category } from '../models/category';
@@ -19,9 +19,14 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./restaurant-profile.component.scss']
 })
 export class RestaurantProfileComponent implements OnInit, OnDestroy {
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+
   restaurant: Restaurant;
+
   restaurantForm: FormGroup;
-  separatorKeysCodes: number[] = [ENTER, COMMA];
+  search: FormControl;
+
+  filteredFoods$: Observable<Food[]>;
 
   private editRestaurantClicksSubject = new Subject();
 
@@ -35,10 +40,19 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.restaurantForm = this.formBuilder.group({
       name: [null, Validators.required],
-      description: [null, Validators.required]
-    })
+      description: [null, Validators.required],
+      category: [null],
+    });
+
+    this.search = this.formBuilder.control('');
 
     this.restaurantForm.disable();
+
+    this.filteredFoods$ = this.search.valueChanges
+      .pipe(
+        startWith(''),
+        map(searchValue => this.restaurant.foods.filter(food => food.name.toLowerCase().includes(searchValue.toLowerCase())))
+      )
 
     this.editRestaurantClicksSubject
       .pipe(
@@ -46,12 +60,15 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
         switchMap(user =>
           this.restaurantService.editRestaurant(user.id, this.restaurantForm.value)
             .pipe(
-              catchError(error => of(error))
+              catchError(error => {
+                this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting restaurant. Try again later.', 'error');
+                return of(null);
+              })
             ))
       ).subscribe(result => {
-        if (result?.error) {
-          this.alertService.displayMessage(result?.error?.description || 'An error occurred while editting restaurant. Try again later.', 'error');
-        } else {
+        if (result) {
+          this.restaurant = result;
+          this.search.updateValueAndValidity();
           this.restaurantForm.disable();
           this.alertService.displayMessage('Successfully editted restaurant.', 'success');
         }
@@ -81,6 +98,11 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
     this.editRestaurantClicksSubject.complete();
   }
 
+  cancel() {
+    this.restaurantForm.disable();
+    this.restaurantForm.patchValue(this.restaurant);
+  }
+
   openDialog(): void {
     const dialogRef = this.dialog.open(RestaurantAddFoodDialogComponent, {
       data: this.restaurant.categories
@@ -92,8 +114,9 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
           this.restaurant.foods.push(food);
           food.categories
             .filter(category => !this.restaurant.categories
-              .some(c => c.id === category.name))
+              .some(c => c.id === category.id))
             .forEach(category => this.restaurant.categories.push(category));
+          this.search.updateValueAndValidity();
         }
       });
   }
@@ -103,6 +126,14 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
       this.restaurantForm.disable();
     } else {
       this.restaurantForm.enable();
+    }
+  }
+
+  editFood(food: Food) {
+    const index = this.restaurant.foods.findIndex(f => f.id === food.id);
+    if (index !== -1) {
+      this.restaurant.foods.splice(index, 1, food);
+      this.search.updateValueAndValidity();
     }
   }
 
@@ -167,6 +198,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
     const index = this.restaurant.foods.findIndex(x => x.id === food.id);
     if (index !== -1) {
       this.restaurant.foods.splice(index, 1);
+      this.search.updateValueAndValidity();
     }
   }
 }

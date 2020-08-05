@@ -65,11 +65,11 @@ public class RestaurantsController {
 
     @PutMapping("{restaurantId}/foods/{foodId}")
     @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public void editFood(
+    public FoodDto editFood(
 	    @PathVariable String restaurantId,
 	    @PathVariable String foodId,
 	    @RequestBody @Valid FoodCreateDto foodCreateDto) {
-	this.restaurantsService.editFood(restaurantId, foodId, foodCreateDto);
+	return this.restaurantsService.editFood(restaurantId, foodId, foodCreateDto);
     }
 
     @GetMapping("{restaurantId}")
@@ -86,10 +86,10 @@ public class RestaurantsController {
 
     @PutMapping("{restaurantId}")
     @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public void editRestaurant(
+    public RestaurantDataDto editRestaurant(
 	    @PathVariable String restaurantId,
 	    @RequestBody @Valid RestaurantEditDto restaurantEditDto) {
-	this.restaurantsService.editRestaurant(restaurantId, restaurantEditDto);
+	return this.restaurantsService.editRestaurant(restaurantId, restaurantEditDto);
     }
 
     @DeleteMapping("{restaurantId}/categories/{categoryId}")

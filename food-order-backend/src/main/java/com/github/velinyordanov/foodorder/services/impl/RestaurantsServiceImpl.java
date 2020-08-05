@@ -179,39 +179,53 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     }
 
     @Override
-    public void editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto) {
-	this.foodOrderData.foods().findById(foodId).ifPresentOrElse((food -> {
-	    food.setName(foodCreateDto.getName());
-	    food.setPrice(foodCreateDto.getPrice());
-	    food.setDescription(foodCreateDto.getDescription());
-
-	    Collection<Category> categories = this.foodOrderData.categories().findByRestaurantId(restaurantId);
-	    Collection<String> selectedCategoryIds =
-		    foodCreateDto.getCategories().stream().map(x -> x.getId()).collect(Collectors.toList());
-	    categories.forEach(category -> {
-		if (selectedCategoryIds.contains(category.getId())) {
-		    category.addFood(food);
-		} else {
-		    category.removeFood(food);
-		}
-	    });
-
-	    this.foodOrderData.foods().save(food);
-	}), () -> {
+    public FoodDto editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto) {
+	Optional<Food> foodOptional = this.foodOrderData.foods().findById(foodId);
+	if (foodOptional.isEmpty()) {
 	    throw new NotFoundException(MessageFormat.format("Food with id {0} not found", foodId));
+	}
+
+	Food food = foodOptional.get();
+
+	food.setName(foodCreateDto.getName());
+	food.setPrice(foodCreateDto.getPrice());
+	food.setDescription(foodCreateDto.getDescription());
+
+	Collection<Category> categories = this.foodOrderData.categories().findByRestaurantId(restaurantId);
+	Collection<String> selectedCategoryIds =
+		foodCreateDto.getCategories().stream().map(x -> x.getId()).collect(Collectors.toList());
+	categories.forEach(category -> {
+	    if (selectedCategoryIds.contains(category.getId())) {
+		category.addFood(food);
+	    } else {
+		category.removeFood(food);
+	    }
 	});
+
+	return this.mapper.map(this.foodOrderData.foods().save(food), FoodDto.class);
     }
 
     @Override
-    public void editRestaurant(String restaurantId, RestaurantEditDto restaurantEditDto) {
-	this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse((restaurant -> {
-	    restaurant.setName(restaurantEditDto.getName());
-	    restaurant.setDescription(restaurantEditDto.getDescription());
+    public RestaurantDataDto editRestaurant(String restaurantId, RestaurantEditDto restaurantEditDto) {
+	return this.foodOrderData.restaurants()
+		.findById(restaurantId)
+		.map(restaurant -> {
+		    restaurant.setName(restaurantEditDto.getName());
+		    restaurant.setDescription(restaurantEditDto.getDescription());
 
-	    this.foodOrderData.restaurants().save(restaurant);
-	}), () -> {
-	    throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId));
-	});
+		    RestaurantDataDto restaurantDataDto =
+			    this.mapper.map(this.foodOrderData.restaurants().save(restaurant), RestaurantDataDto.class);
+		    restaurantDataDto.setFoods(
+			    this.foodOrderData.foods()
+				    .findByRestaurantId(restaurantId)
+				    .stream()
+				    .map(food -> this.mapper.map(food, FoodDto.class))
+				    .collect(Collectors.toList()));
+
+		    return restaurantDataDto;
+		})
+		.orElseThrow(() -> new NotFoundException(
+			MessageFormat.format("Restaurant with id {0} not found!", restaurantId)));
     }
 
     @Override

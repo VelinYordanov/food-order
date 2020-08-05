@@ -38,7 +38,6 @@
                     <input #categoryInput
                         placeholder="Categories"
                         [matAutocomplete]="auto"
-                        [disabled]="categoryFormControl.disabled"
                         [matChipInputFor]="chipList"
                         [formControl]="categoryFormControl"
                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
@@ -54,12 +53,17 @@
             </mat-form-field>
         </div>
         <div class="buttons">
-            <div>
+            <div *ngIf="!foodForm.enabled">
                 <button mat-raised-button
-                    [color]="foodForm.enabled ? 'error' : 'primary'"
-                    (click)="toggleForm()">{{foodForm.enabled ? 'Cancel' : 'Edit'}}</button>
+                    color="primary"
+                    (click)="toggleForm()">Edit</button>
             </div>
-            <div>
+            <div *ngIf="foodForm.enabled">
+                <button mat-raised-button
+                    color="error"
+                    (click)="cancel()">Cancel</button>
+            </div>
+            <div *ngIf="!foodForm.enabled">
                 <button mat-raised-button
                     color="warn"
                     (click)="delete()">Delete</button>

@@ -4,6 +4,7 @@ import { Subject, of, noop } from 'rxjs';
 import { LoginService } from '../services/login-service.service';
 import { exhaustMap, catchError, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private loginService: LoginService,
+    private router: Router,
     private authenticationService: AuthenticationService,
   ) { }
 
@@ -42,6 +44,9 @@ export class LoginComponent implements OnInit {
       ).subscribe(result => {
         if (!result.error) {
           this.authenticationService.login(result.token);
+          if (this.loginForm.get('isRestaurant').value) {
+            this.router.navigate(['profile']);
+          }
         }
       });
 

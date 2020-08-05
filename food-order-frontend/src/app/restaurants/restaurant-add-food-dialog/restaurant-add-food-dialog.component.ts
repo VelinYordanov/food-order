@@ -97,6 +97,10 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  close() {
+    this.dialogRef.close();
+  }
+
   removeCategory(category) {
     const categories = this.foodForm.get('categories') as FormArray;
     const index = categories.value.indexOf(category);
