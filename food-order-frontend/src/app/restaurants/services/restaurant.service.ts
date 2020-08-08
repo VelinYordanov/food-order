@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Category } from '../models/category';
 import { Food } from '../models/food';
 import { Restaurant } from '../models/restaurant';
+import { RestaurantListItem } from '../models/restaurant-list-item';
 import { RestaurantEdit } from '../models/restaurant-edit';
 
 @Injectable({
@@ -11,6 +12,10 @@ import { RestaurantEdit } from '../models/restaurant-edit';
 export class RestaurantService {
   private readonly BASE_URL: string = 'api/restaurants';
   constructor(private httpClient: HttpClient) { }
+
+  getRestaurantsList() {
+    return this.httpClient.get<RestaurantListItem[]>(`${this.BASE_URL}`);
+  }
 
   getRestaurantData(restaurantId: string) {
     return this.httpClient.get<Restaurant>(`${this.BASE_URL}/${restaurantId}`);

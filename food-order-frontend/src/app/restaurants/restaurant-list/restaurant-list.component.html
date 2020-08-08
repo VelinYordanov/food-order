@@ -1,0 +1,9 @@
+<article>
+    <h1>Restaurants</h1>
+    <div>
+        <section *ngFor="let restaurant of restaurants$ | async">
+            <app-restaurant-item [restaurant]="restaurant">
+            </app-restaurant-item>
+        </section>
+    </div>
+</article>
