@@ -1,0 +1,43 @@
+article {
+    width:70%;
+    margin:0 auto;
+}
+
+.categories {
+    display: flex;
+    margin:15px 0;
+}
+
+.categories > h4 {
+    margin-right:20px;
+    margin-top:20px;
+    font-weight:700;
+    font-size:1.2rem;
+    cursor: pointer;
+}
+
+.foods-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.foods {
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.08);
+    width:40%;
+    padding:15px;
+}
+
+.foods h3 {
+    font-weight: 700;
+}
+
+.description {
+    font-weight: 300;
+    color: #707070;
+}
+
+.price {
+    font-weight: 500;
+    color: #333;
+}

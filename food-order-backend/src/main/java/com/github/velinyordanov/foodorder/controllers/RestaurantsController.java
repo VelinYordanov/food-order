@@ -44,6 +44,11 @@ public class RestaurantsController {
 	return this.restaurantsService.getAll();
     }
 
+    @GetMapping("{restaurantId}")
+    public RestaurantDataDto getRestaurantData(@PathVariable String restaurantId) {
+	return this.restaurantsService.getRestaurantData(restaurantId);
+    }
+
     @PostMapping()
     public JwtTokenDto register(@Valid @RequestBody RestaurantRegisterDto userDto) {
 	return new JwtTokenDto(restaurantsService.register(userDto));
@@ -68,12 +73,6 @@ public class RestaurantsController {
 	    @PathVariable String foodId,
 	    @RequestBody @Valid FoodCreateDto foodCreateDto) {
 	return this.restaurantsService.editFood(restaurantId, foodId, foodCreateDto);
-    }
-
-    @GetMapping("{restaurantId}")
-    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public RestaurantDataDto getRestaurantData(@PathVariable String restaurantId) {
-	return this.restaurantsService.getRestaurantData(restaurantId);
     }
 
     @GetMapping("{restaurantId}/categories")

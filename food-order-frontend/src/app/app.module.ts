@@ -27,6 +27,7 @@ import { RestaurantFoodComponent } from './restaurants/restaurant-food/restauran
 import { RestaurantAddFoodDialogComponent } from './restaurants/restaurant-add-food-dialog/restaurant-add-food-dialog.component';
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
 import { RestaurantItemComponent } from './restaurants/restaurant-item/restaurant-item.component';
+import { RestaurantDetailsComponent } from './restaurants/restaurant-details/restaurant-details.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { RestaurantItemComponent } from './restaurants/restaurant-item/restauran
     RestaurantFoodComponent,
     RestaurantAddFoodDialogComponent,
     RestaurantListComponent,
-    RestaurantItemComponent
+    RestaurantItemComponent,
+    RestaurantDetailsComponent
   ],
   imports: [
     JwtModule.forRoot({
