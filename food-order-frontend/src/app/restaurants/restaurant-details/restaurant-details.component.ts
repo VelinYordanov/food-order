@@ -2,8 +2,9 @@ import { ViewportScroller } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/alert.service';
+import { CartService } from 'src/app/shared/cart.service';
 import { Category } from '../models/category';
 import { Food } from '../models/food';
 import { Restaurant } from '../models/restaurant';
@@ -21,15 +22,18 @@ export class RestaurantDetailsComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private restaurantService: RestaurantService,
+    private cartService: CartService,
     private alertService: AlertService,
     private viewScroller: ViewportScroller) { }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap
       .pipe(
-        switchMap(paramMap =>
-          this.restaurantService.getRestaurantData(paramMap.get('id'))
+        map(paramMap => paramMap.get('id')),
+        switchMap(id =>
+          this.restaurantService.getRestaurantData(id)
             .pipe(
+              tap(restaurant => this.cartService.setRestaurant(restaurant)),
               catchError(error => {
                 this.alertService.displayMessage(error?.error?.description || 'An error ocurred while loading restaurant data. Try again later.', 'error');
                 return throwError(error);
@@ -47,5 +51,9 @@ export class RestaurantDetailsComponent implements OnInit {
 
   viewCategory(categoryName: string) {
     this.viewScroller.scrollToAnchor(categoryName);
+  }
+
+  addFoodToCart(food: Food) {
+    this.cartService.addItemToCart(food);
   }
 }

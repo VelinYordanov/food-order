@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { CartItem } from '../restaurants/models/cart-item';
 import { Food } from '../restaurants/models/food';
 import { Restaurant } from '../restaurants/models/restaurant';
@@ -10,6 +10,9 @@ import { Restaurant } from '../restaurants/models/restaurant';
 export class CartService {
   private currentRestaurant = new BehaviorSubject<Restaurant>(null);
   private foodCart = new BehaviorSubject<CartItem[]>([]);
+
+  selectedRestaurant$: Observable<Restaurant> = this.currentRestaurant.asObservable();
+  selectedItems$: Observable<CartItem[]> = this.foodCart.asObservable();
 
   constructor() { }
 
@@ -70,7 +73,7 @@ export class CartService {
   }
 
   setRestaurant(restaurant: Restaurant) {
-    if (restaurant !== this.currentRestaurant.getValue()) {
+    if (restaurant.id !== this.currentRestaurant.getValue()?.id) {
       this.foodCart.next([]);
       this.currentRestaurant.next(restaurant);
     }

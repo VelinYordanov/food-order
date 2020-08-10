@@ -28,6 +28,7 @@ import { RestaurantAddFoodDialogComponent } from './restaurants/restaurant-add-f
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
 import { RestaurantItemComponent } from './restaurants/restaurant-item/restaurant-item.component';
 import { RestaurantDetailsComponent } from './restaurants/restaurant-details/restaurant-details.component';
+import { CartComponentComponent } from './home/cart-component/cart-component.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { RestaurantDetailsComponent } from './restaurants/restaurant-details/res
     RestaurantAddFoodDialogComponent,
     RestaurantListComponent,
     RestaurantItemComponent,
-    RestaurantDetailsComponent
+    RestaurantDetailsComponent,
+    CartComponentComponent
   ],
   imports: [
     JwtModule.forRoot({

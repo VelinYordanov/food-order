@@ -15,10 +15,13 @@ export class AppComponent implements OnInit {
     private userService: AuthenticationService) { }
 
   ngOnInit(): void {
-    const user = this.jwtService.decodeToken(this.storageService.getItem('jwt-user'));
+    const token = this.storageService.getItem('jwt-user');
+    if (token) {
+      const user = this.jwtService.decodeToken(token);
 
-    if(user) {
-      this.userService.updateUser(user);
+      if (user) {
+        this.userService.updateUser(user);
+      }
     }
   }
 }

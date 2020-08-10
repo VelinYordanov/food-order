@@ -1,22 +1,29 @@
-<article *ngIf="restaurant">
-    <h1>{{restaurant.name}}</h1>
-    <p>{{restaurant.description}}</p>
-    <section class="categories">
-        <h4 *ngFor="let category of categoriesToView"
-            (click)="viewCategory(category.name)">{{category.name | titlecase}}</h4>
+<article *ngIf="restaurant"
+    class="wrapper">
+    <section class="restaurant-info">
+        <h1>{{restaurant.name}}</h1>
+        <p>{{restaurant.description}}</p>
+        <section class="categories">
+            <h4 *ngFor="let category of categoriesToView"
+                (click)="viewCategory(category.name)">{{category.name | titlecase}}</h4>
+        </section>
+        <section *ngFor="let category of categoriesToView"
+            [id]="category.name"
+            class="category">
+            <h2>{{category.name | titlecase}}</h2>
+            <div class="foods-wrapper">
+                <section *ngFor="let food of getFoodsForCategory(category)"
+                    class="foods">
+                    <div (click)="addFoodToCart(food)">
+                        <h3>{{food.name | titlecase}}</h3>
+                        <p>{{food.description}}</p>
+                        <p class="price">{{food.price | currency}}</p>
+                    </div>
+                </section>
+            </div>
+        </section>
     </section>
-    <section *ngFor="let category of categoriesToView"
-        [id]="category.name">
-        <h2>{{category.name | titlecase}}</h2>
-        <div class="foods-wrapper">
-            <section *ngFor="let food of getFoodsForCategory(category)"
-                class="foods">
-                <div>
-                    <h3>{{food.name | titlecase}}</h3>
-                    <p>{{food.description}}</p>
-                    <p class="price">{{food.price | currency}}</p>
-                </div>
-            </section>
-        </div>
+    <section class="cart">
+        <app-cart-component></app-cart-component>
     </section>
 </article>

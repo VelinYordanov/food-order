@@ -1,0 +1,40 @@
+<article>
+    <section *ngIf="selectedRestaurant$ | async; let restaurant">
+        <h1>Your order from {{restaurant.name}}</h1>
+    </section>
+    <section *ngIf="items$ | async; let items">
+        <div *ngIf="!items.length">
+            <h2>No items in your cart</h2>
+            <p>You haven't added anything to your cart yet!</p>
+            <p>Start adding the products you like.</p>
+        </div>
+        <div *ngIf="items.length">
+            <div *ngFor="let item of items" class="food-item">
+                <h3>{{item.food.name | titlecase}}</h3>
+                <h3>{{calculateItemPrice(item) | currency}}</h3>
+                <h3>
+                    <mat-icon aria-hidden="false"
+                        class="icon"
+                        aria-label="remove icon"
+                        (click)="decreaseQuantity(item)">remove</mat-icon>
+                    {{item.quantity}}
+                    <mat-icon aria-hidden="false"
+                        class="icon"
+                        aria-label="add icon"
+                        (click)="increaseQuantity(item)">add</mat-icon>
+                    <mat-icon aria-hidden="false"
+                        class="icon"
+                        aria-label="delete icon"
+                        color="warn"
+                        (click)="removeFromCart(item)">delete</mat-icon>
+                </h3>
+            </div>
+            <div>
+                <h2>{{calculateTotalPrice(items) | currency}}</h2>
+            </div>
+            <div class="checkout">
+                <button mat-stroked-button color="primary">Checkout</button>
+            </div>
+        </div>
+    </section>
+</article>
