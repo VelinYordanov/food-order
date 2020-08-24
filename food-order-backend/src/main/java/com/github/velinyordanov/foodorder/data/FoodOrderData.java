@@ -12,4 +12,6 @@ public interface FoodOrderData {
     OrdersRepository orders();
 
     RestaurantsRepository restaurants();
+
+    AddressesRepository addresses();
 }

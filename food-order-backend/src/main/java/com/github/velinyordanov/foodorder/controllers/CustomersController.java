@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.velinyordanov.foodorder.data.entities.Customer;
+import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
+import com.github.velinyordanov.foodorder.dto.AddressDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
@@ -48,5 +51,10 @@ public class CustomersController {
 
 	Authentication authentication = this.authenticationManager.authenticate(token);
 	return new JwtTokenDto(this.jwtTokenUtil.generateToken((Customer) authentication.getPrincipal()));
+    }
+
+    @PostMapping("{customerId}/addresses")
+    public AddressDto addAddressToCustomer(@PathVariable String customerId, @RequestBody AddressCreateDto address) {
+	return this.customersService.addAddressToCustomer(customerId, address);
     }
 }

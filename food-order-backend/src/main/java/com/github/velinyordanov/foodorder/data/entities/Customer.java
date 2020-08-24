@@ -1,6 +1,7 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -37,8 +38,29 @@ public class Customer extends BaseUser {
 		    CascadeType.REFRESH })
     private Set<Authority> authorities;
 
+    @OneToMany(
+	    fetch = FetchType.LAZY,
+	    mappedBy = "customer")
+    private Set<Address> addresses;
+
     public Customer() {
 	super();
+	this.setAuthorities(new HashSet<>());
+	this.setOrders(new HashSet<>());
+	this.setAddresses(new HashSet<>());
+    }
+
+    public void addAddress(Address address) {
+	this.getAddresses().add(address);
+	address.setCustomer(this);
+    }
+
+    public Set<Address> getAddresses() {
+	return addresses;
+    }
+
+    public void setAddresses(Set<Address> addresses) {
+	this.addresses = addresses;
     }
 
     @Override
