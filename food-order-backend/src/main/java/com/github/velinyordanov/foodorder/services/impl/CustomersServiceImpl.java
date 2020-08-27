@@ -102,4 +102,24 @@ public class CustomersServiceImpl implements CustomersService {
 	customer.addAddress(addressToAdd);
 	return this.mapper.map(this.foodOrderData.addresses().save(addressToAdd), AddressDto.class);
     }
+
+    @Override
+    public AddressDto editAddress(String customerId, String addressId, AddressDto address) {
+	Optional<Address> addressOptional = this.foodOrderData.addresses().findById(addressId);
+
+	if (addressOptional.isEmpty()) {
+	    throw new NotFoundException(MessageFormat.format("Address with id {0} not found", addressId));
+	}
+
+	Address addressToUpdate = addressOptional.get();
+	if (!customerId.equals(addressToUpdate.getCustomer().getId())) {
+	    throw new NotFoundException(
+		    MessageFormat.format("No such address found for customer with id {0}", customerId));
+	}
+
+	this.mapper.map(address, addressToUpdate);
+	addressToUpdate.setId(addressId);
+
+	return this.mapper.map(this.foodOrderData.addresses().save(addressToUpdate), AddressDto.class);
+    }
 }

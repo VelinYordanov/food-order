@@ -19,4 +19,9 @@ public class MapperImpl implements Mapper {
     public <TDest> TDest map(Object source, Class<TDest> destination) {
 	return this.modelMapper.map(source, destination);
     }
+
+    @Override
+    public void map(Object source, Object destination) {
+	this.modelMapper.map(source, destination);
+    }
 }

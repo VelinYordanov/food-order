@@ -20,6 +20,9 @@ public class Address extends BaseEntity {
     @Column(name = "Street")
     private String street;
 
+    @Column(name = "StreetNumber")
+    private String streetNumber;
+
     @Column(name = "ApartmentBuildingNumber")
     private String apartmentBuildingNumber;
 
@@ -35,6 +38,14 @@ public class Address extends BaseEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "CustomerId")
     private Customer customer;
+
+    public String getStreetNumber() {
+	return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+	this.streetNumber = streetNumber;
+    }
 
     public Customer getCustomer() {
 	return customer;

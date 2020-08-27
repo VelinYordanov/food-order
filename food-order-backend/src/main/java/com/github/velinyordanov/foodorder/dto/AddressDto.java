@@ -4,11 +4,14 @@ import com.github.velinyordanov.foodorder.enums.AddressType;
 
 public class AddressDto {
     private String id;
+
     private AddressType addressType;
 
     private String neighborhood;
 
     private String street;
+
+    private String streetNumber;
 
     private String apartmentBuildingNumber;
 
@@ -17,6 +20,14 @@ public class AddressDto {
     private Byte floor;
 
     private String apartmentNumber;
+
+    public String getStreetNumber() {
+	return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+	this.streetNumber = streetNumber;
+    }
 
     public String getId() {
 	return id;

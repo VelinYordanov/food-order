@@ -15,4 +15,6 @@ public interface CustomersService {
     String login(UserDto userDto);
 
     AddressDto addAddressToCustomer(String customerId, AddressCreateDto address);
+
+    AddressDto editAddress(String customerId, String addressId, AddressDto address);
 }

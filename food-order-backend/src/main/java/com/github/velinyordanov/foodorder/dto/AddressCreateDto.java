@@ -9,6 +9,8 @@ public class AddressCreateDto {
 
     private String street;
 
+    private String streetNumber;
+
     private String apartmentBuildingNumber;
 
     private String entrance;
@@ -16,6 +18,14 @@ public class AddressCreateDto {
     private Byte floor;
 
     private String apartmentNumber;
+
+    public String getStreetNumber() {
+	return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+	this.streetNumber = streetNumber;
+    }
 
     public AddressType getAddressType() {
 	return addressType;

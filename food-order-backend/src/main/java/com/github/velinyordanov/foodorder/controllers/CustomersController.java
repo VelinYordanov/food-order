@@ -3,11 +3,13 @@ package com.github.velinyordanov.foodorder.controllers;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +26,9 @@ import com.github.velinyordanov.foodorder.services.impl.JwtTokenServiceImpl;
 @RestController
 @RequestMapping("customers")
 public class CustomersController {
+    private static final String ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION =
+	    "hasAuthority('ROLE_CUSTOMER') and principal.id == #customerId";
+
     private final CustomersService customersService;
     private final AuthenticationManager authenticationManager;
     private JwtTokenServiceImpl jwtTokenUtil;
@@ -54,7 +59,17 @@ public class CustomersController {
     }
 
     @PostMapping("{customerId}/addresses")
+    @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
     public AddressDto addAddressToCustomer(@PathVariable String customerId, @RequestBody AddressCreateDto address) {
 	return this.customersService.addAddressToCustomer(customerId, address);
+    }
+
+    @PutMapping("{customerId}/addresses/{addressId}")
+    @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
+    public AddressDto updateAddress(
+	    @PathVariable String customerId,
+	    @PathVariable String addressId,
+	    @RequestBody AddressDto address) {
+	return this.customersService.editAddress(customerId, addressId, address);
     }
 }
