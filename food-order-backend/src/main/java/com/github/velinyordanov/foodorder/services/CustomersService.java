@@ -1,5 +1,6 @@
 package com.github.velinyordanov.foodorder.services;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import com.github.velinyordanov.foodorder.data.entities.Customer;
@@ -17,4 +18,6 @@ public interface CustomersService {
     AddressDto addAddressToCustomer(String customerId, AddressCreateDto address);
 
     AddressDto editAddress(String customerId, String addressId, AddressDto address);
+
+    Collection<AddressDto> getAddressesForCustomer(String customerId);
 }

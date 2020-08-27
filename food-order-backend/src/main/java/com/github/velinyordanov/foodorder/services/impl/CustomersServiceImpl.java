@@ -1,9 +1,11 @@
 package com.github.velinyordanov.foodorder.services.impl;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -121,5 +123,18 @@ public class CustomersServiceImpl implements CustomersService {
 	addressToUpdate.setId(addressId);
 
 	return this.mapper.map(this.foodOrderData.addresses().save(addressToUpdate), AddressDto.class);
+    }
+
+    @Override
+    public Collection<AddressDto> getAddressesForCustomer(String customerId) {
+	if (!this.foodOrderData.customers().existsById(customerId)) {
+	    throw new NotFoundException(MessageFormat.format("Customer with id {0} not found.", customerId));
+	}
+
+	return this.foodOrderData.addresses()
+		.findByCustomerId(customerId)
+		.stream()
+		.map(address -> this.mapper.map(address, AddressDto.class))
+		.collect(Collectors.toList());
     }
 }
