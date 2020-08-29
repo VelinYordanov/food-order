@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,5 +81,11 @@ public class CustomersController {
     @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
     public Collection<AddressDto> getAddressesForCustomer(@PathVariable String customerId) {
 	return this.customersService.getAddressesForCustomer(customerId);
+    }
+
+    @DeleteMapping("{customerId}/addresses/{addressId}")
+    @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
+    public AddressDto deleteCustomerAddress(@PathVariable String customerId, @PathVariable String addressId) {
+	return this.customersService.deleteCustomerAddress(customerId, addressId);
     }
 }

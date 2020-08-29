@@ -137,4 +137,21 @@ public class CustomersServiceImpl implements CustomersService {
 		.map(address -> this.mapper.map(address, AddressDto.class))
 		.collect(Collectors.toList());
     }
+
+    @Override
+    public AddressDto deleteCustomerAddress(String customerId, String addressId) {
+	Optional<Address> addressOptional = this.foodOrderData.addresses().findById(addressId);
+	if (addressOptional.isEmpty()) {
+	    throw new NotFoundException(MessageFormat.format("No address with id {0} found", addressId));
+	}
+
+	Address addressToDelete = addressOptional.get();
+	if (!customerId.equals(addressToDelete.getCustomer().getId())) {
+	    throw new NotFoundException(
+		    MessageFormat.format("No such address found for customer with id {0}", customerId));
+	}
+
+	addressToDelete.setIsDeleted(true);
+	return this.mapper.map(this.foodOrderData.addresses().save(addressToDelete), AddressDto.class);
+    }
 }

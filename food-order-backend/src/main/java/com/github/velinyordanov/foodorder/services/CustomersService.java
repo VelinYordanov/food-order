@@ -20,4 +20,6 @@ public interface CustomersService {
     AddressDto editAddress(String customerId, String addressId, AddressDto address);
 
     Collection<AddressDto> getAddressesForCustomer(String customerId);
+
+    AddressDto deleteCustomerAddress(String customerId, String addressId);
 }
