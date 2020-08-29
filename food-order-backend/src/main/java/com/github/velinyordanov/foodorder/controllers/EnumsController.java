@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.velinyordanov.foodorder.dto.EnumDto;
 import com.github.velinyordanov.foodorder.enums.AddressType;
+import com.github.velinyordanov.foodorder.enums.City;
 import com.github.velinyordanov.foodorder.services.EnumsService;
 
 @RestController
@@ -24,5 +25,10 @@ public class EnumsController {
     @GetMapping("address-types")
     public Collection<EnumDto> getAddressTypes() {
 	return this.enumsService.getEnumOptions(AddressType.class);
+    }
+
+    @GetMapping("cities")
+    public Collection<EnumDto> getCities() {
+	return this.enumsService.getEnumOptions(City.class);
     }
 }
