@@ -1,8 +1,11 @@
 package com.github.velinyordanov.foodorder.dto;
 
 import com.github.velinyordanov.foodorder.enums.AddressType;
+import com.github.velinyordanov.foodorder.enums.City;
 
 public class AddressCreateDto {
+    private City city;
+
     private AddressType addressType;
 
     private String neighborhood;
@@ -18,6 +21,14 @@ public class AddressCreateDto {
     private Byte floor;
 
     private String apartmentNumber;
+
+    public City getCity() {
+	return city;
+    }
+
+    public void setCity(City city) {
+	this.city = city;
+    }
 
     public String getStreetNumber() {
 	return streetNumber;

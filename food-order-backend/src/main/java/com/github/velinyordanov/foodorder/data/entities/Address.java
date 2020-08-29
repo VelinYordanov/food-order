@@ -7,11 +7,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.github.velinyordanov.foodorder.enums.AddressType;
+import com.github.velinyordanov.foodorder.enums.City;
 
 @Entity
 @Table(name = "Addresses")
 public class Address extends BaseEntity {
-    @Column(name = "AddressType")
+    @Column(name = "City", nullable = false)
+    private City city;
+
+    @Column(name = "AddressType", nullable = false)
     private AddressType addressType;
 
     @Column(name = "Neighborhood")
@@ -38,6 +42,14 @@ public class Address extends BaseEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "CustomerId")
     private Customer customer;
+
+    public City getCity() {
+	return city;
+    }
+
+    public void setCity(City city) {
+	this.city = city;
+    }
 
     public String getStreetNumber() {
 	return streetNumber;
