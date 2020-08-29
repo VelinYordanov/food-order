@@ -1,0 +1,7 @@
+<section *ngIf="address && cities && addressTypes"
+    class="address">
+    <p>{{getCityValue(address.city)}}</p>
+    <p>{{getAddressTypeValue(address.addressType)}}</p>
+    <p *ngIf="address.street">Street {{address.street}} {{address.streetNumber}}</p>
+    <p *ngIf="address.neighborhood">Neighborhood {{address.neighborhood}}</p>
+</section>
