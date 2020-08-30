@@ -22,4 +22,6 @@ public interface CustomersService {
     Collection<AddressDto> getAddressesForCustomer(String customerId);
 
     AddressDto deleteCustomerAddress(String customerId, String addressId);
+
+    AddressDto getCustomerAddress(String customerId, String addressId);
 }

@@ -88,4 +88,10 @@ public class CustomersController {
     public AddressDto deleteCustomerAddress(@PathVariable String customerId, @PathVariable String addressId) {
 	return this.customersService.deleteCustomerAddress(customerId, addressId);
     }
+
+    @GetMapping("{customerId}/addresses/{addressId}")
+    @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
+    public AddressDto getCustomerAddress(@PathVariable String customerId, @PathVariable String addressId) {
+	return this.customersService.getCustomerAddress(customerId, addressId);
+    }
 }
