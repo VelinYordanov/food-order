@@ -12,6 +12,12 @@ export class AddressListComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log('here');
+  }
+
+  removeAddressFromList(address: Address) {
+    const index = this.addresses.indexOf(address);
+    if(index !== -1) {
+      this.addresses.splice(index, 1);
+    }
   }
 }

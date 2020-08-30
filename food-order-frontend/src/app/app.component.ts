@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     const token = this.storageService.getItem('jwt-user');
-    if (token) {
+    if (token && !this.jwtService.isTokenExpired(token)) {
       const user = this.jwtService.decodeToken(token);
 
       if (user) {

@@ -1,6 +1,5 @@
-<article>
-    <section *ngFor="let address of addresses"
-        class="addresses">
-        <app-address-item [address]="address"></app-address-item>
+<article class="addresses">
+    <section *ngFor="let address of addresses">
+        <app-address-item [address]="address" (onDelete)="removeAddressFromList($event)"></app-address-item>
     </section>
 </article>

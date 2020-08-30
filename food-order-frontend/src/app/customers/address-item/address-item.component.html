@@ -3,5 +3,12 @@
     <p>{{getCityValue(address.city)}}</p>
     <p>{{getAddressTypeValue(address.addressType)}}</p>
     <p *ngIf="address.street">Street {{address.street}} {{address.streetNumber}}</p>
-    <p *ngIf="address.neighborhood">Neighborhood {{address.neighborhood}}</p>
+    <p *ngIf="address.neighborhood">{{address.neighborhood}}</p>
+    <p class="actions">
+        <a [routerLink]="['addresses', address.id]"
+            class="action">Edit</a>
+        <span>|</span>
+        <span (click)="delete()"
+            class="action last-action">Delete</span>
+    </p>
 </section>
