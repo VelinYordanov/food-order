@@ -47,27 +47,32 @@ export class AddressComponent implements OnInit {
       apartmentNumber: [null],
     })
 
-    combineLatest([
-      this.authenticationService.user$.pipe(first(user => !!user)),
-      this.activatedRoute.paramMap
-        .pipe(
-          map(paramMap => paramMap.get('id')),
-          first(id => !!id)
-        )
-    ])
-      .pipe(
-        switchMap(([user, id]) =>
-          this.customerService.getCustomerAddress(user.id, id)
-            .pipe(
-              catchError(error => {
-                this.alertService.displayMessage('An error occurred while loading address. Try again later.', 'error');
-                return throwError(error);
-              })
-            ))
-      ).subscribe(address => this.addressForm.patchValue(address))
+    if (this.address) {
+      this.addressForm.patchValue(this.address);
+    }
+
+    // combineLatest([
+    //   this.authenticationService.user$.pipe(first(user => !!user)),
+    //   this.activatedRoute.paramMap
+    //     .pipe(
+    //       map(paramMap => paramMap.get('id')),
+    //       first(id => !!id)
+    //     )
+    // ])
+    //   .pipe(
+    //     switchMap(([user, id]) =>
+    //       this.customerService.getCustomerAddress(user.id, id)
+    //         .pipe(
+    //           catchError(error => {
+    //             this.alertService.displayMessage('An error occurred while loading address. Try again later.', 'error');
+    //             return throwError(error);
+    //           })
+    //         ))
+    //   ).subscribe(address => this.addressForm.patchValue(address))
   }
 
   submit() {
+    console.log(this.addressForm.value);
     if (this.addressForm.valid) {
       this.onSubmit.next(this.addressForm.value);
     }

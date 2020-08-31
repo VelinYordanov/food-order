@@ -10,15 +10,19 @@ export class CustomerService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getCustomerAddresses(customerId:string) {
+  getCustomerAddresses(customerId: string) {
     return this.httpClient.get<Address[]>(`${this.BASE_URL}/${customerId}/addresses`);
   }
 
-  getCustomerAddress(customerId:string, addressId:string) {
+  getCustomerAddress(customerId: string, addressId: string) {
     return this.httpClient.get<Address>(`${this.BASE_URL}/${customerId}/addresses/${addressId}`);
   }
 
-  deleteCustomerAddress(customerId:string, addressId:string) {
+  deleteCustomerAddress(customerId: string, addressId: string) {
     return this.httpClient.delete<Address>(`${this.BASE_URL}/${customerId}/addresses/${addressId}`);
+  }
+
+  addAddressToCustomer(customerId: string, address: Address) {
+    return this.httpClient.post(`${this.BASE_URL}/${customerId}/addresses`, address);
   }
 }

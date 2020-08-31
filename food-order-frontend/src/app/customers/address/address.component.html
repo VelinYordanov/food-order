@@ -1,78 +1,85 @@
 <article>
     <h1>Create address</h1>
-    <form [formGroup]="addressForm" (submit)="submit()">
-        <div>
-            <mat-form-field appearance="fill"
-                class="form-field">
-                <mat-label>City</mat-label>
-                <mat-select formControlName="city">
-                    <mat-option *ngFor="let city of cities$ | async"
-                        [value]="city.id">
-                        {{city.value}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div>
-            <mat-form-field appearance="fill"
-                class="form-field">
-                <mat-label>Address Type</mat-label>
-                <mat-select formControlName="addressType">
-                    <mat-option *ngFor="let addressType of addressTypes$ | async"
-                        [value]="addressType.id">
-                        {{addressType.value}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div>
-            <mat-form-field class="form-field">
-                <mat-label>Neighborhood</mat-label>
-                <input matInput
-                    formControlName="neighborhood">
-            </mat-form-field>
-        </div>
-        <div>
-            <mat-form-field class="form-field">
-                <mat-label>Street</mat-label>
-                <input matInput
-                    formControlName="street">
-            </mat-form-field>
-        </div>
-        <div class="smaller">
-            <mat-form-field class="form-field">
-                <mat-label>Street number</mat-label>
-                <input matInput
-                    formControlName="streetNumber">
-            </mat-form-field>
-        </div>
-        <div class="smaller">
-            <mat-form-field class="form-field">
-                <mat-label>Apartment Building Number</mat-label>
-                <input matInput
-                    formControlName="apartmentBuildingNumber">
-            </mat-form-field>
-        </div>
-        <div class="smaller">
-            <mat-form-field class="form-field">
-                <mat-label>Entrance</mat-label>
-                <input matInput
-                    formControlName="entrance">
-            </mat-form-field>
-        </div>
-        <div class="smaller">
-            <mat-form-field class="form-field">
-                <mat-label>Floor</mat-label>
-                <input matInput
-                    formControlName="floor">
-            </mat-form-field>
-        </div>
-        <div class="smaller">
-            <mat-form-field class="form-field">
-                <mat-label>Apartment number</mat-label>
-                <input matInput
-                    formControlName="apartmentNumber">
-            </mat-form-field>
+    <form [formGroup]="addressForm"
+        (submit)="submit()">
+        <section class="flex">
+            <div>
+                <mat-form-field appearance="fill"
+                    class="form-field">
+                    <mat-label>City</mat-label>
+                    <mat-select formControlName="city">
+                        <mat-option *ngFor="let city of cities$ | async"
+                            [value]="city.id">
+                            {{city.value}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="fill"
+                    class="form-field">
+                    <mat-label>Address Type</mat-label>
+                    <mat-select formControlName="addressType">
+                        <mat-option *ngFor="let addressType of addressTypes$ | async"
+                            [value]="addressType.id">
+                            {{addressType.value}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field class="form-field">
+                    <mat-label>Neighborhood</mat-label>
+                    <input matInput
+                        formControlName="neighborhood">
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field class="form-field">
+                    <mat-label>Street</mat-label>
+                    <input matInput
+                        formControlName="street">
+                </mat-form-field>
+            </div>
+            <div class="smaller">
+                <mat-form-field class="form-field">
+                    <mat-label>Street number</mat-label>
+                    <input matInput
+                        formControlName="streetNumber">
+                </mat-form-field>
+            </div>
+            <div class="smaller">
+                <mat-form-field class="form-field">
+                    <mat-label>Apartment Building Number</mat-label>
+                    <input matInput
+                        formControlName="apartmentBuildingNumber">
+                </mat-form-field>
+            </div>
+            <div class="smaller">
+                <mat-form-field class="form-field">
+                    <mat-label>Entrance</mat-label>
+                    <input matInput
+                        formControlName="entrance">
+                </mat-form-field>
+            </div>
+            <div class="smaller">
+                <mat-form-field class="form-field">
+                    <mat-label>Floor</mat-label>
+                    <input matInput
+                        formControlName="floor">
+                </mat-form-field>
+            </div>
+            <div class="smaller">
+                <mat-form-field class="form-field">
+                    <mat-label>Apartment number</mat-label>
+                    <input matInput
+                        formControlName="apartmentNumber">
+                </mat-form-field>
+            </div>
+        </section>
+        <div class="submit-button-container">
+            <button mat-raised-button
+                color="primary">{{address ? 'Edit' : 'Create'}}</button>
         </div>
     </form>
 </article>

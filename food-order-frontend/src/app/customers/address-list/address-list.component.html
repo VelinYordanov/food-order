@@ -1,5 +1,14 @@
-<article class="addresses">
-    <section *ngFor="let address of addresses">
-        <app-address-item [address]="address" (onDelete)="removeAddressFromList($event)"></app-address-item>
+<article>
+    <h1 class="title">Addresses</h1>
+    <section class="addresses">
+        <section class="add-address">
+            <h3>
+                <a routerLink="addresses/add">Add an address</a>
+            </h3>
+        </section>
+        <section *ngFor="let address of addresses">
+            <app-address-item [address]="address"
+                (onDelete)="removeAddressFromList($event)"></app-address-item>
+        </section>
     </section>
 </article>
