@@ -1,0 +1,29 @@
+article {
+    width:60%;
+    margin: 0 auto;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+form > div {
+    width:40%;
+    margin-right:5%;
+}
+
+form > div.smaller {
+    width:15%;
+}
+
+.form-field {
+    width:100%;
+}
+
+h1 {
+    margin-top:30px;
+    margin-bottom:30px;
+    text-align: center;
+}

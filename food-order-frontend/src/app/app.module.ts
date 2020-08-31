@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,6 +33,7 @@ import { CartComponentComponent } from './home/cart-component/cart-component.com
 import { CustomerProfileComponent } from './customers/customer-profile/customer-profile.component';
 import { AddressItemComponent } from './customers/address-item/address-item.component';
 import { AddressListComponent } from './customers/address-list/address-list.component';
+import { AddressComponent } from './customers/address/address.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,8 @@ import { AddressListComponent } from './customers/address-list/address-list.comp
     CartComponentComponent,
     CustomerProfileComponent,
     AddressItemComponent,
-    AddressListComponent
+    AddressListComponent,
+    AddressComponent
   ],
   imports: [
     JwtModule.forRoot({
@@ -65,7 +68,8 @@ import { AddressListComponent } from './customers/address-list/address-list.comp
     MatAutocompleteModule,
     MatDialogModule,
     MatCardModule,
-
+    MatSelectModule,
+    
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,

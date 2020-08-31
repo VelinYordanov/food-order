@@ -14,6 +14,10 @@ export class CustomerService {
     return this.httpClient.get<Address[]>(`${this.BASE_URL}/${customerId}/addresses`);
   }
 
+  getCustomerAddress(customerId:string, addressId:string) {
+    return this.httpClient.get<Address>(`${this.BASE_URL}/${customerId}/addresses/${addressId}`);
+  }
+
   deleteCustomerAddress(customerId:string, addressId:string) {
     return this.httpClient.delete<Address>(`${this.BASE_URL}/${customerId}/addresses/${addressId}`);
   }
