@@ -1,5 +1,5 @@
 <article>
-    <h1>Create address</h1>
+    <h1>{{address ? 'Update address' : 'Create address'}}</h1>
     <form [formGroup]="addressForm"
         (submit)="submit()">
         <section class="flex">

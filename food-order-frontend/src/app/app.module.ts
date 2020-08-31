@@ -35,6 +35,7 @@ import { AddressItemComponent } from './customers/address-item/address-item.comp
 import { AddressListComponent } from './customers/address-list/address-list.component';
 import { AddressComponent } from './customers/address/address.component';
 import { AddressCreateComponent } from './customers/address-create/address-create.component';
+import { AddressUpdateComponent } from './customers/address-update/address-update.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { AddressCreateComponent } from './customers/address-create/address-creat
     AddressItemComponent,
     AddressListComponent,
     AddressComponent,
-    AddressCreateComponent
+    AddressCreateComponent,
+    AddressUpdateComponent
   ],
   imports: [
     JwtModule.forRoot({

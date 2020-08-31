@@ -25,4 +25,8 @@ export class CustomerService {
   addAddressToCustomer(customerId: string, address: Address) {
     return this.httpClient.post(`${this.BASE_URL}/${customerId}/addresses`, address);
   }
+
+  editCustomerAddress(customerId:string, addressId:string, address:Address) {
+    return this.httpClient.put(`${this.BASE_URL}/${customerId}/addresses/${addressId}`, address);
+  }
 }
