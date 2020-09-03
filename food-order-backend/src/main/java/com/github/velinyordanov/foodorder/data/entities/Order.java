@@ -1,13 +1,13 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -17,6 +17,10 @@ public class Order extends BaseEntity {
     private Status status;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "AddressId")
+    private Address address;
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "RestaurantId")
     private Restaurant restaurant;
 
@@ -24,12 +28,29 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "CustomerId")
     private Customer customer;
 
-    @ManyToMany()
-    @JoinTable(
-	    name = "Orders_Foods",
-	    joinColumns = @JoinColumn(name = "order_id"),
-	    inverseJoinColumns = @JoinColumn(name = "food_id"))
-    private Set<Food> foods;
+    @OneToMany(mappedBy = "order")
+    private Set<OrderFood> foods;
+
+    public Order() {
+	super();
+	this.setFoods(new HashSet<>());
+    }
+
+    public Address getAddress() {
+	return address;
+    }
+
+    public void setAddress(Address address) {
+	this.address = address;
+    }
+
+    public Set<OrderFood> getFoods() {
+	return foods;
+    }
+
+    public void setFoods(Set<OrderFood> foods) {
+	this.foods = foods;
+    }
 
     public Status getStatus() {
 	return status;
@@ -49,14 +70,6 @@ public class Order extends BaseEntity {
 
     public void setUser(Customer user) {
 	this.customer = user;
-    }
-
-    public Set<Food> getFoods() {
-	return foods;
-    }
-
-    public void setFoods(Set<Food> foods) {
-	this.foods = foods;
     }
 
     public Customer getCustomer() {

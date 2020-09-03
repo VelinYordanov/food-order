@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -29,13 +30,21 @@ public class Food extends BaseEntity {
 	    cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     private Set<Category> categories;
 
-    @ManyToMany(mappedBy = "foods")
-    private Set<Order> orders;
+    @OneToMany(mappedBy = "food")
+    private Set<OrderFood> orders;
 
     public Food() {
 	super();
 	this.setCategories(new HashSet<>());
 	this.setOrders(new HashSet<>());
+    }
+
+    public Set<OrderFood> getOrders() {
+	return orders;
+    }
+
+    public void setOrders(Set<OrderFood> orders) {
+	this.orders = orders;
     }
 
     public BigDecimal getPrice() {
@@ -89,14 +98,6 @@ public class Food extends BaseEntity {
 
     public void setCategories(Set<Category> categories) {
 	this.categories = categories;
-    }
-
-    public Set<Order> getOrders() {
-	return orders;
-    }
-
-    public void setOrders(Set<Order> orders) {
-	this.orders = orders;
     }
 
     @Override
