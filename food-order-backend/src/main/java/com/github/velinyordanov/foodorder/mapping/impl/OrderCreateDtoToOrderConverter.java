@@ -10,6 +10,7 @@ import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.data.entities.OrderFood;
+import com.github.velinyordanov.foodorder.data.entities.OrderFoodId;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 
@@ -34,11 +35,19 @@ public class OrderCreateDtoToOrderConverter extends AbstractConverter<OrderCreat
 		.setFoods(source.getFoods()
 			.stream()
 			.map(foodDto -> {
+			    OrderFood orderFood = new OrderFood();
+
 			    Food food = new Food();
 			    food.setId(foodDto.getId());
-			    OrderFood orderFood = new OrderFood();
 			    orderFood.setFood(food);
+
+			    orderFood.setQuantity(foodDto.getQuantity());
+
 			    orderFood.setOrder(result);
+
+			    OrderFoodId orderFoodId = new OrderFoodId(result.getId(), food.getId());
+			    orderFood.setOrderFoodId(orderFoodId);
+
 			    return orderFood;
 			})
 			.collect(Collectors.toSet()));

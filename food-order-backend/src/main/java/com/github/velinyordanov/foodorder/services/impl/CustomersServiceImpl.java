@@ -19,8 +19,12 @@ import com.github.velinyordanov.foodorder.data.FoodOrderData;
 import com.github.velinyordanov.foodorder.data.entities.Address;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Customer;
+import com.github.velinyordanov.foodorder.data.entities.Food;
+import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
+import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
+import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
@@ -169,5 +173,34 @@ public class CustomersServiceImpl implements CustomersService {
 	}
 
 	return this.mapper.map(address, AddressDto.class);
+    }
+
+    @Override
+    public OrderDto addOrderToCustomer(String customerId, OrderCreateDto order) {
+	Address address = this.foodOrderData
+		.addresses()
+		.findById(order.getAddressId())
+		.orElseThrow(() -> new NotFoundException("No such address found"));
+
+	if (!order.getCustomerId().equals(address.getCustomer().getId())) {
+	    throw new NotFoundException("No such address found");
+	}
+
+	this.foodOrderData
+		.restaurants()
+		.findById(order.getRestaurantId())
+		.orElseThrow(() -> new NotFoundException("No such restaurant found"));
+
+	Collection<Food> restaurantFoods = this.foodOrderData.foods()
+		.findByRestaurantId(order.getRestaurantId());
+
+	if (!order.getFoods()
+		.stream()
+		.allMatch(food -> restaurantFoods.stream().anyMatch(f -> f.getId().equals(food.getId())))) {
+	    throw new NotFoundException("No such food found");
+	}
+
+	Order orderToAdd = this.mapper.map(order, Order.class);
+	return this.mapper.map(this.foodOrderData.orders().save(orderToAdd), OrderDto.class);
     }
 }

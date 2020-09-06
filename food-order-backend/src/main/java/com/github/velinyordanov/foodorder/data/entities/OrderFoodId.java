@@ -15,6 +15,15 @@ public class OrderFoodId implements Serializable {
     @Column(name = "FoodId")
     private String foodId;
 
+    public OrderFoodId(String orderId, String foodId) {
+	this.orderId = orderId;
+	this.foodId = foodId;
+    }
+
+    public OrderFoodId() {
+
+    }
+
     public String getOrderId() {
 	return orderId;
     }

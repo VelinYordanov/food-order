@@ -3,6 +3,7 @@ package com.github.velinyordanov.foodorder.data.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -28,11 +29,12 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "CustomerId")
     private Customer customer;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = { CascadeType.ALL })
     private Set<OrderFood> foods;
 
     public Order() {
 	super();
+	this.setStatus(Status.Pending);
 	this.setFoods(new HashSet<>());
     }
 

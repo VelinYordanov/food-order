@@ -22,6 +22,8 @@ import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
+import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
+import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.services.CustomersService;
@@ -93,5 +95,11 @@ public class CustomersController {
     @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
     public AddressDto getCustomerAddress(@PathVariable String customerId, @PathVariable String addressId) {
 	return this.customersService.getCustomerAddress(customerId, addressId);
+    }
+
+    @PostMapping("{customerId}/orders")
+    @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
+    public OrderDto addOrderToCustomer(@PathVariable String customerId, @RequestBody @Valid OrderCreateDto order) {
+	return this.customersService.addOrderToCustomer(customerId, order);
     }
 }
