@@ -1,10 +1,12 @@
 package com.github.velinyordanov.foodorder.dto;
 
+import java.math.BigDecimal;
+
 public class FoodOrderDto {
     private String id;
     private String name;
     private String description;
-    private double price;
+    private BigDecimal price;
     private int quantity;
 
     public String getId() {
@@ -31,11 +33,11 @@ public class FoodOrderDto {
 	this.description = description;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
 	return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
 	this.price = price;
     }
 

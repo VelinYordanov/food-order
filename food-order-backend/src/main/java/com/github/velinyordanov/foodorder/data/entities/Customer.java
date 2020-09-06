@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -17,6 +18,9 @@ import org.springframework.security.core.GrantedAuthority;
 @Table(name = "Customers")
 public class Customer extends BaseUser {
     private static final long serialVersionUID = 4746831092067539667L;
+
+    @Column(name = "PhoneNumber")
+    private String phoneNumber;
 
     @OneToMany(
 	    fetch = FetchType.LAZY,
@@ -53,6 +57,14 @@ public class Customer extends BaseUser {
     public void addAddress(Address address) {
 	this.getAddresses().add(address);
 	address.setCustomer(this);
+    }
+
+    public String getPhoneNumber() {
+	return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+	this.phoneNumber = phoneNumber;
     }
 
     public Set<Address> getAddresses() {

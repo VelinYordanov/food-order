@@ -5,6 +5,7 @@ import java.util.Collection;
 public class OrderDto {
     private String id;
     private RestaurantOrderDto restaurant;
+    private CustomerOrderDto customer;
     private AddressDto address;
     private Collection<FoodOrderDto> foods;
 
@@ -22,6 +23,14 @@ public class OrderDto {
 
     public void setRestaurant(RestaurantOrderDto restaurant) {
 	this.restaurant = restaurant;
+    }
+
+    public CustomerOrderDto getCustomer() {
+	return customer;
+    }
+
+    public void setCustomer(CustomerOrderDto customer) {
+	this.customer = customer;
     }
 
     public AddressDto getAddress() {
