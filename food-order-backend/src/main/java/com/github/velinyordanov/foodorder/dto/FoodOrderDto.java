@@ -1,13 +1,11 @@
 package com.github.velinyordanov.foodorder.dto;
 
-import java.util.Collection;
-
-public class FoodDto {
+public class FoodOrderDto {
     private String id;
     private String name;
     private String description;
     private double price;
-    private Collection<CategoryDto> categories;
+    private int quantity;
 
     public String getId() {
 	return id;
@@ -41,11 +39,11 @@ public class FoodDto {
 	this.price = price;
     }
 
-    public Collection<CategoryDto> getCategories() {
-	return categories;
+    public int getQuantity() {
+	return quantity;
     }
 
-    public void setCategories(Collection<CategoryDto> categories) {
-	this.categories = categories;
+    public void setQuantity(int quantity) {
+	this.quantity = quantity;
     }
 }
