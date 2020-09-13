@@ -5,11 +5,11 @@ import { Restaurant } from 'src/app/restaurants/models/restaurant';
 import { CartService } from '../../shared/cart.service';
 
 @Component({
-  selector: 'app-cart-component',
-  templateUrl: './cart-component.component.html',
-  styleUrls: ['./cart-component.component.scss']
+  selector: 'app-cart',
+  templateUrl: './cart-component.html',
+  styleUrls: ['./cart-component.scss']
 })
-export class CartComponentComponent implements OnInit {
+export class CartComponent implements OnInit {
   selectedRestaurant$: Observable<Restaurant>;
   items$: Observable<CartItem[]>;
 

@@ -29,7 +29,7 @@ import { RestaurantAddFoodDialogComponent } from './restaurants/restaurant-add-f
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
 import { RestaurantItemComponent } from './restaurants/restaurant-item/restaurant-item.component';
 import { RestaurantDetailsComponent } from './restaurants/restaurant-details/restaurant-details.component';
-import { CartComponentComponent } from './home/cart-component/cart-component.component';
+import { CartComponent } from './home/cart-component/cart-component';
 import { CustomerProfileComponent } from './customers/customer-profile/customer-profile.component';
 import { AddressItemComponent } from './customers/address-item/address-item.component';
 import { AddressListComponent } from './customers/address-list/address-list.component';
@@ -47,7 +47,7 @@ import { AddressUpdateComponent } from './customers/address-update/address-updat
     RestaurantListComponent,
     RestaurantItemComponent,
     RestaurantDetailsComponent,
-    CartComponentComponent,
+    CartComponent,
     CustomerProfileComponent,
     AddressItemComponent,
     AddressListComponent,

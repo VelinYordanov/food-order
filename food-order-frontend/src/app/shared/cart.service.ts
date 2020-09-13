@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Address } from '../customers/models/address';
 import { CartItem } from '../restaurants/models/cart-item';
 import { Food } from '../restaurants/models/food';
 import { Restaurant } from '../restaurants/models/restaurant';
@@ -9,15 +10,21 @@ import { Restaurant } from '../restaurants/models/restaurant';
 })
 export class CartService {
   private currentRestaurant = new BehaviorSubject<Restaurant>(null);
+  private selectedAddress = new BehaviorSubject<Address>(null);
   private foodCart = new BehaviorSubject<CartItem[]>([]);
 
   selectedRestaurant$: Observable<Restaurant> = this.currentRestaurant.asObservable();
+  selectedAddress$:Observable<Address> = this.selectedAddress.asObservable();
   selectedItems$: Observable<CartItem[]> = this.foodCart.asObservable();
 
   constructor() { }
 
   updateSelectedRestaurant(restaurant: Restaurant) {
     this.currentRestaurant.next(restaurant);
+  }
+
+  updateSelectedAddress(address:Address) {
+    this.selectedAddress.next(address);
   }
 
   addItemToCart(food: Food) {
