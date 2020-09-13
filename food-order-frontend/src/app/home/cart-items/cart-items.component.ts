@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CartItem } from 'src/app/restaurants/models/cart-item';
 import { Restaurant } from 'src/app/restaurants/models/restaurant';
-import { CartService } from '../../shared/cart.service';
+import { CartService } from 'src/app/shared/cart.service';
 
 @Component({
-  selector: 'app-cart',
-  templateUrl: './cart-component.html',
-  styleUrls: ['./cart-component.scss']
+  selector: 'app-cart-items',
+  templateUrl: './cart-items.component.html',
+  styleUrls: ['./cart-items.component.scss']
 })
-export class CartComponent implements OnInit {
+export class CartItemsComponent implements OnInit {
   selectedRestaurant$: Observable<Restaurant>;
   items$: Observable<CartItem[]>;
 

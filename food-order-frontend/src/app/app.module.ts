@@ -29,13 +29,14 @@ import { RestaurantAddFoodDialogComponent } from './restaurants/restaurant-add-f
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
 import { RestaurantItemComponent } from './restaurants/restaurant-item/restaurant-item.component';
 import { RestaurantDetailsComponent } from './restaurants/restaurant-details/restaurant-details.component';
-import { CartComponent } from './home/cart-component/cart-component';
+import { CartComponent } from './home/cart/cart-component';
 import { CustomerProfileComponent } from './customers/customer-profile/customer-profile.component';
 import { AddressItemComponent } from './customers/address-item/address-item.component';
 import { AddressListComponent } from './customers/address-list/address-list.component';
 import { AddressComponent } from './customers/address/address.component';
 import { AddressCreateComponent } from './customers/address-create/address-create.component';
 import { AddressUpdateComponent } from './customers/address-update/address-update.component';
+import { CartItemsComponent } from './home/cart-items/cart-items.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { AddressUpdateComponent } from './customers/address-update/address-updat
     AddressListComponent,
     AddressComponent,
     AddressCreateComponent,
-    AddressUpdateComponent
+    AddressUpdateComponent,
+    CartItemsComponent
   ],
   imports: [
     JwtModule.forRoot({
