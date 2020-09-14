@@ -37,6 +37,8 @@ import { AddressComponent } from './customers/address/address.component';
 import { AddressCreateComponent } from './customers/address-create/address-create.component';
 import { AddressUpdateComponent } from './customers/address-update/address-update.component';
 import { CartItemsComponent } from './home/cart-items/cart-items.component';
+import { CheckoutComponent } from './home/checkout/checkout.component';
+import { AddressSelectComponent } from './home/address-select/address-select.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,9 @@ import { CartItemsComponent } from './home/cart-items/cart-items.component';
     AddressComponent,
     AddressCreateComponent,
     AddressUpdateComponent,
-    CartItemsComponent
+    CartItemsComponent,
+    CheckoutComponent,
+    AddressSelectComponent
   ],
   imports: [
     JwtModule.forRoot({
