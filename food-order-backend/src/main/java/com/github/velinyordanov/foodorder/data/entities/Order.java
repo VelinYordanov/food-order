@@ -32,6 +32,8 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = { CascadeType.ALL })
     private Set<OrderFood> foods;
 
+    private String comment;
+
     public Order() {
 	super();
 	this.setStatus(Status.Pending);
@@ -80,6 +82,14 @@ public class Order extends BaseEntity {
 
     public void setCustomer(Customer customer) {
 	this.customer = customer;
+    }
+
+    public String getComment() {
+	return comment;
+    }
+
+    public void setComment(String comment) {
+	this.comment = comment;
     }
 
     @Override

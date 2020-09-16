@@ -18,6 +18,8 @@ public class OrderCreateDto {
     @NotEmpty(message = "No foods provided")
     private Collection<OrderFoodDto> foods;
 
+    private String comment;
+
     public String getRestaurantId() {
 	return restaurantId;
     }
@@ -48,5 +50,13 @@ public class OrderCreateDto {
 
     public void setFoods(Collection<OrderFoodDto> foods) {
 	this.foods = foods;
+    }
+
+    public String getComment() {
+	return comment;
+    }
+
+    public void setComment(String comment) {
+	this.comment = comment;
     }
 }

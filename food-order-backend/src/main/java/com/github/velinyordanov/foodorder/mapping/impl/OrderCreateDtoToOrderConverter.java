@@ -30,6 +30,7 @@ public class OrderCreateDtoToOrderConverter extends AbstractConverter<OrderCreat
 	Restaurant restaurant = new Restaurant();
 	restaurant.setId(source.getRestaurantId());
 	result.setRestaurant(restaurant);
+	result.setComment(source.getComment());
 
 	result
 		.setFoods(source.getFoods()

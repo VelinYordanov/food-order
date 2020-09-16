@@ -8,6 +8,7 @@ public class OrderDto {
     private CustomerOrderDto customer;
     private AddressDto address;
     private Collection<FoodOrderDto> foods;
+    private String comment;
 
     public String getId() {
 	return id;
@@ -47,5 +48,13 @@ public class OrderDto {
 
     public void setFoods(Collection<FoodOrderDto> foods) {
 	this.foods = foods;
+    }
+
+    public String getComment() {
+	return comment;
+    }
+
+    public void setComment(String comment) {
+	this.comment = comment;
     }
 }
