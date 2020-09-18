@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
@@ -18,8 +19,10 @@ export class AddressSelectComponent implements OnInit {
   addresses$: Observable<Address[]>;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
     private formBuilder: FormBuilder,
-    private cartService:CartService,
+    private cartService: CartService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private customerService: CustomerService) { }
@@ -43,12 +46,12 @@ export class AddressSelectComponent implements OnInit {
   }
 
   getAddressData(address: Address) {
-    return [address.neighborhood, address.street, address.streetNumber, address.apartmentBuildingNumber]
-      .filter(Boolean)
-      .join(", ");
+    return this.customerService.getAddressData(address);
   }
 
   confirmAddress() {
+    console.log(this.addressForm.get('address').value);
     this.cartService.updateSelectedAddress(this.addressForm.get('address').value);
+    this.router.navigate(['../', 'checkout'], { relativeTo: this.activatedRoute });
   }
 }

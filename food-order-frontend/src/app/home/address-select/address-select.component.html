@@ -6,7 +6,7 @@
                 <mat-label>Address</mat-label>
                 <mat-select formControlName="address">
                     <mat-option *ngFor="let address of addresses"
-                        [value]="address.id">
+                        [value]="address">
                         {{getAddressData(address)}}
                     </mat-option>
                 </mat-select>

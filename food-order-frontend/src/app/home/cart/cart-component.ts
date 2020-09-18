@@ -13,7 +13,7 @@ export class CartComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  goToCheckout() {
-    this.router.navigate(['order', 'checkout']);
+  goToAddress() {
+    this.router.navigate(['order', 'address']);
   }
 }

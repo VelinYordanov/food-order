@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Address } from '../models/address';
+import { OrderCreate } from '../models/order-create';
+import { Order } from '../models/order';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +28,17 @@ export class CustomerService {
     return this.httpClient.post(`${this.BASE_URL}/${customerId}/addresses`, address);
   }
 
-  editCustomerAddress(customerId:string, addressId:string, address:Address) {
+  editCustomerAddress(customerId: string, addressId: string, address: Address) {
     return this.httpClient.put(`${this.BASE_URL}/${customerId}/addresses/${addressId}`, address);
+  }
+
+  submitOrder(order: OrderCreate) {
+    return this.httpClient.post<Order>(`${this.BASE_URL}/${order.customerId}/orders`, order);
+  }
+
+  getAddressData(address: Address) {
+    return [address.neighborhood, address.street, address.streetNumber, address.apartmentBuildingNumber]
+      .filter(Boolean)
+      .join(", ");
   }
 }
