@@ -109,4 +109,10 @@ public class CustomersController {
     public Collection<OrderListDto> getCustomerOrders(@PathVariable String customerId) {
 	return this.customersService.getCustomerOrders(customerId);
     }
+
+    @GetMapping("{customerId}/orders/{orderId}")
+    @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
+    public OrderDto getCustomerOrder(@PathVariable String customerId, @PathVariable String orderId) {
+	return this.customersService.getCustomerOrder(customerId, orderId);
+    }
 }

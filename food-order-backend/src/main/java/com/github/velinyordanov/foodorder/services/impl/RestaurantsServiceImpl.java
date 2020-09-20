@@ -20,11 +20,13 @@ import com.github.velinyordanov.foodorder.data.FoodOrderData;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Category;
 import com.github.velinyordanov.foodorder.data.entities.Food;
+import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
+import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
@@ -357,5 +359,18 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 		.stream()
 		.map(order -> this.mapper.map(order, OrderListDto.class))
 		.collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDto getRestaurantOrder(String restaurantId, String orderId) {
+	Order order = this.foodOrderData.orders()
+		.findById(orderId)
+		.orElseThrow(() -> new NotFoundException("Order not found!"));
+
+	if (!restaurantId.equals(order.getRestaurant().getId())) {
+	    throw new NotFoundException("No such order found for restaurant.");
+	}
+
+	return this.mapper.map(order, OrderDto.class);
     }
 }

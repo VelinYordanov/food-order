@@ -31,4 +31,6 @@ public interface CustomersService {
     OrderDto addOrderToCustomer(String customerId, OrderCreateDto order);
 
     Collection<OrderListDto> getCustomerOrders(String customerId);
+
+    OrderDto getCustomerOrder(String customerId, String orderId);
 }

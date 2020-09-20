@@ -213,4 +213,17 @@ public class CustomersServiceImpl implements CustomersService {
 		.map(order -> this.mapper.map(order, OrderListDto.class))
 		.collect(Collectors.toList());
     }
+
+    @Override
+    public OrderDto getCustomerOrder(String customerId, String orderId) {
+	Order order = this.foodOrderData.orders()
+		.findById(orderId)
+		.orElseThrow(() -> new NotFoundException("Order not found"));
+
+	if (!customerId.equals(order.getCustomer().getId())) {
+	    throw new NotFoundException("Order not found for customer");
+	}
+
+	return this.mapper.map(order, OrderDto.class);
+    }
 }
