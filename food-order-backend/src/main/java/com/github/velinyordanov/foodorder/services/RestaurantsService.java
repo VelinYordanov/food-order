@@ -8,6 +8,7 @@ import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
+import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
@@ -38,4 +39,6 @@ public interface RestaurantsService {
     RestaurantDataDto getRestaurantData(String restaurantId);
 
     Collection<CategoryDto> getCategoriesForRestaurant(String restaurantId);
+
+    Collection<OrderListDto> getRestaurantOrders(String restaurantId);
 }

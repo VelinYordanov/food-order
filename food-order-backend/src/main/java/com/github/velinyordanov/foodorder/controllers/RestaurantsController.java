@@ -19,6 +19,7 @@ import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
+import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
@@ -112,5 +113,11 @@ public class RestaurantsController {
 	    @RequestBody @Valid CategoryCreateDto categoryCreateDto) {
 	return this.restaurantsService.addCategoryForRestaurant(restaurantId, categoryCreateDto)
 		.orElseThrow(() -> new IllegalStateException("An error occurred while creating category"));
+    }
+
+    @GetMapping("{restaurantId}/orders")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public Collection<OrderListDto> getRestaurantOrders(String restaurantId) {
+	return this.restaurantsService.getRestaurantOrders(restaurantId);
     }
 }

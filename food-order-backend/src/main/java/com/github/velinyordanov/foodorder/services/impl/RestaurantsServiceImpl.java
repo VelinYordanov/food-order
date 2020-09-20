@@ -25,6 +25,7 @@ import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
+import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
@@ -347,5 +348,14 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 			.collect(Collectors.toList()))
 		.orElseThrow(() -> new IllegalStateException(
 			"An error occurred while loading categories. Try again later."));
+    }
+
+    @Override
+    public Collection<OrderListDto> getRestaurantOrders(String restaurantId) {
+	return this.foodOrderData.orders()
+		.findByRestaurantId(restaurantId)
+		.stream()
+		.map(order -> this.mapper.map(order, OrderListDto.class))
+		.collect(Collectors.toList());
     }
 }
