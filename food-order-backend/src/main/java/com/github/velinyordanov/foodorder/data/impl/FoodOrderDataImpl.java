@@ -6,6 +6,7 @@ import com.github.velinyordanov.foodorder.data.AddressesRepository;
 import com.github.velinyordanov.foodorder.data.AuthoritiesRepository;
 import com.github.velinyordanov.foodorder.data.CategoriesRepository;
 import com.github.velinyordanov.foodorder.data.CustomersRepository;
+import com.github.velinyordanov.foodorder.data.DiscountCodesRepository;
 import com.github.velinyordanov.foodorder.data.FoodOrderData;
 import com.github.velinyordanov.foodorder.data.FoodsRepository;
 import com.github.velinyordanov.foodorder.data.OrdersRepository;
@@ -20,6 +21,7 @@ public class FoodOrderDataImpl implements FoodOrderData {
     private final OrdersRepository ordersRepository;
     private final RestaurantsRepository restaurantsRepository;
     private final AddressesRepository addressesRepository;
+    private final DiscountCodesRepository discountCodesRepository;
 
     public FoodOrderDataImpl(
 	    AuthoritiesRepository authoritiesRepository,
@@ -28,7 +30,8 @@ public class FoodOrderDataImpl implements FoodOrderData {
 	    CustomersRepository customersRepository,
 	    FoodsRepository foodsRepository,
 	    OrdersRepository ordersRepository,
-	    RestaurantsRepository restaurantsRepository) {
+	    RestaurantsRepository restaurantsRepository,
+	    DiscountCodesRepository discountCodesRepository) {
 	this.authoritiesRepository = authoritiesRepository;
 	this.categoriesRepository = categoriesRepository;
 	this.addressesRepository = addressesRepository;
@@ -36,6 +39,7 @@ public class FoodOrderDataImpl implements FoodOrderData {
 	this.foodsRepository = foodsRepository;
 	this.ordersRepository = ordersRepository;
 	this.restaurantsRepository = restaurantsRepository;
+	this.discountCodesRepository = discountCodesRepository;
     }
 
     @Override
@@ -71,5 +75,10 @@ public class FoodOrderDataImpl implements FoodOrderData {
     @Override
     public AddressesRepository addresses() {
 	return this.addressesRepository;
+    }
+
+    @Override
+    public DiscountCodesRepository discountCodes() {
+	return this.discountCodesRepository;
     }
 }

@@ -32,6 +32,10 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = { CascadeType.ALL })
     private Set<OrderFood> foods;
 
+    @ManyToOne()
+    @JoinColumn(name = "DiscountCodeId")
+    private DiscountCode discountCode;
+
     private String comment;
 
     public Order() {

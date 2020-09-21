@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
+import com.github.velinyordanov.foodorder.exceptions.ExistingDiscountCodeException;
 import com.github.velinyordanov.foodorder.exceptions.NonEmptyCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 
@@ -85,6 +87,16 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException ex) {
 	return this.buildResponse(ex, "Entity not found", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ExistingDiscountCodeException.class)
+    public ResponseEntity<Map<String, String>> handleExistingDiscountCodeException(ExistingDiscountCodeException ex) {
+	return this.buildResponse(ex, "Discount code already exists for restaurant", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, String>> handleBadRequestException(BadRequestException ex) {
+	return this.buildResponse(ex, "Bad request", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

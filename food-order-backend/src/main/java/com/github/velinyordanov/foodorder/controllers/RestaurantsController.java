@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
+import com.github.velinyordanov.foodorder.dto.DiscountCodeCreateDto;
+import com.github.velinyordanov.foodorder.dto.DiscountCodeDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
@@ -126,5 +130,21 @@ public class RestaurantsController {
     @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public OrderDto getRestaurantOrder(@PathVariable String restaurantId, @PathVariable String orderId) {
 	return this.restaurantsService.getRestaurantOrder(restaurantId, orderId);
+    }
+
+    @PostMapping("{restaurantId}/discount-codes")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public DiscountCodeDto addDiscountCodeToRestaurant(@PathVariable String restaurantId,
+	    @Valid @RequestBody DiscountCodeCreateDto discountCode) {
+	return this.restaurantsService.addDiscountCodeToRestaurant(restaurantId, discountCode);
+    }
+
+    @GetMapping("{restaurantId}/discount-codes/{code}")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    public DiscountCodeDto getDiscountCode(
+	    @PathVariable String restaurantId,
+	    @PathVariable String code,
+	    @AuthenticationPrincipal Customer customer) {
+	return this.restaurantsService.getDiscountByCode(restaurantId, code, customer.getId());
     }
 }

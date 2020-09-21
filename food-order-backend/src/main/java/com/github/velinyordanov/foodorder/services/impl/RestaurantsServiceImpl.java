@@ -19,11 +19,14 @@ import org.springframework.stereotype.Service;
 import com.github.velinyordanov.foodorder.data.FoodOrderData;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Category;
+import com.github.velinyordanov.foodorder.data.entities.DiscountCode;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
+import com.github.velinyordanov.foodorder.dto.DiscountCodeCreateDto;
+import com.github.velinyordanov.foodorder.dto.DiscountCodeDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
@@ -34,11 +37,14 @@ import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
+import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
+import com.github.velinyordanov.foodorder.exceptions.ExistingDiscountCodeException;
 import com.github.velinyordanov.foodorder.exceptions.NonEmptyCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
+import com.github.velinyordanov.foodorder.services.DateService;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
 import com.github.velinyordanov.foodorder.services.RestaurantsService;
 
@@ -47,6 +53,7 @@ import com.github.velinyordanov.foodorder.services.RestaurantsService;
 public class RestaurantsServiceImpl implements RestaurantsService {
     private final FoodOrderData foodOrderData;
     private final JwtTokenService jwtTokenService;
+    private final DateService dateService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final Mapper mapper;
@@ -56,12 +63,14 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	    FoodOrderData foodOrderData,
 	    JwtTokenService jwtTokenService,
 	    AuthenticationManager authenticationManager,
+	    DateService dateService,
 	    PasswordEncoder passwordEncoder,
 	    Mapper mapper) {
 	this.foodOrderData = foodOrderData;
 	this.authenticationManager = authenticationManager;
 	this.jwtTokenService = jwtTokenService;
 	this.passwordEncoder = passwordEncoder;
+	this.dateService = dateService;
 	this.mapper = mapper;
     }
 
@@ -372,5 +381,61 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	}
 
 	return this.mapper.map(order, OrderDto.class);
+    }
+
+    @Override
+    public DiscountCodeDto addDiscountCodeToRestaurant(String restaurantId, DiscountCodeCreateDto discountCode) {
+	Restaurant restaurant = this.foodOrderData.restaurants()
+		.findById(restaurantId)
+		.orElseThrow(() -> new NotFoundException("Restaurant not found"));
+
+	Optional<DiscountCode> discountCodeOptional =
+		this.foodOrderData.discountCodes()
+			.findByCodeAndRestaurantIdWithDeleted(restaurantId, discountCode.getCode());
+	if (discountCodeOptional.isPresent()) {
+	    DiscountCode code = discountCodeOptional.get();
+	    throw new ExistingDiscountCodeException(
+		    MessageFormat.format("Discount code {0} already exists for restaurant {1}",
+			    code.getCode(),
+			    code.getRestaurant().getName()));
+	}
+
+	DiscountCode discountCodeToBeAdded = this.mapper.map(discountCode, DiscountCode.class);
+	discountCodeToBeAdded.setRestaurant(restaurant);
+
+	return this.mapper.map(this.foodOrderData.discountCodes().save(discountCodeToBeAdded), DiscountCodeDto.class);
+    }
+
+    @Override
+    public DiscountCodeDto getDiscountByCode(String restaurantId, String code, String customerId) {
+	DiscountCode discountCode = this.foodOrderData.discountCodes()
+		.findByCodeAndRestaurantId(restaurantId, code)
+		.orElseThrow(() -> new NotFoundException("Discount code not found"));
+
+	if (this.dateService.isInTheFuture(discountCode.getValidFrom())) {
+	    throw new BadRequestException(
+		    MessageFormat.format("Discount code {0} is not available yet. Try again later.", code));
+	}
+
+	if (this.dateService.isInThePast(discountCode.getValidTo())) {
+	    throw new BadRequestException(MessageFormat.format("Discount code {0} is expired.", code));
+	}
+
+	if (discountCode.getIsSingleUse() && !discountCode.getOrders().isEmpty()) {
+	    throw new BadRequestException(MessageFormat.format("Discount code {0} was already used.", code));
+	}
+
+	boolean hasCustomerUserThisCodeBefore = discountCode.getOrders()
+		.stream()
+		.map(order -> order.getCustomer().getId())
+		.filter(id -> id.equals(customerId))
+		.findFirst()
+		.isPresent();
+
+	if (discountCode.getIsOncePerUser() && hasCustomerUserThisCodeBefore) {
+	    throw new BadRequestException(MessageFormat.format("You have already used code {0}.", code));
+	}
+
+	return this.mapper.map(discountCode, DiscountCodeDto.class);
     }
 }

@@ -19,7 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 public class Restaurant extends BaseUser {
     private static final long serialVersionUID = 7321303086507184708L;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "Name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "Description")
@@ -54,6 +54,9 @@ public class Restaurant extends BaseUser {
 		    CascadeType.PERSIST,
 		    CascadeType.REFRESH })
     private Set<Order> orders;
+
+    @OneToMany(mappedBy = "restaurant")
+    private Set<DiscountCode> discountCodes;
 
     public String getName() {
 	return name;
@@ -101,6 +104,14 @@ public class Restaurant extends BaseUser {
 
     public void setAuthorities(Set<Authority> authorities) {
 	this.authorities = authorities;
+    }
+
+    public Set<DiscountCode> getDiscountCodes() {
+	return discountCodes;
+    }
+
+    public void setDiscountCodes(Set<DiscountCode> discountCodes) {
+	this.discountCodes = discountCodes;
     }
 
     @Override
