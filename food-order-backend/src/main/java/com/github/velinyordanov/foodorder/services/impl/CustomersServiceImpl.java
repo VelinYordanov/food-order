@@ -19,6 +19,7 @@ import com.github.velinyordanov.foodorder.data.FoodOrderData;
 import com.github.velinyordanov.foodorder.data.entities.Address;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Customer;
+import com.github.velinyordanov.foodorder.data.entities.DiscountCode;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
@@ -32,12 +33,14 @@ import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
 import com.github.velinyordanov.foodorder.services.CustomersService;
+import com.github.velinyordanov.foodorder.services.DiscountCodesService;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
 
 @Service
 public class CustomersServiceImpl implements CustomersService {
     private final Mapper mapper;
     private final FoodOrderData foodOrderData;
+    private final DiscountCodesService discountCodesService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
     private final PasswordEncoder encoder;
@@ -46,11 +49,13 @@ public class CustomersServiceImpl implements CustomersService {
 	    Mapper mapper,
 	    PasswordEncoder encoder,
 	    FoodOrderData foodOrderData,
+	    DiscountCodesService discountCodesService,
 	    JwtTokenService jwtTokenService,
 	    AuthenticationManager authenticationManager) {
 	this.mapper = mapper;
 	this.jwtTokenService = jwtTokenService;
 	this.foodOrderData = foodOrderData;
+	this.discountCodesService = discountCodesService;
 	this.authenticationManager = authenticationManager;
 	this.encoder = encoder;
     }
@@ -202,6 +207,17 @@ public class CustomersServiceImpl implements CustomersService {
 	}
 
 	Order orderToAdd = this.mapper.map(order, Order.class);
+
+	if (order.getDiscountCodeId() != null) {
+	    DiscountCode discountCode = this.foodOrderData.discountCodes()
+		    .findById(order.getDiscountCodeId())
+		    .orElseThrow(() -> new NotFoundException("Discount code not found"));
+
+	    this.discountCodesService.validateDiscountCode(discountCode, customerId);
+
+	    orderToAdd.setDiscountCode(discountCode);
+	}
+
 	return this.mapper.map(this.foodOrderData.orders().save(orderToAdd), OrderDto.class);
     }
 

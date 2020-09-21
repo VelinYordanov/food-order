@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { CartItem } from 'src/app/restaurants/models/cart-item';
 import { Restaurant } from 'src/app/restaurants/models/restaurant';
 import { CartService } from 'src/app/shared/cart.service';
@@ -10,6 +11,8 @@ import { CartService } from 'src/app/shared/cart.service';
   styleUrls: ['./cart-items.component.scss']
 })
 export class CartItemsComponent implements OnInit {
+  @Input('discountCode') discountCode: DiscountCode;
+
   selectedRestaurant$: Observable<Restaurant>;
   items$: Observable<CartItem[]>;
 
@@ -28,6 +31,10 @@ export class CartItemsComponent implements OnInit {
     return items.reduce((total, current) => {
       return total + this.calculateItemPrice(current);
     }, 0);
+  }
+
+  calculateTotalPriceWithDiscountCode(items: CartItem[]) {
+    return this.calculateTotalPrice(items) * (1 - (this.discountCode.discountPercentage / 100));
   }
 
   increaseQuantity(item: CartItem) {

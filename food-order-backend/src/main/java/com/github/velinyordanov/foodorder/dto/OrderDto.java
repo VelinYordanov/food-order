@@ -7,6 +7,7 @@ public class OrderDto {
     private RestaurantOrderDto restaurant;
     private CustomerOrderDto customer;
     private AddressDto address;
+    private DiscountCodeDto discountCode;
     private Collection<FoodOrderDto> foods;
     private String comment;
 
@@ -48,6 +49,14 @@ public class OrderDto {
 
     public void setFoods(Collection<FoodOrderDto> foods) {
 	this.foods = foods;
+    }
+
+    public DiscountCodeDto getDiscountCode() {
+	return discountCode;
+    }
+
+    public void setDiscountCode(DiscountCodeDto discountCode) {
+	this.discountCode = discountCode;
     }
 
     public String getComment() {

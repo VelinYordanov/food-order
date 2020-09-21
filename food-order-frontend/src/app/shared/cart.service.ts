@@ -77,6 +77,9 @@ export class CartService {
 
   clearCart() {
     this.foodCart.next([]);
+    this.currentRestaurant.next(null);
+    this.selectedAddress.next(null);
+    
   }
 
   setRestaurant(restaurant: Restaurant) {

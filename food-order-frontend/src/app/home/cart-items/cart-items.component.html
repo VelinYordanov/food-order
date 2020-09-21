@@ -30,7 +30,14 @@
                 </h3>
             </div>
             <div>
-                <h2>{{calculateTotalPrice(items) | currency}}</h2>
+                <h2>
+                    <span [class.line-through]="discountCode">{{calculateTotalPrice(items) | currency}}</span>
+                    <span *ngIf="discountCode">-{{discountCode.discountPercentage}}%</span>
+                </h2>
+                <h2 *ngIf="discountCode">{{calculateTotalPriceWithDiscountCode(items) | currency}}</h2>
+            </div>
+            <div *ngIf="discountCode">
+                <p>You applied discount code {{discountCode.code}} which gives you {{discountCode.discountPercentage}}% off.</p>
             </div>
         </div>
     </section>

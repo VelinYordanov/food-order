@@ -2,8 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
-import { catchError, map, switchMap, switchMapTo, withLatestFrom } from 'rxjs/operators';
+import { catchError, filter, finalize, map, switchMap, switchMapTo, withLatestFrom } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
+import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/alert.service';
 import { AuthenticationService } from 'src/app/shared/authentication.service';
@@ -15,10 +16,15 @@ import { CartService } from 'src/app/shared/cart.service';
   styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
-  private submitButtonClicks: Subject<void> = new Subject<void>();
-
   comment: FormControl;
+  discountCodeFormControl: FormControl;
+
   selectedAddress$: Observable<Address>;
+
+  discountCode: DiscountCode = null;
+
+  private submitButtonClicks: Subject<void> = new Subject<void>();
+  private applyDiscountCodeClicks: Subject<void> = new Subject<void>();
 
   constructor(
     private alertService: AlertService,
@@ -29,6 +35,50 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.setUpSubmitOrder();
+    this.setUpDiscountCodeLookup();
+
+    this.selectedAddress$ = this.cartService.selectedAddress$;
+
+    this.discountCodeFormControl = new FormControl(null);
+    this.comment = new FormControl(null);
+  }
+
+  ngOnDestroy(): void {
+    this.submitButtonClicks.complete();
+    this.applyDiscountCodeClicks.complete();
+  }
+
+  submitOrder() {
+    this.submitButtonClicks.next();
+  }
+
+  getAddressData(address: Address) {
+    return this.customerService.getAddressData(address);
+  }
+
+  applyDiscountCode() {
+    this.applyDiscountCodeClicks.next();
+  }
+
+  private setUpDiscountCodeLookup() {
+    this.applyDiscountCodeClicks
+      .pipe(
+        map(_ => this.discountCodeFormControl.value),
+        filter(code => !!code),
+        withLatestFrom(this.cartService.selectedRestaurant$),
+        switchMap(([code, restaurant]) =>
+          this.customerService.getDiscountCode(restaurant.id, code)
+            .pipe(
+              catchError(error => {
+                this.alertService.displayMessage(error?.error?.description || 'An error occurred while looking up discount code. Try again later.', 'error');
+                return of(null);
+              })
+            ))
+      ).subscribe(discountCode => discountCode && (this.discountCode = discountCode))
+  }
+
+  private setUpSubmitOrder() {
     this.submitButtonClicks
       .pipe(
         switchMapTo(
@@ -52,13 +102,23 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           ])
             .pipe(
               switchMap(([customerId, restaurantId, addressId, foods]) =>
-                this.customerService.submitOrder({ restaurantId, customerId, addressId, foods, comment: this.comment.value })
+                this.customerService.submitOrder(
+                  {
+                    restaurantId,
+                    customerId,
+                    addressId,
+                    foods,
+                    discountCodeId: this.discountCode?.id,
+                    comment: this.comment.value
+                  }
+                )
                   .pipe(
                     catchError(error => {
                       this.alertService.displayMessage(error?.error?.description || 'An error occurred while submitting order. Try again later', 'error');
                       return of(null);
                     })
-                  ))
+                  )),
+              finalize(() => this.cartService.clearCart())
             )
         ))
       .subscribe(order => {
@@ -66,20 +126,5 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           this.alertService.displayMessage('Successfully submitted order.', 'success');
         }
       })
-
-    this.selectedAddress$ = this.cartService.selectedAddress$;
-    this.comment = new FormControl(null);
-  }
-
-  ngOnDestroy(): void {
-    this.submitButtonClicks.complete();
-  }
-
-  submitOrder() {
-    this.submitButtonClicks.next();
-  }
-
-  getAddressData(address:Address) {
-    return this.customerService.getAddressData(address);
   }
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Address } from '../models/address';
 import { OrderCreate } from '../models/order-create';
 import { Order } from '../models/order';
+import { DiscountCode } from '../models/discount-code';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,10 @@ export class CustomerService {
 
   submitOrder(order: OrderCreate) {
     return this.httpClient.post<Order>(`${this.BASE_URL}/${order.customerId}/orders`, order);
+  }
+
+  getDiscountCode(restaurantId: string, code: string) {
+    return this.httpClient.get<DiscountCode>(`/api/restaurants/${restaurantId}/discount-codes/${code}`);
   }
 
   getAddressData(address: Address) {

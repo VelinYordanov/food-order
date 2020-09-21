@@ -88,6 +88,14 @@ public class Order extends BaseEntity {
 	this.customer = customer;
     }
 
+    public DiscountCode getDiscountCode() {
+	return discountCode;
+    }
+
+    public void setDiscountCode(DiscountCode discountCode) {
+	this.discountCode = discountCode;
+    }
+
     public String getComment() {
 	return comment;
     }
