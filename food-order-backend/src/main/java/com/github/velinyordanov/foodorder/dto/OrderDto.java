@@ -2,8 +2,11 @@ package com.github.velinyordanov.foodorder.dto;
 
 import java.util.Collection;
 
+import com.github.velinyordanov.foodorder.data.entities.Status;
+
 public class OrderDto {
     private String id;
+    private Status status;
     private RestaurantOrderDto restaurant;
     private CustomerOrderDto customer;
     private AddressDto address;
@@ -17,6 +20,14 @@ public class OrderDto {
 
     public void setId(String id) {
 	this.id = id;
+    }
+
+    public Status getStatus() {
+	return status;
+    }
+
+    public void setStatus(Status status) {
+	this.status = status;
     }
 
     public RestaurantOrderDto getRestaurant() {

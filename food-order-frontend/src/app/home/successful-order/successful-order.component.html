@@ -1,0 +1,3 @@
+<section *ngIf="order$ | async; let order">
+    <p>Your order is {{getOrderStatus(order.status)}}</p>
+</section>

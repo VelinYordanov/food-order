@@ -124,6 +124,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       .subscribe(order => {
         if (order) {
           this.alertService.displayMessage('Successfully submitted order.', 'success');
+          this.router.navigate(['../', order.id], { relativeTo: this.activatedRoute });
         }
       })
   }

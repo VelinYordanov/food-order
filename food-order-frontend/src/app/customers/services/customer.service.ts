@@ -37,6 +37,10 @@ export class CustomerService {
     return this.httpClient.post<Order>(`${this.BASE_URL}/${order.customerId}/orders`, order);
   }
 
+  getOrderById(customerId: string, orderId: string) {
+    return this.httpClient.get<Order>(`${this.BASE_URL}/${customerId}/orders/${orderId}`);
+  }
+
   getDiscountCode(restaurantId: string, code: string) {
     return this.httpClient.get<DiscountCode>(`/api/restaurants/${restaurantId}/discount-codes/${code}`);
   }

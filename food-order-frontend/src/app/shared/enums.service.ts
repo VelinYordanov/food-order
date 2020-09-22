@@ -12,6 +12,7 @@ export class EnumsService {
 
   private cities$: Observable<EnumData[]>;
   private addressTypes$: Observable<EnumData[]>;
+  private orderStatuses$: Observable<EnumData[]>;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -35,5 +36,16 @@ export class EnumsService {
     }
 
     return this.addressTypes$;
+  }
+
+  getOrderStatuses() {
+    if (!this.orderStatuses$) {
+      this.orderStatuses$ = this.httpClient.get<EnumData[]>(`${this.BASE_URL}/order-statuses`)
+        .pipe(
+          shareReplay()
+        );
+    }
+
+    return this.orderStatuses$;
   }
 }

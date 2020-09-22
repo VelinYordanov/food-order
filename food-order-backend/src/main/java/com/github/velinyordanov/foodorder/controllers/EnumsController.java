@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.velinyordanov.foodorder.data.entities.Status;
 import com.github.velinyordanov.foodorder.dto.EnumDto;
 import com.github.velinyordanov.foodorder.enums.AddressType;
 import com.github.velinyordanov.foodorder.enums.City;
@@ -30,5 +31,10 @@ public class EnumsController {
     @GetMapping("cities")
     public Collection<EnumDto> getCities() {
 	return this.enumsService.getEnumOptions(City.class);
+    }
+
+    @GetMapping("order-statuses")
+    public Collection<EnumDto> getOrderStatuses() {
+	return this.enumsService.getEnumOptions(Status.class);
     }
 }

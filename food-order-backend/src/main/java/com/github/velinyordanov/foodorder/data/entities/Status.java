@@ -1,7 +1,9 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
 public enum Status {
-    Pending(0), Delivered(1);
+    Pending(0),
+    Delivered(1),
+    Accepted(2);
 
     private int member;
 
