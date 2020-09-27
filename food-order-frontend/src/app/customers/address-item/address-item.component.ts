@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Address } from '../models/address';
-import { EnumsService } from '../../shared/enums.service';
+import { EnumsService } from '../../shared/services/enums.service';
 import { EnumData } from 'src/app/shared/models/enum-data';
 import { CustomerService } from '../services/customer.service';
-import { AuthenticationService } from 'src/app/shared/authentication.service';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { catchError, first, switchMap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { AlertService } from 'src/app/shared/alert.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
   selector: 'app-address-item',

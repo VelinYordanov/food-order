@@ -2,8 +2,8 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, filter, first, map, startWith, switchMap, switchMapTo, tap } from 'rxjs/operators';
-import { AuthenticationService } from 'src/app/shared/authentication.service';
-import { AlertService } from 'src/app/shared/alert.service';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
 import { Category } from '../models/category';
 import { Restaurant } from '../models/restaurant';
 import { RestaurantService } from '../services/restaurant.service';

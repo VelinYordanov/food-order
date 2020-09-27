@@ -6,9 +6,9 @@ import { catchError, filter, finalize, map, switchMap, switchMapTo, withLatestFr
 import { Address } from 'src/app/customers/models/address';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { CustomerService } from 'src/app/customers/services/customer.service';
-import { AlertService } from 'src/app/shared/alert.service';
-import { AuthenticationService } from 'src/app/shared/authentication.service';
-import { CartService } from 'src/app/shared/cart.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { CartService } from 'src/app/shared/services/cart.service';
 
 @Component({
   selector: 'app-checkout',

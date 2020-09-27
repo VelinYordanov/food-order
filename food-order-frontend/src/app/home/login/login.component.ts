@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subject, of, noop } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { LoginService } from '../services/login-service.service';
 import { exhaustMap, catchError, tap } from 'rxjs/operators';
-import { AuthenticationService } from 'src/app/shared/authentication.service';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { Router } from '@angular/router';
 
 @Component({

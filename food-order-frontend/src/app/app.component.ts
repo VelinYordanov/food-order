@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { StorageService } from './shared/storage.service';
-import { AuthenticationService } from './shared/authentication.service';
+import { StorageService } from './shared/services/storage.service';
+import { AuthenticationService } from './shared/services/authentication.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Address } from '../customers/models/address';
-import { CartItem } from '../restaurants/models/cart-item';
-import { Food } from '../restaurants/models/food';
-import { Restaurant } from '../restaurants/models/restaurant';
+import { Address } from '../../customers/models/address';
+import { CartItem } from '../../restaurants/models/cart-item';
+import { Food } from '../../restaurants/models/food';
+import { Restaurant } from '../../restaurants/models/restaurant';
 
 @Injectable({
   providedIn: 'root'

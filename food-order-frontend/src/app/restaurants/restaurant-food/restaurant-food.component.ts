@@ -6,12 +6,12 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, filter, first, map, switchMap, switchMapTo, tap } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/alert.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
 import { Category } from '../models/category';
 import { Food } from '../models/food';
 import { price } from 'src/app/shared/validators/price-validator';
 import { RestaurantService } from '../services/restaurant.service';
-import { AuthenticationService } from 'src/app/shared/authentication.service';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 
 @Component({
   selector: 'app-restaurant-food',

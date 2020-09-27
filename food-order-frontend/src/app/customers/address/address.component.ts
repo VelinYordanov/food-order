@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { EnumsService } from 'src/app/shared/enums.service';
+import { EnumsService } from 'src/app/shared/services/enums.service';
 import { EnumData } from 'src/app/shared/models/enum-data';
 import { Address } from '../models/address';
 

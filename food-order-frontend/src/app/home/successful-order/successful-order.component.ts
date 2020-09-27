@@ -4,9 +4,9 @@ import { combineLatest, Observable, of } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { Order } from 'src/app/customers/models/order';
 import { CustomerService } from 'src/app/customers/services/customer.service';
-import { AlertService } from 'src/app/shared/alert.service';
-import { AuthenticationService } from 'src/app/shared/authentication.service';
-import { EnumsService } from 'src/app/shared/enums.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { EnumsService } from 'src/app/shared/services/enums.service';
 import { EnumData } from 'src/app/shared/models/enum-data';
 
 @Component({

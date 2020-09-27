@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { CartItem } from 'src/app/restaurants/models/cart-item';
 import { Restaurant } from 'src/app/restaurants/models/restaurant';
-import { CartService } from 'src/app/shared/cart.service';
+import { CartService } from 'src/app/shared/services/cart.service';
 
 @Component({
   selector: 'app-cart-items',

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { throwError } from 'rxjs';
 import { catchError, first, switchMap } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/alert.service';
-import { AuthenticationService } from 'src/app/shared/authentication.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { Address } from '../models/address';
 import { CustomerService } from '../services/customer.service';
 

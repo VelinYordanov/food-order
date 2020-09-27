@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SwalToken } from './injection-tokens/swal-injection-token';
+import { SwalToken } from '../injection-tokens/swal-injection-token';
 
 @Injectable({
   providedIn: 'root'

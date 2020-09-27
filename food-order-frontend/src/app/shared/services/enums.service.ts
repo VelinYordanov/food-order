@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-import { EnumData } from './models/enum-data';
+import { EnumData } from '../models/enum-data';
 
 @Injectable({
   providedIn: 'root'

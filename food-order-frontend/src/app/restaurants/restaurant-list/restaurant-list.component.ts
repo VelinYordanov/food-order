@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/alert.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
 import { RestaurantListItem } from '../models/restaurant-list-item';
 import { RestaurantService } from '../services/restaurant.service';
 
