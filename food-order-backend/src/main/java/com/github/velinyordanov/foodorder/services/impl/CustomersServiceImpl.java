@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,6 +41,7 @@ import com.github.velinyordanov.foodorder.services.JwtTokenService;
 public class CustomersServiceImpl implements CustomersService {
     private final Mapper mapper;
     private final FoodOrderData foodOrderData;
+    private final SimpMessagingTemplate messagingTemplate;
     private final DiscountCodesService discountCodesService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
@@ -48,12 +50,14 @@ public class CustomersServiceImpl implements CustomersService {
     public CustomersServiceImpl(
 	    Mapper mapper,
 	    PasswordEncoder encoder,
+	    SimpMessagingTemplate messagingTemplate,
 	    FoodOrderData foodOrderData,
 	    DiscountCodesService discountCodesService,
 	    JwtTokenService jwtTokenService,
 	    AuthenticationManager authenticationManager) {
 	this.mapper = mapper;
 	this.jwtTokenService = jwtTokenService;
+	this.messagingTemplate = messagingTemplate;
 	this.foodOrderData = foodOrderData;
 	this.discountCodesService = discountCodesService;
 	this.authenticationManager = authenticationManager;
@@ -218,7 +222,11 @@ public class CustomersServiceImpl implements CustomersService {
 	    orderToAdd.setDiscountCode(discountCode);
 	}
 
-	return this.mapper.map(this.foodOrderData.orders().save(orderToAdd), OrderDto.class);
+	OrderDto result = this.mapper.map(this.foodOrderData.orders().save(orderToAdd), OrderDto.class);
+	this.messagingTemplate.convertAndSend(
+		MessageFormat.format("/notifications/restaurants/{0}/orders", result.getRestaurant().getId()),
+		result);
+	return result;
     }
 
     @Override

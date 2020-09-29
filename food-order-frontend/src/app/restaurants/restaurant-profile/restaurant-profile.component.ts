@@ -1,8 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, filter, first, map, startWith, switchMap, switchMapTo, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { RealTimeNotificationsService } from 'src/app/shared/services/real-time-notifications.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Category } from '../models/category';
 import { Restaurant } from '../models/restaurant';
@@ -34,6 +35,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private restaurantService: RestaurantService,
     private authenticationService: AuthenticationService,
+    private notificationsService: RealTimeNotificationsService,
     private dialog: MatDialog,
     private alertService: AlertService) { }
 
@@ -47,6 +49,13 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
     this.search = this.formBuilder.control('');
 
     this.restaurantForm.disable();
+
+    this.authenticationService.user$
+      .pipe(
+        map(restaurant => restaurant.id),
+        first(),
+        switchMap(id => this.notificationsService.subscribe(`/notifications/restaurants/${id}/orders`)))
+      .subscribe(console.log);
 
     this.filteredFoods$ = this.search.valueChanges
       .pipe(
@@ -96,6 +105,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.editRestaurantClicksSubject.complete();
+    this.notificationsService.disconnect();
   }
 
   cancel() {
