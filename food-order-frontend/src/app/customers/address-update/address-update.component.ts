@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable, throwError } from 'rxjs';
+import { combineLatest, EMPTY, Observable } from 'rxjs';
 import { catchError, first, map, switchMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
@@ -45,7 +45,7 @@ export class AddressUpdateComponent implements OnInit {
             .pipe(
               catchError(error => {
                 this.alertService.displayMessage('An error occurred while loading address. Try again later.', 'error');
-                return throwError(error);
+                return EMPTY;
               })
             ))
       ).subscribe(address => this.address = address);
@@ -62,7 +62,7 @@ export class AddressUpdateComponent implements OnInit {
           .pipe(
             catchError(error => {
               this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting address. Try again later.', 'error');
-              return throwError(error);
+              return EMPTY;
             })
           ))
       ).subscribe(address => {

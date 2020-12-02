@@ -30,11 +30,11 @@ export class RestaurantService {
   }
 
   addFood(restaurantId, food: Food) {
-    return this.httpClient.post(`${this.BASE_URL}/${restaurantId}/foods`, food);
+    return this.httpClient.post<Food>(`${this.BASE_URL}/${restaurantId}/foods`, food);
   }
 
   editRestaurant(restaurantId: string, restaurant: RestaurantEdit) {
-    return this.httpClient.put(`${this.BASE_URL}/${restaurantId}`, restaurant);
+    return this.httpClient.put<Restaurant>(`${this.BASE_URL}/${restaurantId}`, restaurant);
   }
 
   editFood(restaurantId: string, foodId: string, food: Food) {

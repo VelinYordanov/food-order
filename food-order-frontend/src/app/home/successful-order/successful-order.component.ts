@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, Observable, of } from 'rxjs';
+import { combineLatest, EMPTY, Observable } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { Order } from 'src/app/customers/models/order';
 import { CustomerService } from 'src/app/customers/services/customer.service';
@@ -50,7 +50,7 @@ export class SuccessfulOrderComponent implements OnInit {
           .pipe(
             catchError(error => {
               this.alertService.displayMessage(error?.error?.description || 'An error occurred while loading offer. Try again later.', 'error');
-              return of(null);
+              return EMPTY;
             })
           ))
     )

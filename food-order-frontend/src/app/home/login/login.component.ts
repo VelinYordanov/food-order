@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subject, of } from 'rxjs';
+import { Subject, EMPTY } from 'rxjs';
 import { LoginService } from '../services/login-service.service';
 import { exhaustMap, catchError, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
@@ -35,19 +35,17 @@ export class LoginComponent implements OnInit {
         }),
         exhaustMap(
           data => data.isRestaurant ?
-            this.loginService.loginRestaurant(data).pipe(catchError(error => of(error))) :
-            this.loginService.loginCustomer(data).pipe(catchError(error => of(error)))
+            this.loginService.loginRestaurant(data).pipe(catchError(error => EMPTY)) :
+            this.loginService.loginCustomer(data).pipe(catchError(error => EMPTY))
         ),
         tap({
           next: _ => this.loginForm.enable()
         }),
       ).subscribe(result => {
-        if (!result.error) {
           this.authenticationService.login(result.token);
           if (this.loginForm.get('isRestaurant').value) {
             this.router.navigate(['profile']);
           }
-        }
       });
 
     this.loginForm = this.formBuilder.group({

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
 import { CustomerService } from 'src/app/customers/services/customer.service';
@@ -39,7 +39,7 @@ export class AddressSelectComponent implements OnInit {
             .pipe(
               catchError(error => {
                 this.alertService.displayMessage(error?.error?.description || "An error occurred while loading addresses. Try again later.", 'error');
-                return throwError(error);
+                return EMPTY;
               })
             ))
       )

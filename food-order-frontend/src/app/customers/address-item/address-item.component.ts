@@ -5,7 +5,7 @@ import { EnumData } from 'src/app/shared/models/enum-data';
 import { CustomerService } from '../services/customer.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { catchError, first, switchMap } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
@@ -57,7 +57,7 @@ export class AddressItemComponent implements OnInit {
         .pipe(
           catchError(error => {
             this.alertService.displayMessage(error?.error?.description || `An error occurred while deleting address ${this.address.id}. Try again later.`, 'error');
-            return throwError(error);
+            return EMPTY;
           })
         ))
     )

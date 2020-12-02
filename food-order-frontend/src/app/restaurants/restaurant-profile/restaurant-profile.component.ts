@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, of, Subject } from 'rxjs';
+import { EMPTY, Observable, Subject } from 'rxjs';
 import { catchError, filter, first, map, startWith, switchMap, switchMapTo, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { RealTimeNotificationsService } from 'src/app/shared/services/real-time-notifications.service';
@@ -71,16 +71,14 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
             .pipe(
               catchError(error => {
                 this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting restaurant. Try again later.', 'error');
-                return of(null);
+                return EMPTY;
               })
             ))
       ).subscribe(result => {
-        if (result) {
           this.restaurant = result;
           this.search.updateValueAndValidity();
           this.restaurantForm.disable();
           this.alertService.displayMessage('Successfully editted restaurant.', 'success');
-        }
       })
 
     this.authenticationService.user$
@@ -92,14 +90,12 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
             .pipe(
               catchError(error => {
                 this.alertService.displayMessage(error?.error?.description || 'An error occurred while loading your profile. Try again later.', 'error');
-                return of(null);
+                return EMPTY;
               })
             ))
       ).subscribe(restaurant => {
-        if (restaurant) {
           this.restaurant = restaurant;
           this.restaurantForm.patchValue(restaurant);
-        }
       })
   }
 
@@ -164,7 +160,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
           this.restaurantService.deleteCategoryFromRestaurant(user.id, category.id)
             .pipe(
               tap(_ => this.removeCategory(category)),
-              catchError(error => of(error))
+              catchError(error => EMPTY)
             ))
       )
   }
@@ -177,7 +173,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
           this.restaurantService.addCategoryToRestaurant(user.id, categoryName)
             .pipe(
               tap(category => this.restaurant.categories.push(category)),
-              catchError(error => of(error))
+              catchError(error => EMPTY)
             ))
       )
   }

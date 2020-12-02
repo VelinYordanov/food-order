@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
 import { catchError, filter, finalize, map, switchMap, switchMapTo, withLatestFrom } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
@@ -72,10 +72,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             .pipe(
               catchError(error => {
                 this.alertService.displayMessage(error?.error?.description || 'An error occurred while looking up discount code. Try again later.', 'error');
-                return of(null);
+                return EMPTY;
               })
             ))
-      ).subscribe(discountCode => discountCode && (this.discountCode = discountCode))
+      ).subscribe(discountCode => this.discountCode = discountCode);
   }
 
   private setUpSubmitOrder() {
@@ -115,17 +115,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                   .pipe(
                     catchError(error => {
                       this.alertService.displayMessage(error?.error?.description || 'An error occurred while submitting order. Try again later', 'error');
-                      return of(null);
+                      return EMPTY;
                     })
                   )),
               finalize(() => this.cartService.clearCart())
             )
         ))
       .subscribe(order => {
-        if (order) {
           this.alertService.displayMessage('Successfully submitted order.', 'success');
           this.router.navigate(['../', order.id], { relativeTo: this.activatedRoute });
-        }
       })
   }
 }

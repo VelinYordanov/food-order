@@ -4,7 +4,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, of, Subject } from 'rxjs';
+import { EMPTY, Observable, Subject } from 'rxjs';
 import { catchError, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
@@ -45,15 +45,13 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
           .pipe(
             catchError(error => {
               this.alertService.displayMessage(error?.error?.description || 'An error occurred while adding food. Try again later.', 'error');
-              return of(null);
+              return EMPTY;
             }),
             tap(_ => this.foodForm.enable())
           ))
     ).subscribe(food => {
-      if (food) {
         this.alertService.displayMessage(`Successfully added food ${food.name}`, 'success');
         this.dialogRef.close(food);
-      }
     });
 
     this.foodForm = this.formBuilder.group({

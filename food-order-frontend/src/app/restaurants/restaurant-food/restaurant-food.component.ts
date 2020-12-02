@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, of, Subject } from 'rxjs';
+import { EMPTY, Observable, of, Subject } from 'rxjs';
 import { catchError, filter, first, map, switchMap, switchMapTo, tap } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Category } from '../models/category';
@@ -60,15 +60,13 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
             .pipe(
               catchError(error => {
                 this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting food. Try again later.', 'error');
-                return of(null);
+                return EMPTY;
               })
             ))
       ).subscribe(result => {
-        if (result) {
           this.alertService.displayMessage('Successfully editted food.', 'success');
           this.onEdit.emit(result);
           this.toggleForm();
-        }
       });
 
     this.filteredCategories$ = this.categoryFormControl.valueChanges
@@ -163,7 +161,7 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
         switchMap(user =>
           this.restaurantService.deleteFood(user.id, this.food.id)
             .pipe(
-              catchError(error => of(error))
+              catchError(error => EMPTY)
             ))
       )
   }

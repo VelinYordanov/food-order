@@ -1,7 +1,7 @@
 import { ViewportScroller } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { CartService } from 'src/app/shared/services/cart.service';
@@ -36,7 +36,7 @@ export class RestaurantDetailsComponent implements OnInit {
               tap(restaurant => this.cartService.setRestaurant(restaurant)),
               catchError(error => {
                 this.alertService.displayMessage(error?.error?.description || 'An error ocurred while loading restaurant data. Try again later.', 'error');
-                return throwError(error);
+                return EMPTY;
               })
             ))
       ).subscribe(restaurant => {

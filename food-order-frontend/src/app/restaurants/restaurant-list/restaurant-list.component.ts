@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { RestaurantListItem } from '../models/restaurant-list-item';
@@ -22,7 +22,7 @@ export class RestaurantListComponent implements OnInit {
       .pipe(
         catchError(error => {
           this.alertService.displayMessage(error?.error?.desccription || 'An error occurred while loading restaurants data. Try again later.', 'error');
-          return throwError(error);
+          return EMPTY;
         })
       );
   }
