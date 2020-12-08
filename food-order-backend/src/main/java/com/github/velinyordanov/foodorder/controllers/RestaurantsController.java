@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,6 +26,7 @@ import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.OrderListDto;
+import com.github.velinyordanov.foodorder.dto.OrderStatusDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
@@ -130,6 +132,15 @@ public class RestaurantsController {
     @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public OrderDto getRestaurantOrder(@PathVariable String restaurantId, @PathVariable String orderId) {
 	return this.restaurantsService.getRestaurantOrder(restaurantId, orderId);
+    }
+
+    @PatchMapping("{restaurantId}/orders/{orderId}")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public OrderStatusDto patchRestaurantOrder(
+	    @PathVariable String restaurantId,
+	    @PathVariable String orderId,
+	    @RequestBody @Valid OrderStatusDto orderStatusDto) {
+	return this.restaurantsService.updateRestaurantOrderStatus(restaurantId, orderId, orderStatusDto);
     }
 
     @PostMapping("{restaurantId}/discount-codes")

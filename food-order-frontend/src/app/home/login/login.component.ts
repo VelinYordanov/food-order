@@ -34,9 +34,16 @@ export class LoginComponent implements OnInit {
           next: _ => this.loginForm.disable()
         }),
         exhaustMap(
-          data => data.isRestaurant ?
-            this.loginService.loginRestaurant(data).pipe(catchError(error => EMPTY)) :
-            this.loginService.loginCustomer(data).pipe(catchError(error => EMPTY))
+          data => {
+            const login$ = data.isRestaurant ?
+            this.loginService.loginRestaurant(data) :
+            this.loginService.loginCustomer(data);
+
+            return login$.pipe(catchError(error => { 
+              this.loginForm.enable();
+              return EMPTY;
+            }))
+          }
         ),
         tap({
           next: _ => this.loginForm.enable()

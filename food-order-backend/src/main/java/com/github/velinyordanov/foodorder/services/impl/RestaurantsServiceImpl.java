@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import com.github.velinyordanov.foodorder.data.entities.DiscountCode;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
+import com.github.velinyordanov.foodorder.data.entities.Status;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeCreateDto;
@@ -31,12 +33,14 @@ import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.OrderListDto;
+import com.github.velinyordanov.foodorder.dto.OrderStatusDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
+import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
 import com.github.velinyordanov.foodorder.exceptions.ExistingDiscountCodeException;
@@ -52,6 +56,7 @@ import com.github.velinyordanov.foodorder.services.RestaurantsService;
 public class RestaurantsServiceImpl implements RestaurantsService {
     private final FoodOrderData foodOrderData;
     private final JwtTokenService jwtTokenService;
+    private final SimpMessagingTemplate messagingTemplate;
     private final DiscountCodesService discountCodesService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -61,12 +66,14 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     public RestaurantsServiceImpl(
 	    FoodOrderData foodOrderData,
 	    JwtTokenService jwtTokenService,
+	    SimpMessagingTemplate messagingTemplate,
 	    AuthenticationManager authenticationManager,
 	    DiscountCodesService discountCodesService,
 	    PasswordEncoder passwordEncoder,
 	    Mapper mapper) {
 	this.foodOrderData = foodOrderData;
 	this.authenticationManager = authenticationManager;
+	this.messagingTemplate = messagingTemplate;
 	this.jwtTokenService = jwtTokenService;
 	this.passwordEncoder = passwordEncoder;
 	this.discountCodesService = discountCodesService;
@@ -414,5 +421,37 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	this.discountCodesService.validateDiscountCode(discountCode, customerId);
 
 	return this.mapper.map(discountCode, DiscountCodeDto.class);
+    }
+
+    @Override
+    public OrderStatusDto updateRestaurantOrderStatus(
+	    String restaurantId,
+	    String orderId,
+	    OrderStatusDto orderStatusDto) {
+	Order order = this.foodOrderData.orders()
+		.findById(orderId)
+		.filter(restaurantOrder -> restaurantId.equals(restaurantOrder.getRestaurant().getId()))
+		.orElseThrow(() -> new BadRequestException("No such order found for restaurant!"));
+
+	if (Status.Delivered.equals(order.getStatus())) {
+	    throw new BadRequestException("Order was already delivered.");
+	}
+
+	if (Status.Accepted.equals(order.getStatus()) && !Status.Delivered.equals(orderStatusDto.getStatus())) {
+	    throw new BadRequestException("Order was already accepted");
+	}
+
+	order.setStatus(orderStatusDto.getStatus());
+
+	OrderStatusDto result = new OrderStatusDto(this.foodOrderData.orders().save(order).getStatus());
+
+	this.messagingTemplate.convertAndSend(
+		MessageFormat.format(
+			"notifications/customers/{0}/orders/{1}",
+			order.getCustomer().getId(),
+			order.getId()),
+		result);
+
+	return result;
     }
 }
