@@ -14,10 +14,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer {
     private final AuthenticationChannelInterceptor channelInterceptor;
+    private final WebsocketErrorHandler websocketErrorHandler;
 
     public WebsocketConfiguration(
-	    AuthenticationChannelInterceptor channelInterceptor) {
+	    AuthenticationChannelInterceptor channelInterceptor,
+	    WebsocketErrorHandler websocketErrorHandler) {
 	this.channelInterceptor = channelInterceptor;
+	this.websocketErrorHandler = websocketErrorHandler;
     }
 
     @Override
@@ -29,6 +32,7 @@ public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 	registry.addEndpoint("/ws").withSockJS();
+	registry.setErrorHandler(this.websocketErrorHandler);
     }
 
     @Override

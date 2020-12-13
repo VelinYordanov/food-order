@@ -2,6 +2,7 @@ package com.github.velinyordanov.foodorder.websockets;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
@@ -18,6 +19,8 @@ public class WebsocketSecurityConfiguration extends AbstractSecurityWebSocketMes
 		.access("hasAuthority('ROLE_RESTAURANT') and @websocketSecurityConfiguration.verifyId(principal, message)")
 		.simpDestMatchers("/notifications/customers/{customerId}/orders/**")
 		.access("hasAuthority('ROLE_CUSTOMER') and @websocketSecurityConfiguration.verifyId(principal, message)")
+		.simpTypeMatchers(SimpMessageType.DISCONNECT, SimpMessageType.UNSUBSCRIBE)
+		.permitAll()
 		.anyMessage()
 		.authenticated();
     }
