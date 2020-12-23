@@ -25,7 +25,6 @@ import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
-import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.OrderStatusDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
@@ -124,7 +123,7 @@ public class RestaurantsController {
 
     @GetMapping("{restaurantId}/orders")
     @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public Collection<OrderListDto> getRestaurantOrders(@PathVariable String restaurantId) {
+    public Collection<OrderDto> getRestaurantOrders(@PathVariable String restaurantId) {
 	return this.restaurantsService.getRestaurantOrders(restaurantId);
     }
 

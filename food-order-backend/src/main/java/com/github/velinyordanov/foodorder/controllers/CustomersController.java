@@ -24,7 +24,6 @@ import com.github.velinyordanov.foodorder.dto.AddressDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
-import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.services.CustomersService;
@@ -106,7 +105,7 @@ public class CustomersController {
 
     @GetMapping("{customerId}/orders")
     @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
-    public Collection<OrderListDto> getCustomerOrders(@PathVariable String customerId) {
+    public Collection<OrderDto> getCustomerOrders(@PathVariable String customerId) {
 	return this.customersService.getCustomerOrders(customerId);
     }
 

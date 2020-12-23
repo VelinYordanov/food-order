@@ -27,7 +27,6 @@ import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
-import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
@@ -230,11 +229,11 @@ public class CustomersServiceImpl implements CustomersService {
     }
 
     @Override
-    public Collection<OrderListDto> getCustomerOrders(String customerId) {
+    public Collection<OrderDto> getCustomerOrders(String customerId) {
 	return this.foodOrderData.orders()
 		.findByCustomerId(customerId)
 		.stream()
-		.map(order -> this.mapper.map(order, OrderListDto.class))
+		.map(order -> this.mapper.map(order, OrderDto.class))
 		.collect(Collectors.toList());
     }
 

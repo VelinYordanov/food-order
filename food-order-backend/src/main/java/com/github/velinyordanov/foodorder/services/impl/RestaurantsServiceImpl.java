@@ -32,7 +32,6 @@ import com.github.velinyordanov.foodorder.dto.DiscountCodeDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
-import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.OrderStatusDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
@@ -368,11 +367,11 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     }
 
     @Override
-    public Collection<OrderListDto> getRestaurantOrders(String restaurantId) {
+    public Collection<OrderDto> getRestaurantOrders(String restaurantId) {
 	return this.foodOrderData.orders()
 		.findByRestaurantId(restaurantId)
 		.stream()
-		.map(order -> this.mapper.map(order, OrderListDto.class))
+		.map(order -> this.mapper.map(order, OrderDto.class))
 		.collect(Collectors.toList());
     }
 

@@ -8,7 +8,6 @@ import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
-import com.github.velinyordanov.foodorder.dto.OrderListDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 
 public interface CustomersService {
@@ -30,7 +29,7 @@ public interface CustomersService {
 
     OrderDto addOrderToCustomer(String customerId, OrderCreateDto order);
 
-    Collection<OrderListDto> getCustomerOrders(String customerId);
+    Collection<OrderDto> getCustomerOrders(String customerId);
 
     OrderDto getCustomerOrder(String customerId, String orderId);
 }
