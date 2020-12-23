@@ -3,14 +3,16 @@
         <form [formGroup]="restaurantForm">
             <h1>Restaurant data</h1>
             <div>
-                <mat-form-field class="form-field">
+                <mat-form-field appearance="outline"
+                    class="form-field">
                     <mat-label>Name</mat-label>
                     <input matInput
                         formControlName="name">
                 </mat-form-field>
             </div>
             <div>
-                <mat-form-field class="form-field">
+                <mat-form-field appearance="outline"
+                    class="form-field">
                     <mat-label>Description</mat-label>
                     <textarea matInput
                         cdkTextareaAutosize
@@ -18,7 +20,8 @@
                 </mat-form-field>
             </div>
             <div>
-                <mat-form-field class="form-field">
+                <mat-form-field appearance="outline"
+                    class="form-field">
                     <mat-chip-list #chipList
                         aria-label="Categories">
                         <mat-chip *ngFor="let category of restaurant.categories"
@@ -61,7 +64,8 @@
             <div *ngIf="restaurant.foods.length">
                 <h1>Foods</h1>
                 <div class="search">
-                    <mat-form-field class="form-field">
+                    <mat-form-field appearance="outline"
+                        class="form-field">
                         <mat-label>Search foods</mat-label>
                         <input matInput
                             [formControl]="search">

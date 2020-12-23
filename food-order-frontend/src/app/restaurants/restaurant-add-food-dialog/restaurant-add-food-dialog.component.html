@@ -1,7 +1,8 @@
 <section>
     <form [formGroup]="foodForm">
         <div>
-            <mat-form-field class="form-field">
+            <mat-form-field appearance="outline"
+                class="form-field">
                 <mat-label>Name</mat-label>
                 <input matInput
                     formControlName="name">
@@ -9,7 +10,8 @@
             </mat-form-field>
         </div>
         <div>
-            <mat-form-field class="form-field">
+            <mat-form-field appearance="outline"
+                class="form-field">
                 <mat-label>Description</mat-label>
                 <textarea matInput
                     cdkTextareaAutosize
@@ -17,7 +19,8 @@
             </mat-form-field>
         </div>
         <div>
-            <mat-form-field class="form-field">
+            <mat-form-field appearance="outline"
+                class="form-field">
                 <mat-label>Price</mat-label>
                 <input matInput
                     formControlName="price">
@@ -25,7 +28,8 @@
             </mat-form-field>
         </div>
         <div>
-            <mat-form-field class="form-field">
+            <mat-form-field appearance="outline"
+                class="form-field">
                 <mat-chip-list #chipList
                     aria-label="Categories">
                     <mat-chip *ngFor="let category of foodForm.get('categories').value"

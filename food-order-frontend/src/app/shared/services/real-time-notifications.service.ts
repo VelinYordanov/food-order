@@ -11,7 +11,6 @@ import { AuthenticationService } from './authentication.service';
 export class RealTimeNotificationsService {
   private messageClient: Client;
   private cancel$: Subject<void> = new Subject<void>();
-  private authenticationService: AuthenticationService;
 
   private stompConfiguration: StompConfig = {
     webSocketFactory: () => new SockJs('/api/ws'),
