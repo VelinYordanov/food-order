@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +31,7 @@ import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
+import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
@@ -186,6 +189,10 @@ public class CustomersServiceImpl implements CustomersService {
 
     @Override
     public OrderDto addOrderToCustomer(String customerId, OrderCreateDto order) {
+	if (!customerId.equals(order.getCustomerId())) {
+	    throw new BadRequestException("Customer is not valid");
+	}
+
 	Address address = this.foodOrderData
 		.addresses()
 		.findById(order.getAddressId())
@@ -229,12 +236,10 @@ public class CustomersServiceImpl implements CustomersService {
     }
 
     @Override
-    public Collection<OrderDto> getCustomerOrders(String customerId) {
+    public Page<OrderDto> getCustomerOrders(String customerId, Pageable pageable) {
 	return this.foodOrderData.orders()
-		.findByCustomerId(customerId)
-		.stream()
-		.map(order -> this.mapper.map(order, OrderDto.class))
-		.collect(Collectors.toList());
+		.findByCustomerId(customerId, pageable)
+		.map(order -> this.mapper.map(order, OrderDto.class));
     }
 
     @Override

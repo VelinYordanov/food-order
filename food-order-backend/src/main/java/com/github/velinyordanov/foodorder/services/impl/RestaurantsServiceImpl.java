@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -367,12 +369,10 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     }
 
     @Override
-    public Collection<OrderDto> getRestaurantOrders(String restaurantId) {
+    public Page<OrderDto> getRestaurantOrders(String restaurantId, Pageable pageable) {
 	return this.foodOrderData.orders()
-		.findByRestaurantId(restaurantId)
-		.stream()
-		.map(order -> this.mapper.map(order, OrderDto.class))
-		.collect(Collectors.toList());
+		.findByRestaurantId(restaurantId, pageable)
+		.map(order -> this.mapper.map(order, OrderDto.class));
     }
 
     @Override

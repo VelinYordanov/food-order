@@ -3,6 +3,9 @@ package com.github.velinyordanov.foodorder.services;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
@@ -29,7 +32,7 @@ public interface CustomersService {
 
     OrderDto addOrderToCustomer(String customerId, OrderCreateDto order);
 
-    Collection<OrderDto> getCustomerOrders(String customerId);
+    Page<OrderDto> getCustomerOrders(String customerId, Pageable pageable);
 
     OrderDto getCustomerOrder(String customerId, String orderId);
 }

@@ -3,6 +3,9 @@ package com.github.velinyordanov.foodorder.services;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
@@ -43,7 +46,7 @@ public interface RestaurantsService {
 
     Collection<CategoryDto> getCategoriesForRestaurant(String restaurantId);
 
-    Collection<OrderDto> getRestaurantOrders(String restaurantId);
+    Page<OrderDto> getRestaurantOrders(String restaurantId, Pageable pageable);
 
     OrderDto getRestaurantOrder(String restaurantId, String orderId);
 

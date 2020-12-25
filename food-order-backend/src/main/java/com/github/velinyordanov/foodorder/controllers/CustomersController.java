@@ -1,10 +1,15 @@
 package com.github.velinyordanov.foodorder.controllers;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.velinyordanov.foodorder.data.entities.Customer;
@@ -34,6 +40,8 @@ import com.github.velinyordanov.foodorder.services.impl.JwtTokenServiceImpl;
 public class CustomersController {
     private static final String ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION =
 	    "hasAuthority('ROLE_CUSTOMER') and principal.id == #customerId";
+
+    private static final int DEFAULT_PAGE_SIZE = 15;
 
     private final CustomersService customersService;
     private final AuthenticationManager authenticationManager;
@@ -105,8 +113,17 @@ public class CustomersController {
 
     @GetMapping("{customerId}/orders")
     @PreAuthorize(ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
-    public Collection<OrderDto> getCustomerOrders(@PathVariable String customerId) {
-	return this.customersService.getCustomerOrders(customerId);
+    public Page<OrderDto> getCustomerOrders(
+	    @PathVariable String customerId,
+	    @RequestParam("page") Optional<Integer> pageOptional) {
+	int page = pageOptional
+		.map(selectedPage -> selectedPage - 1)
+		.filter(selectedPage -> selectedPage >= 0)
+		.orElse(0);
+
+	Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE, Sort.by("createdOn").descending());
+
+	return this.customersService.getCustomerOrders(customerId, pageable);
     }
 
     @GetMapping("{customerId}/orders/{orderId}")
