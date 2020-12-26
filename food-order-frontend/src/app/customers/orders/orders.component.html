@@ -5,20 +5,20 @@
     <section *ngIf="pagedOrders.content.length">
         <h2>MY ORDERS</h2>
         <div *ngFor="let order of pagedOrders.content">
-            <h3>{{order.createdOn}}</h3>
+            <h3>{{order.createdOn | date:'dd.MM.yyyyг. HH:mmч.'}}</h3>
             <ul>
                 <li *ngFor="let food of order.foods">
-                    {{food.name}} {{food.quantity}} x {{food.price}}
+                    {{food.name}} {{food.quantity}} x {{food.price | currency}}
                 </li>
             </ul>
 
-            <h3>{{calculateTotal(order.foods)}}</h3>
+            <h3>{{calculateTotal(order.foods) | currency}}</h3>
             <button *ngIf="isTrackable(order)"
                 (click)="trackOrder(order.id)"
                 mat-raised-button
                 color="primary">Track order</button>
             <button *ngIf="isFinished(order)"
-                (click)="loadCart(order.foods)"
+                (click)="loadCart(order)"
                 mat-raised-button
                 color="accent">Add to cart</button>
         </div>

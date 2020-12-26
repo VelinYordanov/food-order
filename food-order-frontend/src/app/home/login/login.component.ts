@@ -51,7 +51,9 @@ export class LoginComponent implements OnInit {
       ).subscribe(result => {
           this.authenticationService.login(result.token);
           if (this.loginForm.get('isRestaurant').value) {
-            this.router.navigate(['profile']);
+            this.router.navigate(['restaurant-profile']);
+          } else {
+            this.router.navigate(['customer-profile']);
           }
       });
 

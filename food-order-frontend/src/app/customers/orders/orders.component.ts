@@ -71,9 +71,11 @@ export class OrdersComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadCart(foods: OrderFoodResponse[]) {
-    const cartItems = foods.map((food) => ({ food, quantity: food.quantity }));
+  loadCart(order: Order) {
+    const cartItems = order.foods.map((food) => ({ food, quantity: food.quantity }));
     this.cartService.loadCart(cartItems);
+    this.cartService.setRestaurant(order.restaurant);
+    this.router.navigate(['restaurants', order.restaurant.id]);
   }
 
   trackOrder(orderId: string) {

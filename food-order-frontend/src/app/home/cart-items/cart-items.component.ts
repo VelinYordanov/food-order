@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
+import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 import { CartItem } from 'src/app/restaurants/models/cart-item';
-import { Restaurant } from 'src/app/restaurants/models/restaurant';
 import { CartService } from 'src/app/shared/services/cart.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { CartService } from 'src/app/shared/services/cart.service';
 export class CartItemsComponent implements OnInit {
   @Input('discountCode') discountCode: DiscountCode;
 
-  selectedRestaurant$: Observable<Restaurant>;
+  selectedRestaurant$: Observable<OrderRestaurant>;
   items$: Observable<CartItem[]>;
 
   constructor(private cartService: CartService) { }

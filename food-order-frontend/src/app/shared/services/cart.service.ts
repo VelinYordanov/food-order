@@ -3,33 +3,33 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Address } from '../../customers/models/address';
 import { CartItem } from '../../restaurants/models/cart-item';
 import { CartFood } from '../../restaurants/models/cart-food';
-import { Restaurant } from '../../restaurants/models/restaurant';
+import { StorageService } from './storage.service';
+import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
-  private currentRestaurant = new BehaviorSubject<Restaurant>(null);
+  private currentRestaurant = new BehaviorSubject<OrderRestaurant>(JSON.parse(this.storageService.getItem('restaurant')));
   private selectedAddress = new BehaviorSubject<Address>(null);
-  private foodCart = new BehaviorSubject<CartItem[]>([]);
+  private foodCart = new BehaviorSubject<CartItem[]>(JSON.parse(this.storageService.getItem("cart")));
 
-  selectedRestaurant$: Observable<Restaurant> = this.currentRestaurant.asObservable();
-  selectedAddress$:Observable<Address> = this.selectedAddress.asObservable();
+  selectedRestaurant$: Observable<OrderRestaurant> = this.currentRestaurant.asObservable();
+  selectedAddress$: Observable<Address> = this.selectedAddress.asObservable();
   selectedItems$: Observable<CartItem[]> = this.foodCart.asObservable();
 
-  constructor() { }
-
-  updateSelectedRestaurant(restaurant: Restaurant) {
-    this.currentRestaurant.next(restaurant);
+  constructor(private storageService: StorageService) {
+    this.selectedItems$.subscribe(items => this.storageService.setItem('cart', JSON.stringify(items)));
+    this.currentRestaurant.subscribe(restaurant => this.storageService.setItem('restaurant', JSON.stringify(restaurant)));
   }
 
-  updateSelectedAddress(address:Address) {
+  updateSelectedAddress(address: Address) {
     this.selectedAddress.next(address);
   }
 
   addItemToCart(food: CartFood) {
     const items = this.foodCart.getValue();
-    const item = items.find(item => item.food.id === food.id);
+    const item = items.find((item) => item.food.id === food.id);
     if (item) {
       item.quantity += 1;
     } else {
@@ -39,16 +39,23 @@ export class CartService {
     this.foodCart.next(items);
   }
 
-  loadCart(items:CartItem[]) {
-    const currentItems = this.foodCart.getValue();
-    const result = currentItems.concat(items);
+  loadCart(items: CartItem[]) {
+    const existingItems = this.foodCart.getValue();
+    items.forEach(item => {
+      const currentItem = existingItems.find(existingItem => existingItem.food.id === item.food.id);
+      if(currentItem) {
+        currentItem.quantity += item.quantity;
+      } else {
+        existingItems.push(item);
+      }
+    })
 
-    this.foodCart.next(result);
+    this.foodCart.next(existingItems);
   }
 
   increaseQuantity(food: CartFood) {
     const items = this.foodCart.getValue();
-    const item = items.find(item => item.food.id === food.id);
+    const item = items.find((item) => item.food.id === food.id);
 
     if (item) {
       item.quantity += 1;
@@ -59,12 +66,15 @@ export class CartService {
 
   decreaseQuantity(food: CartFood) {
     const items = this.foodCart.getValue();
-    const item = items.find(item => item.food.id === food.id);
+    const item = items.find((item) => item.food.id === food.id);
 
     if (item) {
       item.quantity -= 1;
       if (item.quantity === 0) {
-        items.splice(items.findIndex(i => i === item), 1);
+        items.splice(
+          items.findIndex((i) => i === item),
+          1
+        );
       }
     }
 
@@ -73,7 +83,7 @@ export class CartService {
 
   removeFood(food: CartFood) {
     const items = this.foodCart.getValue();
-    const index = items.findIndex(item => item.food.id === food.id);
+    const index = items.findIndex((item) => item.food.id === food.id);
 
     if (index !== -1) {
       items.splice(index, 1);
@@ -86,10 +96,9 @@ export class CartService {
     this.foodCart.next([]);
     this.currentRestaurant.next(null);
     this.selectedAddress.next(null);
-    
   }
 
-  setRestaurant(restaurant: Restaurant) {
+  setRestaurant(restaurant: OrderRestaurant) {
     if (restaurant.id !== this.currentRestaurant.getValue()?.id) {
       this.foodCart.next([]);
       this.currentRestaurant.next(restaurant);
