@@ -4,6 +4,7 @@ import { Address } from '../models/address';
 import { OrderCreate } from '../models/order-create';
 import { Order } from '../models/order';
 import { DiscountCode } from '../models/discount-code';
+import { Page } from '../../shared/models/page';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +32,10 @@ export class CustomerService {
 
   editCustomerAddress(customerId: string, addressId: string, address: Address) {
     return this.httpClient.put(`${this.BASE_URL}/${customerId}/addresses/${addressId}`, address);
+  }
+
+  getOrders(customerId, pageNumber = 0) {
+    return this.httpClient.get<Page<Order>>(`${this.BASE_URL}/${customerId}/orders`, {params: { page : String(pageNumber)}});
   }
 
   submitOrder(order: OrderCreate) {

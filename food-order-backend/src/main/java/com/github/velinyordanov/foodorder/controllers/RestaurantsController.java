@@ -135,7 +135,6 @@ public class RestaurantsController {
 	    @PathVariable String restaurantId,
 	    @RequestParam("page") Optional<Integer> pageOptional) {
 	int page = pageOptional
-		.map(selectedPage -> selectedPage - 1)
 		.filter(selectedPage -> selectedPage >= 0)
 		.orElse(0);
 

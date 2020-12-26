@@ -117,7 +117,6 @@ public class CustomersController {
 	    @PathVariable String customerId,
 	    @RequestParam("page") Optional<Integer> pageOptional) {
 	int page = pageOptional
-		.map(selectedPage -> selectedPage - 1)
 		.filter(selectedPage -> selectedPage >= 0)
 		.orElse(0);
 

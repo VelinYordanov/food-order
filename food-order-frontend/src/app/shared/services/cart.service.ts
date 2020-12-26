@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Address } from '../../customers/models/address';
 import { CartItem } from '../../restaurants/models/cart-item';
-import { Food } from '../../restaurants/models/food';
+import { CartFood } from '../../restaurants/models/cart-food';
 import { Restaurant } from '../../restaurants/models/restaurant';
 
 @Injectable({
@@ -27,7 +27,7 @@ export class CartService {
     this.selectedAddress.next(address);
   }
 
-  addItemToCart(food: Food) {
+  addItemToCart(food: CartFood) {
     const items = this.foodCart.getValue();
     const item = items.find(item => item.food.id === food.id);
     if (item) {
@@ -39,7 +39,14 @@ export class CartService {
     this.foodCart.next(items);
   }
 
-  increaseQuantity(food: Food) {
+  loadCart(items:CartItem[]) {
+    const currentItems = this.foodCart.getValue();
+    const result = currentItems.concat(items);
+
+    this.foodCart.next(result);
+  }
+
+  increaseQuantity(food: CartFood) {
     const items = this.foodCart.getValue();
     const item = items.find(item => item.food.id === food.id);
 
@@ -50,7 +57,7 @@ export class CartService {
     this.foodCart.next(items);
   }
 
-  decreaseQuantity(food: Food) {
+  decreaseQuantity(food: CartFood) {
     const items = this.foodCart.getValue();
     const item = items.find(item => item.food.id === food.id);
 
@@ -64,7 +71,7 @@ export class CartService {
     this.foodCart.next(items);
   }
 
-  removeFood(food: Food) {
+  removeFood(food: CartFood) {
     const items = this.foodCart.getValue();
     const index = items.findIndex(item => item.food.id === food.id);
 

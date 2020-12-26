@@ -1,6 +1,6 @@
-import { Food } from './food';
+import { CartFood } from './cart-food';
 
 export interface CartItem {
-    food: Food;
+    food: CartFood;
     quantity: number;
 }

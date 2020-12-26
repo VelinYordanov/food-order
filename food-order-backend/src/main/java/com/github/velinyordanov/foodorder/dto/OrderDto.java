@@ -1,12 +1,14 @@
 package com.github.velinyordanov.foodorder.dto;
 
 import java.util.Collection;
+import java.util.Date;
 
 import com.github.velinyordanov.foodorder.data.entities.Status;
 
 public class OrderDto {
     private String id;
     private Status status;
+    private Date createdOn;
     private RestaurantOrderDto restaurant;
     private CustomerOrderDto customer;
     private AddressDto address;
@@ -28,6 +30,14 @@ public class OrderDto {
 
     public void setStatus(Status status) {
 	this.status = status;
+    }
+
+    public Date getCreatedOn() {
+	return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+	this.createdOn = createdOn;
     }
 
     public RestaurantOrderDto getRestaurant() {

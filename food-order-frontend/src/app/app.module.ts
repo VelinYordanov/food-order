@@ -15,6 +15,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -40,6 +41,7 @@ import { CartItemsComponent } from './home/cart-items/cart-items.component';
 import { CheckoutComponent } from './home/checkout/checkout.component';
 import { AddressSelectComponent } from './home/address-select/address-select.component';
 import { SuccessfulOrderComponent } from './home/successful-order/successful-order.component';
+import { OrdersComponent } from './customers/orders/orders.component';
 
 @NgModule({
   declarations: [
@@ -61,14 +63,15 @@ import { SuccessfulOrderComponent } from './home/successful-order/successful-ord
     CartItemsComponent,
     CheckoutComponent,
     AddressSelectComponent,
-    SuccessfulOrderComponent
+    SuccessfulOrderComponent,
+    OrdersComponent,
   ],
   imports: [
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => localStorage.getItem("jwt-user"),
-        skipWhenExpired: true
-      }
+        tokenGetter: () => localStorage.getItem('jwt-user'),
+        skipWhenExpired: true,
+      },
     }),
 
     MatFormFieldModule,
@@ -81,18 +84,21 @@ import { SuccessfulOrderComponent } from './home/successful-order/successful-ord
     MatDialogModule,
     MatCardModule,
     MatSelectModule,
-    
+    MatPaginatorModule,
+
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
   ],
-  providers: [{
-    provide: SwalToken,
-    useFactory: () => Swal
-  }],
-  bootstrap: [AppComponent]
+  providers: [
+    {
+      provide: SwalToken,
+      useFactory: () => Swal,
+    },
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
