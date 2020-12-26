@@ -77,7 +77,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
   }
 
   trackOrder(orderId: string) {
-    this.router.navigate(['orders', orderId]);
+    this.router.navigate(['order', orderId]);
   }
 
   onPageChange(event: PageEvent) {
