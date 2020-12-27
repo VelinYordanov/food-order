@@ -1,3 +1,6 @@
-<section *ngIf="order$ | async; let order">
-    <p>Your order is {{getOrderStatus(order.status)}}</p>
+<section *ngIf="order">
+    <h2>Status of order {{order.id}}</h2>
+    <div class="order-status">
+        <h3>Your order is {{getOrderStatus(order.status)}}</h3>
+    </div>
 </section>

@@ -9,6 +9,7 @@ import { AuthenticationService } from 'src/app/shared/services/authentication.se
 import { EnumsService } from 'src/app/shared/services/enums.service';
 import { EnumData } from 'src/app/shared/models/enum-data';
 import { RealTimeNotificationsService } from 'src/app/shared/services/real-time-notifications.service';
+import { OrderStatus } from '../../customers/models/order-status';
 
 @Component({
   selector: 'app-successful-order',
@@ -16,7 +17,7 @@ import { RealTimeNotificationsService } from 'src/app/shared/services/real-time-
   styleUrls: ['./successful-order.component.scss']
 })
 export class SuccessfulOrderComponent implements OnInit {
-  order$: Observable<Order> = new Observable<Order>();
+  order: Order;
 
   private orderStatuses: EnumData[] = [];
 
@@ -45,7 +46,7 @@ export class SuccessfulOrderComponent implements OnInit {
           map(user => user.id)
         );
 
-    this.order$ = combineLatest(
+    combineLatest(
       [
         orderId$,
         userId$
@@ -59,13 +60,18 @@ export class SuccessfulOrderComponent implements OnInit {
               return EMPTY;
             })
           ))
-    )
+    ).subscribe(order => this.order = order);
 
     userId$
       .pipe(
         withLatestFrom(orderId$),
         switchMap((([userId, orderId]) => this.realTimeNotificationsService.subscribe(`/notifications/customers/${userId}/orders/${orderId}`)))
-      ).subscribe(order => null)
+      ).subscribe(order => {
+        if(this.order) {
+          const orderStatus = JSON.parse(order) as OrderStatus;
+          this.order.status = orderStatus.status;
+        }
+      });
   }
 
   getOrderStatus(status: number): string {

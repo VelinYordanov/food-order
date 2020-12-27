@@ -446,7 +446,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
 	this.messagingTemplate.convertAndSend(
 		MessageFormat.format(
-			"notifications/customers/{0}/orders/{1}",
+			"/notifications/customers/{0}/orders/{1}",
 			order.getCustomer().getId(),
 			order.getId()),
 		result);
