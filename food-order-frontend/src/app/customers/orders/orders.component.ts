@@ -61,6 +61,10 @@ export class OrdersComponent implements OnInit, OnDestroy {
     return foods.reduce((acc, curr) => acc + curr.price, 0);
   }
 
+  calculateTotalWithDiscount(foods: OrderFoodResponse[], discountPercentage: number) {
+    return this.calculateTotal(foods) * ((100 - discountPercentage) / 100);
+  }
+
   isTrackable(order: Order) {
     return order.status === Status.Accepted || order.status === Status.Pending;
   }
