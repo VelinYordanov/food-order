@@ -45,6 +45,7 @@ import { CutomerOrdersComponent } from './customers/customer-orders/customer-ord
 import { RestaurantOrdersComponent } from './restaurants/restaurant-orders/restaurant-orders.component';
 import { RestaurantOrderComponent } from './restaurants/restaurant-order/restaurant-order.component';
 import { CustomerOrderComponent } from './customers/customer-order/customer-order.component';
+import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-code/generate-discount-code.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { CustomerOrderComponent } from './customers/customer-order/customer-orde
     RestaurantOrdersComponent,
     RestaurantOrderComponent,
     CustomerOrderComponent,
+    GenerateDiscountCodeComponent,
   ],
   imports: [
     JwtModule.forRoot({

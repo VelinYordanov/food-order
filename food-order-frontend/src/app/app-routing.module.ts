@@ -11,11 +11,16 @@ import { SuccessfulOrderComponent } from './home/successful-order/successful-ord
 import { RestaurantDetailsComponent } from './restaurants/restaurant-details/restaurant-details.component';
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
 import { RestaurantProfileComponent } from './restaurants/restaurant-profile/restaurant-profile.component';
+import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-code/generate-discount-code.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'restaurant-profile', component: RestaurantProfileComponent },
   { path: 'restaurant-profile/orders', component: RestaurantOrdersComponent },
+  {
+    path: 'restaurant-profile/discount-codes/add',
+    component: GenerateDiscountCodeComponent,
+  },
   { path: 'order/checkout', component: CheckoutComponent },
   { path: 'order/address', component: AddressSelectComponent },
   { path: 'order/:id', component: SuccessfulOrderComponent },
