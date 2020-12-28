@@ -19,11 +19,11 @@ import { Status } from '../models/status';
 import { CustomerService } from '../services/customer.service';
 
 @Component({
-  selector: 'app-orders',
-  templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.scss'],
+  selector: 'app-customer-orders',
+  templateUrl: './customer-orders.component.html',
+  styleUrls: ['./customer-orders.component.scss'],
 })
-export class OrdersComponent implements OnInit, OnDestroy {
+export class CutomerOrdersComponent implements OnInit, OnDestroy {
   private pageSelects$ = new Subject<number>();
   pagedOrders$: Observable<Page<Order>>;
 
@@ -31,9 +31,6 @@ export class OrdersComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private customerService: CustomerService,
     private alertService: AlertService,
-    private cartService: CartService,
-    private utilService: UtilService,
-    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -57,35 +54,6 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.pageSelects$.complete();
-  }
-
-  calculateTotal(foods: OrderFoodResponse[]) {
-    return this.utilService.calculateTotal(foods);
-  }
-
-  calculateTotalWithDiscount(foods: OrderFoodResponse[], discountPercentage: number) {
-    return this.utilService.calculateTotalWithDiscount(foods, discountPercentage);
-  }
-
-  isTrackable(order: Order) {
-    return order.status === Status.Accepted || order.status === Status.Pending;
-  }
-
-  isFinished(order: Order) {
-    return (
-      order.status === Status.Delivered || order.status === Status.Cancelled
-    );
-  }
-
-  loadCart(order: Order) {
-    const cartItems = order.foods.map((food) => ({ food, quantity: food.quantity }));
-    this.cartService.loadCart(cartItems);
-    this.cartService.setRestaurant(order.restaurant);
-    this.router.navigate(['restaurants', order.restaurant.id]);
-  }
-
-  trackOrder(orderId: string) {
-    this.router.navigate(['order', orderId]);
   }
 
   onPageChange(event: PageEvent) {
