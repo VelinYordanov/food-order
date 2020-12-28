@@ -26,7 +26,6 @@ import com.github.velinyordanov.foodorder.data.entities.DiscountCode;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
-import com.github.velinyordanov.foodorder.data.entities.Status;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeCreateDto;
@@ -431,14 +430,6 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 		.findById(orderId)
 		.filter(restaurantOrder -> restaurantId.equals(restaurantOrder.getRestaurant().getId()))
 		.orElseThrow(() -> new BadRequestException("No such order found for restaurant!"));
-
-	if (Status.Delivered.equals(order.getStatus())) {
-	    throw new BadRequestException("Order was already delivered.");
-	}
-
-	if (Status.Accepted.equals(order.getStatus()) && !Status.Delivered.equals(orderStatusDto.getStatus())) {
-	    throw new BadRequestException("Order was already accepted");
-	}
 
 	order.setStatus(orderStatusDto.getStatus());
 

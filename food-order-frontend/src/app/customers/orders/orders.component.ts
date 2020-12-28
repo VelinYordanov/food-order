@@ -12,6 +12,7 @@ import { Page } from 'src/app/shared/models/page';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { CartService } from 'src/app/shared/services/cart.service';
+import { UtilService } from 'src/app/shared/services/util.service';
 import { Order } from '../models/order';
 import { OrderFoodResponse } from '../models/order-food-response';
 import { Status } from '../models/status';
@@ -31,6 +32,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
     private customerService: CustomerService,
     private alertService: AlertService,
     private cartService: CartService,
+    private utilService: UtilService,
     private router: Router
   ) {}
 
@@ -58,11 +60,11 @@ export class OrdersComponent implements OnInit, OnDestroy {
   }
 
   calculateTotal(foods: OrderFoodResponse[]) {
-    return foods.reduce((acc, curr) => acc + curr.price, 0);
+    return this.utilService.calculateTotal(foods);
   }
 
   calculateTotalWithDiscount(foods: OrderFoodResponse[], discountPercentage: number) {
-    return this.calculateTotal(foods) * ((100 - discountPercentage) / 100);
+    return this.utilService.calculateTotalWithDiscount(foods, discountPercentage);
   }
 
   isTrackable(order: Order) {

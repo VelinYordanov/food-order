@@ -42,6 +42,8 @@ import { CheckoutComponent } from './home/checkout/checkout.component';
 import { AddressSelectComponent } from './home/address-select/address-select.component';
 import { SuccessfulOrderComponent } from './home/successful-order/successful-order.component';
 import { OrdersComponent } from './customers/orders/orders.component';
+import { RestaurantOrdersComponent } from './restaurants/restaurant-orders/restaurant-orders.component';
+import { RestaurantOrderComponent } from './restaurants/restaurant-order/restaurant-order.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +67,8 @@ import { OrdersComponent } from './customers/orders/orders.component';
     AddressSelectComponent,
     SuccessfulOrderComponent,
     OrdersComponent,
+    RestaurantOrdersComponent,
+    RestaurantOrderComponent,
   ],
   imports: [
     JwtModule.forRoot({

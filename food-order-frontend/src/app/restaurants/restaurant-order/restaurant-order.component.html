@@ -1,0 +1,33 @@
+<div class="order">
+    <h3>{{order.createdOn | date:'dd.MM.yyyyг. HH:mmч.'}}</h3>
+    <ul>
+        <li *ngFor="let food of order.foods">
+            {{food.name}} {{food.quantity}} x {{food.price | currency}}
+        </li>
+    </ul>
+
+    <p>Status: {{order.status}}</p>
+    <p>Customer: {{order.customer.username}}, {{order.customer.phoneNumber}}</p>
+    <p>Address: {{getAddressData(order.address)}}</p>
+    <p *ngIf="order.discountCode">Discount code used: {{order.discountCode.code}}</p>
+    <h3 *ngIf="!order.discountCode">{{calculateTotal(order.foods) | currency}}</h3>
+    <h3 *ngIf="order.discountCode">
+        <span class="line-through">{{calculateTotal(order.foods) | currency}}</span>
+        <span class="discount-percentage">&#8722; {{order.discountCode.discountPercentage}}%</span>
+    </h3>
+    <h3 *ngIf="order.discountCode">{{calculateTotalWithDiscount(order.foods,
+        order.discountCode.discountPercentage) | currency}}</h3>
+    <button mat-raised-button
+        color="primary"
+        (click)="toggleStatusButtons()">Change status</button>
+    <div *ngIf="showStatusButtons"
+        class="status-buttons">
+        <button mat-raised-button (click)="changeStatus(Status.Pending)">Pending</button>
+        <button mat-raised-button
+            color="primary" (click)="changeStatus(Status.Accepted)">Accepted</button>
+        <button mat-raised-button
+            color="accent" (click)="changeStatus(Status.Delivered)">Delivered</button>
+        <button mat-raised-button
+            color="warn" (click)="changeStatus(Status.Cancelled)">Cancelled</button>
+    </div>
+</div>

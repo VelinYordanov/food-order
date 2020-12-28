@@ -49,10 +49,4 @@ export class CustomerService {
   getDiscountCode(restaurantId: string, code: string) {
     return this.httpClient.get<DiscountCode>(`/api/restaurants/${restaurantId}/discount-codes/${code}`);
   }
-
-  getAddressData(address: Address) {
-    return [address.neighborhood, address.street, address.streetNumber, address.apartmentBuildingNumber]
-      .filter(Boolean)
-      .join(", ");
-  }
 }

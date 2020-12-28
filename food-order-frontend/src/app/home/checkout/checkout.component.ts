@@ -9,6 +9,7 @@ import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { CartService } from 'src/app/shared/services/cart.service';
+import { UtilService } from 'src/app/shared/services/util.service';
 
 @Component({
   selector: 'app-checkout',
@@ -31,6 +32,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private customerService: CustomerService,
     private cartService: CartService,
+    private utilService:UtilService,
     private router: Router,
     private activatedRoute: ActivatedRoute) { }
 
@@ -54,7 +56,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   getAddressData(address: Address) {
-    return this.customerService.getAddressData(address);
+    return this.utilService.getAddressData(address);
   }
 
   applyDiscountCode() {

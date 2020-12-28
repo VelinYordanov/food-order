@@ -8,6 +8,7 @@ import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { CartService } from 'src/app/shared/services/cart.service';
+import { UtilService } from 'src/app/shared/services/util.service';
 
 @Component({
   selector: 'app-address-select',
@@ -25,7 +26,8 @@ export class AddressSelectComponent implements OnInit {
     private cartService: CartService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
-    private customerService: CustomerService) { }
+    private customerService: CustomerService,
+    private utilService: UtilService) { }
 
   ngOnInit(): void {
     this.addressForm = this.formBuilder.group({
@@ -46,11 +48,10 @@ export class AddressSelectComponent implements OnInit {
   }
 
   getAddressData(address: Address) {
-    return this.customerService.getAddressData(address);
+    return this.utilService.getAddressData(address);
   }
 
   confirmAddress() {
-    console.log(this.addressForm.get('address').value);
     this.cartService.updateSelectedAddress(this.addressForm.get('address').value);
     this.router.navigate(['../', 'checkout'], { relativeTo: this.activatedRoute });
   }
