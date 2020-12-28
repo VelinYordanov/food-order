@@ -6,6 +6,7 @@
         <h2>MY ORDERS</h2>
         <div *ngFor="let order of pagedOrders.content">
             <h3>{{order.createdOn | date:'dd.MM.yyyyг. HH:mmч.'}}</h3>
+            <h3>Restaurant: {{order.restaurant.name}}</h3>
             <ul>
                 <li *ngFor="let food of order.foods">
                     {{food.name}} {{food.quantity}} x {{food.price | currency}}
@@ -29,7 +30,7 @@
                 color="accent">Add to cart</button>
         </div>
         <div>
-            <mat-paginator
+            <mat-paginator *ngIf="!(pagedOrders.first && pagedOrders.last)"
                 [length]="pagedOrders.totalElements"
                 [pageSize]="pagedOrders.size"
                 [hidePageSize]="true"
