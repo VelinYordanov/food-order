@@ -1,19 +1,20 @@
 section {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .flex-after::after {
-    content:"";
-    flex:auto;
+  content: "";
+  margin:30px;
+  width:25%;
 }
 
 section > div {
   width: 25%;
-  margin:30px;
+  margin: 30px;
 }
 
 h2 {
-    text-align: center;
+  text-align: center;
 }

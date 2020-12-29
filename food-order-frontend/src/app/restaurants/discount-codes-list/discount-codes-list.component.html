@@ -2,6 +2,7 @@
 <section *ngIf="discountCodes$ | async; let discountCodes"
     [class.flex-after]="!isGridComplete(discountCodes)">
     <div *ngFor="let discountCode of discountCodes">
-        <app-discount-code-item [discountCode]="discountCode"></app-discount-code-item>
+        <app-discount-code-item [discountCode]="discountCode"
+            (onDelete)="removeDiscountCode($event, discountCodes)"></app-discount-code-item>
     </div>
 </section>

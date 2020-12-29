@@ -1,4 +1,5 @@
 export interface DiscountCodeItem {
+  id: string;
   code: string;
   discountPercentage: number;
   validFrom: Date;

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { DiscountCodeItem } from '../models/discount-code-item';
@@ -35,5 +36,12 @@ export class DiscountCodesListComponent implements OnInit {
 
   isGridComplete(discountCodes: DiscountCodeItem[]) {
     return discountCodes.length % 3 === 0;
+  }
+
+  removeDiscountCode(discountCode: DiscountCode, discountCodes: DiscountCode[]) {
+    const index = discountCodes.findIndex(code => code.id === discountCode.id);
+    if(index !== -1) {
+      discountCodes.splice(index, 1);
+    }
   }
 }
