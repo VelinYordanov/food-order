@@ -49,6 +49,8 @@ import { RestaurantOrderComponent } from './restaurants/restaurant-order/restaur
 import { CustomerOrderComponent } from './customers/customer-order/customer-order.component';
 import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-code/generate-discount-code.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { DiscountCodesListComponent } from './restaurants/discount-codes-list/discount-codes-list.component';
+import { DiscountCodeItemComponent } from './restaurants/discount-code-item/discount-code-item.component';
 
 @NgModule({
   declarations: [
@@ -76,6 +78,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     RestaurantOrderComponent,
     CustomerOrderComponent,
     GenerateDiscountCodeComponent,
+    DiscountCodesListComponent,
+    DiscountCodeItemComponent,
   ],
   imports: [
     JwtModule.forRoot({
