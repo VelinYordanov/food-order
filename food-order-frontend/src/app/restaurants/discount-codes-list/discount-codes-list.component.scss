@@ -1,0 +1,19 @@
+section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.flex-after::after {
+    content:"";
+    flex:auto;
+}
+
+section > div {
+  width: 25%;
+  margin:30px;
+}
+
+h2 {
+    text-align: center;
+}

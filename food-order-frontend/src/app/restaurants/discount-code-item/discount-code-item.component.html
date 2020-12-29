@@ -1,1 +1,18 @@
-<p>discount-code-item works!</p>
+<div>
+    <h3>{{discountCode.code}}</h3>
+    <p>{{discountCode.discountPercentage}}</p>
+    <p *ngIf="!discountCode.timesUsed">Unused</p>
+    <p *ngIf="discountCode.timesUsed">Used {{discountCode.timesUsed}} {{discountCode.timesUsed === 1 ? 'time' :
+        'times'}}</p>
+    <p>{{discountCode.validFrom | date:'dd.MM.yyyy'}}</p>
+    <p>{{discountCode.validTo | date:'dd.MM.yyyy'}}</p>
+    <p *ngIf="discountCode.isSingleUse">For single use only</p>
+    <p *ngIf="!discountCode.isSingleUse">For multiple uses</p>
+    <p *ngIf="discountCode.isOncePerUser">Once per user</p>
+    <p *ngIf="!discountCode.isOncePerUser">Can be used multiple times per user</p>
+    <div>
+        <button mat-raised-button>Edit</button>
+        <button mat-raised-button
+            color="warn">Delete</button>
+    </div>
+</div>

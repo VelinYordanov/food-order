@@ -12,6 +12,7 @@ import { RestaurantDetailsComponent } from './restaurants/restaurant-details/res
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
 import { RestaurantProfileComponent } from './restaurants/restaurant-profile/restaurant-profile.component';
 import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-code/generate-discount-code.component';
+import { DiscountCodesListComponent } from './restaurants/discount-codes-list/discount-codes-list.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -20,6 +21,10 @@ const routes: Routes = [
   {
     path: 'restaurant-profile/discount-codes/add',
     component: GenerateDiscountCodeComponent,
+  },
+  {
+    path: 'restaurant-profile/discount-codes',
+    component: DiscountCodesListComponent,
   },
   { path: 'order/checkout', component: CheckoutComponent },
   { path: 'order/address', component: AddressSelectComponent },
