@@ -8,6 +8,7 @@ import { RestaurantEdit } from '../models/restaurant-edit';
 import { Page } from 'src/app/shared/models/page';
 import { Order } from 'src/app/customers/models/order';
 import { OrderStatus } from 'src/app/customers/models/order-status';
+import { DiscountCodeDto } from '../models/discount-code-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -79,6 +80,13 @@ export class RestaurantService {
     return this.httpClient.patch<OrderStatus>(
       `${this.BASE_URL}/${restaurantId}/orders/${orderId}`,
       status
+    );
+  }
+
+  createDiscountCode(restaurantId: string, discountCode: DiscountCodeDto) {
+    return this.httpClient.post(
+      `${this.BASE_URL}/${restaurantId}/discount-codes`,
+      discountCode
     );
   }
 }

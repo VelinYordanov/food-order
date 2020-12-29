@@ -389,10 +389,15 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
     @Override
     public DiscountCodeDto addDiscountCodeToRestaurant(String restaurantId, DiscountCodeCreateDto discountCode) {
+	if (discountCode.getValidFrom().isAfter(discountCode.getValidTo())) {
+	    throw new BadRequestException("Valid from cannot be later than valid to.");
+	}
+
 	Restaurant restaurant = this.foodOrderData.restaurants()
 		.findById(restaurantId)
 		.orElseThrow(() -> new NotFoundException("Restaurant not found"));
 
+	discountCode.setCode(discountCode.getCode().toUpperCase());
 	Optional<DiscountCode> discountCodeOptional =
 		this.foodOrderData.discountCodes()
 			.findByCodeAndRestaurantIdWithDeleted(restaurantId, discountCode.getCode());

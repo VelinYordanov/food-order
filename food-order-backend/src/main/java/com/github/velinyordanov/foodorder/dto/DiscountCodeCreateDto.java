@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.Range;
 
 public class DiscountCodeCreateDto {
     @NotBlank
-    @Size(min = 5, max = 12, message = "Discount code must be between 5 and 12 symbols long.")
+    @Size(min = 5, max = 10, message = "Discount code must be between 5 and 10 symbols long.")
     private String code;
 
     @Range(min = 1, max = 100, message = "Discount percentage must be between 1 and 100")
