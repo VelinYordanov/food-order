@@ -27,6 +27,7 @@ import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeCreateDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeDto;
+import com.github.velinyordanov.foodorder.dto.DiscountCodeListDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
@@ -163,6 +164,12 @@ public class RestaurantsController {
     public DiscountCodeDto addDiscountCodeToRestaurant(@PathVariable String restaurantId,
 	    @Valid @RequestBody DiscountCodeCreateDto discountCode) {
 	return this.restaurantsService.addDiscountCodeToRestaurant(restaurantId, discountCode);
+    }
+
+    @GetMapping("{restaurantId}/discount-codes")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public Collection<DiscountCodeListDto> getDiscountCodesForRestaurant(@PathVariable String restaurantId) {
+	return this.restaurantsService.getDiscountCodesForRestaurant(restaurantId);
     }
 
     @GetMapping("{restaurantId}/discount-codes/{code}")
