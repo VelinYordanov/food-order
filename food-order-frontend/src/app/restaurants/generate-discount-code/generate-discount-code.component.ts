@@ -64,7 +64,6 @@ export class GenerateDiscountCodeComponent implements OnInit {
 
     this.formSubmits$
       .pipe(
-        tap(_ => this.getFormValidationErrors()),
         filter((_) => this.discountCodeForm.valid),
         withLatestFrom(this.authenticationService.user$),
         switchMap(([_, restaurant]) =>
@@ -110,16 +109,4 @@ export class GenerateDiscountCodeComponent implements OnInit {
 
     this.discountCodeForm.get('code').setValue(result);
   }
-
-  getFormValidationErrors() {
-    Object.keys(this.discountCodeForm.controls).forEach(key => {
-  
-    const controlErrors = this.discountCodeForm.get(key).errors;
-    if (controlErrors != null) {
-          Object.keys(controlErrors).forEach(keyError => {
-            console.log('Key control: ' + key + ', keyError: ' + keyError + ', err value: ', controlErrors[keyError]);
-          });
-        }
-      });
-    }
 }
