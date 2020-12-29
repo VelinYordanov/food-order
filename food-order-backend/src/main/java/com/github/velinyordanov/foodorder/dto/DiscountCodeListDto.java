@@ -3,6 +3,8 @@ package com.github.velinyordanov.foodorder.dto;
 import java.time.LocalDate;
 
 public class DiscountCodeListDto {
+    private String id;
+
     private String code;
 
     private int discountPercentage;
@@ -16,6 +18,14 @@ public class DiscountCodeListDto {
     private boolean isOncePerUser;
 
     private int timesUsed;
+
+    public String getId() {
+	return id;
+    }
+
+    public void setId(String id) {
+	this.id = id;
+    }
 
     public String getCode() {
 	return code;

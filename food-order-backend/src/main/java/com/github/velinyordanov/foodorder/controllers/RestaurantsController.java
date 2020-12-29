@@ -180,4 +180,12 @@ public class RestaurantsController {
 	    @AuthenticationPrincipal Customer customer) {
 	return this.restaurantsService.getDiscountByCode(restaurantId, code, customer.getId());
     }
+
+    @DeleteMapping("{restaurantId}/discount-codes/{discountCodeId}")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public DiscountCodeDto deleteDiscountCode(
+	    @PathVariable String restaurantId,
+	    @PathVariable String discountCodeId) {
+	return this.restaurantsService.deleteDiscountCode(restaurantId, discountCodeId);
+    }
 }

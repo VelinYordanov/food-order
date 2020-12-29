@@ -58,4 +58,6 @@ public interface RestaurantsService {
     Collection<DiscountCodeListDto> getDiscountCodesForRestaurant(String restaurantId);
 
     OrderStatusDto updateRestaurantOrderStatus(String restaurantId, String orderId, OrderStatusDto orderStatusDto);
+
+    DiscountCodeDto deleteDiscountCode(String restaurantId, String discountCodeId);
 }

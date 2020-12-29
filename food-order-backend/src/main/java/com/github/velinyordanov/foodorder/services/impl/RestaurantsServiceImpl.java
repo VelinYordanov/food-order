@@ -463,4 +463,15 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 		})
 		.collect(Collectors.toList());
     }
+
+    @Override
+    public DiscountCodeDto deleteDiscountCode(String restaurantId, String discountCodeId) {
+	DiscountCode code = this.foodOrderData.discountCodes()
+		.findByIdAndRestaurant(discountCodeId, restaurantId)
+		.orElseThrow(() -> new NotFoundException("Discount code not found"));
+
+	this.foodOrderData.discountCodes().delete(code);
+
+	return this.mapper.map(code, DiscountCodeDto.class);
+    }
 }
