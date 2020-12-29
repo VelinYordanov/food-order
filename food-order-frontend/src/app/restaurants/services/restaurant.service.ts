@@ -9,6 +9,7 @@ import { Page } from 'src/app/shared/models/page';
 import { Order } from 'src/app/customers/models/order';
 import { OrderStatus } from 'src/app/customers/models/order-status';
 import { DiscountCodeDto } from '../models/discount-code-dto';
+import { DiscountCodeItem } from '../models/discount-code-item';
 
 @Injectable({
   providedIn: 'root',
@@ -88,5 +89,9 @@ export class RestaurantService {
       `${this.BASE_URL}/${restaurantId}/discount-codes`,
       discountCode
     );
+  }
+
+  getDiscountCodes(restaurantId:string) {
+    return this.httpClient.get<DiscountCodeItem[]>(`${this.BASE_URL}/${restaurantId}/discount-codes`);
   }
 }

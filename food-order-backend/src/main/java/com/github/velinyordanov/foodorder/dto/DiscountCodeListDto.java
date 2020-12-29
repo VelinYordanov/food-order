@@ -49,19 +49,19 @@ public class DiscountCodeListDto {
 	this.validTo = validTo;
     }
 
-    public boolean isSingleUse() {
+    public boolean getIsSingleUse() {
 	return isSingleUse;
     }
 
-    public void setSingleUse(boolean isSingleUse) {
+    public void setIsSingleUse(boolean isSingleUse) {
 	this.isSingleUse = isSingleUse;
     }
 
-    public boolean isOncePerUser() {
+    public boolean getIsOncePerUser() {
 	return isOncePerUser;
     }
 
-    public void setOncePerUser(boolean isOncePerUser) {
+    public void setIsOncePerUser(boolean isOncePerUser) {
 	this.isOncePerUser = isOncePerUser;
     }
 
