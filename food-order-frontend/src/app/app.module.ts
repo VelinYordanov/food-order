@@ -16,6 +16,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -46,6 +48,7 @@ import { RestaurantOrdersComponent } from './restaurants/restaurant-orders/resta
 import { RestaurantOrderComponent } from './restaurants/restaurant-order/restaurant-order.component';
 import { CustomerOrderComponent } from './customers/customer-order/customer-order.component';
 import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-code/generate-discount-code.component';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -93,6 +96,8 @@ import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-c
     MatCardModule,
     MatSelectModule,
     MatPaginatorModule,
+    MatDatepickerModule,
+    MatMomentDateModule,
 
     BrowserModule,
     AppRoutingModule,
@@ -106,6 +111,7 @@ import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-c
       provide: SwalToken,
       useFactory: () => Swal,
     },
+    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
   ],
   bootstrap: [AppComponent],
 })
