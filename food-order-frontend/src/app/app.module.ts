@@ -52,6 +52,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { DiscountCodesListComponent } from './restaurants/discount-codes-list/discount-codes-list.component';
 import { DiscountCodeItemComponent } from './restaurants/discount-code-item/discount-code-item.component';
 import { EditDiscountCodeComponent } from './restaurants/edit-discount-code/edit-discount-code.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -104,6 +105,7 @@ import { EditDiscountCodeComponent } from './restaurants/edit-discount-code/edit
     MatPaginatorModule,
     MatDatepickerModule,
     MatMomentDateModule,
+    MatTooltipModule,
 
     BrowserModule,
     AppRoutingModule,
@@ -117,7 +119,7 @@ import { EditDiscountCodeComponent } from './restaurants/edit-discount-code/edit
       provide: SwalToken,
       useFactory: () => Swal,
     },
-    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
   ],
   bootstrap: [AppComponent],
 })

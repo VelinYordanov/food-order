@@ -7,6 +7,10 @@
                 class="form-field">
                 <mat-label>Discount Percentage</mat-label>
                 <input matInput
+                    matTooltip="Discount percentage can only be changed for discount codes that have not been used yet."
+                    matTooltipPosition="above"
+                    [matTooltipDisabled]="!discountCode.timesUsed"
+                    [class.disabled]="discountCode.timesUsed"
                     formControlName="discountPercentage">
                 <mat-error *ngIf="discountCodeForm.get('discountPercentage').hasError('required')">Discount percentage
                     is required.
@@ -29,6 +33,10 @@
                 <input matInput
                     #validFrom
                     readonly
+                    matTooltip="Valid from can only be changed for discount codes that have not been used yet."
+                    matTooltipPosition="above"
+                    [matTooltipDisabled]="!discountCode.timesUsed"
+                    [class.disabled]="discountCode.timesUsed"
                     [min]="validFromMinDate"
                     (focus)="validFromDatepicker.open()"
                     [matDatepicker]="validFromDatepicker"
