@@ -1,1 +1,86 @@
-<p>edit-discount-code works!</p>
+<section>
+    <h2>Edit discount code {{discountCode.code}}</h2>
+    <form [formGroup]="discountCodeForm"
+        (submit)="submit()">
+        <div>
+            <mat-form-field appearance="outline"
+                class="form-field">
+                <mat-label>Discount Percentage</mat-label>
+                <input matInput
+                    formControlName="discountPercentage">
+                <mat-error *ngIf="discountCodeForm.get('discountPercentage').hasError('required')">Discount percentage
+                    is required.
+                </mat-error>
+                <mat-error *ngIf="discountCodeForm.get('discountPercentage').hasError('min')">Discount percentage
+                    cannot be less than 1.
+                </mat-error>
+                <mat-error *ngIf="discountCodeForm.get('discountPercentage').hasError('max')">Discount percentage
+                    cannot be more than 100.
+                </mat-error>
+                <mat-error *ngIf="discountCodeForm.get('discountPercentage').hasError('pattern')">Discount percentage
+                    cannot only be a number.
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline"
+                class="form-field">
+                <mat-label>Valid From</mat-label>
+                <input matInput
+                    #validFrom
+                    readonly
+                    [min]="validFromMinDate"
+                    (focus)="validFromDatepicker.open()"
+                    [matDatepicker]="validFromDatepicker"
+                    formControlName="validFrom">
+                <mat-datepicker (closed)="validFrom.blur()"
+                    #validFromDatepicker></mat-datepicker>
+                <mat-error *ngIf="discountCodeForm.get('validFrom').hasError('required')">Valid from is required.
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline"
+                class="form-field">
+                <mat-label>Valid To</mat-label>
+                <input matInput
+                    #validTo
+                    readonly
+                    [min]="validToMinDate"
+                    (focus)="validToDatepicker.open()"
+                    [matDatepicker]="validToDatepicker"
+                    formControlName="validTo">
+                <mat-datepicker (closed)="validTo.blur()"
+                    #validToDatepicker></mat-datepicker>
+                <mat-error *ngIf="discountCodeForm.get('validTo').hasError('required')">Valid to is required.
+                </mat-error>
+                <mat-error *ngIf="discountCodeForm.get('validTo').hasError('matDatepickerMin')">Valid to must be after
+                    valid from.
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="checkbox-with-hint">
+            <div>
+                <mat-checkbox class="form-field"
+                    formControlName="isSingleUse">Single Use</mat-checkbox>
+            </div>
+            <mat-hint>If unset code will be usable multiple times</mat-hint>
+        </div>
+        <div class="checkbox-with-hint">
+            <div>
+                <mat-checkbox class="form-field"
+                    formControlName="isOncePerUser">Once Per User</mat-checkbox>
+            </div>
+            <mat-hint>If code is not single use if this is checked the user will be able to use it only once.
+            </mat-hint>
+        </div>
+        <div>
+            <button mat-raised-button
+                (click)="close($event)">Cancel</button>
+        </div>
+        <div>
+            <button mat-raised-button
+                color="primary">Edit</button>
+        </div>
+    </form>
+</section>

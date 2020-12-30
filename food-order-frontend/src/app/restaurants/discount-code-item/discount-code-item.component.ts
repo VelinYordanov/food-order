@@ -65,11 +65,11 @@ export class DiscountCodeItemComponent implements OnInit, OnDestroy {
 
   openEditDialog(): void {
     const dialogRef = this.dialog.open(EditDiscountCodeComponent, {
-      width: '90%',
-      data: this.discountCode
+      data: this.discountCode,
+      autoFocus: false,
     });
 
-    dialogRef.afterClosed().subscribe(edittedDiscountCode => {
+    dialogRef.afterClosed().subscribe((edittedDiscountCode) => {
       console.log(edittedDiscountCode);
     });
   }
