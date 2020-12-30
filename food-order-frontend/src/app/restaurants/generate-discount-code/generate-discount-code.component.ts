@@ -64,7 +64,7 @@ export class GenerateDiscountCodeComponent implements OnInit {
 
     this.formSubmits$
       .pipe(
-        filter((_) => this.discountCodeForm.valid),
+        filter(_ => this.discountCodeForm.valid),
         withLatestFrom(this.authenticationService.user$),
         switchMap(([_, restaurant]) =>
           this.restaurantService

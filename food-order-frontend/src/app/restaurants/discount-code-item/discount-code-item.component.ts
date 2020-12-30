@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EMPTY, Subject } from 'rxjs';
-import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, filter, switchMap, withLatestFrom } from 'rxjs/operators';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
@@ -69,8 +69,11 @@ export class DiscountCodeItemComponent implements OnInit, OnDestroy {
       autoFocus: false,
     });
 
-    dialogRef.afterClosed().subscribe((edittedDiscountCode) => {
-      console.log(edittedDiscountCode);
+    dialogRef.afterClosed()
+    .pipe(
+      filter(x => !!x)
+    ).subscribe((edittedDiscountCode) => {
+      this.discountCode = edittedDiscountCode;
     });
   }
 

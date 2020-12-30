@@ -11,6 +11,7 @@ import { OrderStatus } from 'src/app/customers/models/order-status';
 import { DiscountCodeDto } from '../models/discount-code-dto';
 import { DiscountCodeItem } from '../models/discount-code-item';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
+import { DiscountCodeEdit } from '../models/discount-code-edit';
 
 @Injectable({
   providedIn: 'root',
@@ -92,11 +93,26 @@ export class RestaurantService {
     );
   }
 
-  getDiscountCodes(restaurantId:string) {
-    return this.httpClient.get<DiscountCodeItem[]>(`${this.BASE_URL}/${restaurantId}/discount-codes`);
+  getDiscountCodes(restaurantId: string) {
+    return this.httpClient.get<DiscountCodeItem[]>(
+      `${this.BASE_URL}/${restaurantId}/discount-codes`
+    );
   }
 
-  deleteDiscountCode(discountCodeId:string, restaurantId:string) {
-    return this.httpClient.delete<DiscountCode>(`${this.BASE_URL}/${restaurantId}/discount-codes/${discountCodeId}`);
+  deleteDiscountCode(discountCodeId: string, restaurantId: string) {
+    return this.httpClient.delete<DiscountCode>(
+      `${this.BASE_URL}/${restaurantId}/discount-codes/${discountCodeId}`
+    );
+  }
+
+  editDiscountCode(
+    discountCodeId: string,
+    restaurantId: string,
+    discountCode: DiscountCodeEdit
+  ) {
+    return this.httpClient.put<DiscountCodeItem>(
+      `${this.BASE_URL}/${restaurantId}/discount-codes/${discountCodeId}`,
+      discountCode
+    );
   }
 }

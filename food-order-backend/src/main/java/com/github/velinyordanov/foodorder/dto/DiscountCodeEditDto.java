@@ -12,6 +12,7 @@ public class DiscountCodeEditDto {
     private int discountPercentage;
 
     @NotNull(message = "Valid from is required")
+    @FutureOrPresent(message = "Valid  date must be in the present or future")
     private LocalDate validFrom;
 
     @NotNull(message = "Valid to is required")
