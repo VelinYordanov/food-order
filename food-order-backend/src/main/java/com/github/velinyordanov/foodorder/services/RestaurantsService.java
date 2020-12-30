@@ -11,6 +11,7 @@ import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeCreateDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeDto;
+import com.github.velinyordanov.foodorder.dto.DiscountCodeEditDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeListDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
@@ -60,4 +61,6 @@ public interface RestaurantsService {
     OrderStatusDto updateRestaurantOrderStatus(String restaurantId, String orderId, OrderStatusDto orderStatusDto);
 
     DiscountCodeDto deleteDiscountCode(String restaurantId, String discountCodeId);
+
+    DiscountCodeListDto editDiscountCode(String restaurantId, String discountCodeId, DiscountCodeEditDto discountCode);
 }

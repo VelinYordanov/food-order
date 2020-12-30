@@ -27,6 +27,7 @@ import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeCreateDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeDto;
+import com.github.velinyordanov.foodorder.dto.DiscountCodeEditDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeListDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
@@ -187,5 +188,14 @@ public class RestaurantsController {
 	    @PathVariable String restaurantId,
 	    @PathVariable String discountCodeId) {
 	return this.restaurantsService.deleteDiscountCode(restaurantId, discountCodeId);
+    }
+
+    @PutMapping("{restaurantId}/discount-codes/{discountCodeId}")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public DiscountCodeListDto editDiscountCode(
+	    @PathVariable String restaurantId,
+	    @PathVariable String discountCodeId,
+	    @RequestBody @Valid DiscountCodeEditDto discountCodeEditDto) {
+	return this.restaurantsService.editDiscountCode(restaurantId, discountCodeId, discountCodeEditDto);
     }
 }

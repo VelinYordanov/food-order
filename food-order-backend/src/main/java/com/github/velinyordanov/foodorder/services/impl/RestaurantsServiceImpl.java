@@ -30,6 +30,7 @@ import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeCreateDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeDto;
+import com.github.velinyordanov.foodorder.dto.DiscountCodeEditDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeListDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
@@ -48,6 +49,7 @@ import com.github.velinyordanov.foodorder.exceptions.ExistingDiscountCodeExcepti
 import com.github.velinyordanov.foodorder.exceptions.NonEmptyCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
+import com.github.velinyordanov.foodorder.services.DateService;
 import com.github.velinyordanov.foodorder.services.DiscountCodesService;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
 import com.github.velinyordanov.foodorder.services.RestaurantsService;
@@ -62,6 +64,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final Mapper mapper;
+    private final DateService dateService;
 
     @Autowired
     public RestaurantsServiceImpl(
@@ -71,7 +74,8 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	    AuthenticationManager authenticationManager,
 	    DiscountCodesService discountCodesService,
 	    PasswordEncoder passwordEncoder,
-	    Mapper mapper) {
+	    Mapper mapper,
+	    DateService dateService) {
 	this.foodOrderData = foodOrderData;
 	this.authenticationManager = authenticationManager;
 	this.messagingTemplate = messagingTemplate;
@@ -79,6 +83,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	this.passwordEncoder = passwordEncoder;
 	this.discountCodesService = discountCodesService;
 	this.mapper = mapper;
+	this.dateService = dateService;
     }
 
     @Override
@@ -473,5 +478,38 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	this.foodOrderData.discountCodes().delete(code);
 
 	return this.mapper.map(code, DiscountCodeDto.class);
+    }
+
+    @Override
+    public DiscountCodeListDto
+	    editDiscountCode(String restaurantId, String discountCodeId, DiscountCodeEditDto discountCode) {
+	if (discountCode.getValidFrom().isAfter(discountCode.getValidTo())) {
+	    throw new BadRequestException("Valid from cannot be later than valid to.");
+	}
+
+	DiscountCode code = this.foodOrderData.discountCodes()
+		.findByIdAndRestaurant(discountCodeId, restaurantId)
+		.orElseThrow(() -> new NotFoundException("Discount code not found"));
+
+	if (!code.getOrders().isEmpty()) {
+	    if (discountCode.getDiscountPercentage() != code.getDiscountPercentage()) {
+		throw new BadRequestException(
+			"Discount percentage can be changed only to discount codes that have not been used yet.");
+	    }
+
+	    if (!discountCode.getValidFrom().isEqual(code.getValidFrom())) {
+		throw new BadRequestException("Valid from can only be changed for orders that have not been used yet.");
+	    }
+	}
+
+	this.mapper.map(discountCode, code);
+
+	DiscountCode savedDiscountCode = this.foodOrderData.discountCodes().save(code);
+
+	DiscountCodeListDto result =
+		this.mapper.map(savedDiscountCode, DiscountCodeListDto.class);
+	result.setTimesUsed(savedDiscountCode.getOrders().size());
+
+	return result;
     }
 }
