@@ -7,9 +7,8 @@
     <p>{{discountCode.validFrom | date:'dd.MM.yyyy'}}</p>
     <p>{{discountCode.validTo | date:'dd.MM.yyyy'}}</p>
     <p *ngIf="discountCode.isSingleUse">For single use only</p>
-    <p *ngIf="!discountCode.isSingleUse">For multiple uses</p>
-    <p *ngIf="discountCode.isOncePerUser">Once per user</p>
-    <p *ngIf="!discountCode.isOncePerUser">Can be used multiple times per user</p>
+    <p *ngIf="!discountCode.isSingleUse && discountCode.isOncePerUser">Can be used once per user</p>
+    <p *ngIf="!discountCode.isSingleUse && !discountCode.isOncePerUser">Can be used multiple times</p>
     <div>
         <button mat-raised-button (click)="openEditDialog()">Edit</button>
         <button mat-raised-button
