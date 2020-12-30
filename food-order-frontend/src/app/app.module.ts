@@ -51,6 +51,7 @@ import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-c
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { DiscountCodesListComponent } from './restaurants/discount-codes-list/discount-codes-list.component';
 import { DiscountCodeItemComponent } from './restaurants/discount-code-item/discount-code-item.component';
+import { EditDiscountCodeComponent } from './restaurants/edit-discount-code/edit-discount-code.component';
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import { DiscountCodeItemComponent } from './restaurants/discount-code-item/disc
     GenerateDiscountCodeComponent,
     DiscountCodesListComponent,
     DiscountCodeItemComponent,
+    EditDiscountCodeComponent,
   ],
   imports: [
     JwtModule.forRoot({
