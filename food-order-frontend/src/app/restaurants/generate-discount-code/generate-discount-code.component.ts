@@ -20,8 +20,8 @@ import { RestaurantService } from '../services/restaurant.service';
 export class GenerateDiscountCodeComponent implements OnInit {
   discountCodeForm: FormGroup;
 
-  validFromMinDate = new Date();
-  validToMinDate = new Date();
+  validFromMinDate = this.getStartDate();
+  validToMinDate = this.getStartDate();
 
   private formSubmits$ = new Subject<void>();
 
@@ -108,5 +108,10 @@ export class GenerateDiscountCodeComponent implements OnInit {
     }
 
     this.discountCodeForm.get('code').setValue(result);
+  }
+
+  private getStartDate(): Date {
+    const now = new Date();
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   }
 }

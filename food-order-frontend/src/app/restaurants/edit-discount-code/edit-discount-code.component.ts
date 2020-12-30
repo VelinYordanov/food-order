@@ -16,8 +16,8 @@ import { RestaurantService } from '../services/restaurant.service';
 export class EditDiscountCodeComponent implements OnInit, OnDestroy {
   discountCodeForm: FormGroup;
 
-  validFromMinDate = new Date();
-  validToMinDate = new Date();
+  validFromMinDate = this.getStartDate();
+  validToMinDate = this.getStartDate();
 
   private formSubmits$ = new Subject<void>();
 
@@ -60,20 +60,35 @@ export class EditDiscountCodeComponent implements OnInit, OnDestroy {
       .get('validFrom')
       .valueChanges.subscribe((date) => (this.validToMinDate = date));
 
-    this.formSubmits$.pipe(
-      switchMapTo(this.authenticationService.user$),
-      switchMap(restaurant => 
-        this.restaurantService.editDiscountCode(this.discountCode.id, restaurant.id, this.discountCodeForm.value)
-        .pipe(
-          catchError(error => {
-            this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting discount code. Try again later.', 'error');
-            return EMPTY;
-          })
-        ))
-    ).subscribe(discountCode => {
-      this.alertService.displayMessage(`Successfully editted discount code ${discountCode.code}`, 'success');
-      this.dialogRef.close(discountCode);
-    });
+    this.formSubmits$
+      .pipe(
+        switchMapTo(this.authenticationService.user$),
+        switchMap((restaurant) =>
+          this.restaurantService
+            .editDiscountCode(
+              this.discountCode.id,
+              restaurant.id,
+              this.discountCodeForm.value
+            )
+            .pipe(
+              catchError((error) => {
+                this.alertService.displayMessage(
+                  error?.error?.description ||
+                    'An error occurred while editting discount code. Try again later.',
+                  'error'
+                );
+                return EMPTY;
+              })
+            )
+        )
+      )
+      .subscribe((discountCode) => {
+        this.alertService.displayMessage(
+          `Successfully editted discount code ${discountCode.code}`,
+          'success'
+        );
+        this.dialogRef.close(discountCode);
+      });
   }
 
   ngOnDestroy(): void {
@@ -89,5 +104,10 @@ export class EditDiscountCodeComponent implements OnInit, OnDestroy {
   close(event) {
     event.preventDefault();
     this.dialogRef.close();
+  }
+
+  private getStartDate(): Date {
+    const now = new Date();
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   }
 }
