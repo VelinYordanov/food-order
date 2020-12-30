@@ -74,7 +74,8 @@
             </div>
             <mat-hint>If unset code will be usable multiple times</mat-hint>
         </div>
-        <div class="checkbox-with-hint" *ngIf="!discountCodeForm.get('isSingleUse').value">
+        <div class="checkbox-with-hint"
+            *ngIf="!discountCodeForm.get('isSingleUse').value">
             <div>
                 <mat-checkbox class="form-field"
                     formControlName="isOncePerUser">Once Per User</mat-checkbox>
@@ -88,6 +89,7 @@
         </div>
         <div>
             <button mat-raised-button
+                [disabled]="!discountCodeForm.dirty"
                 color="primary">Edit</button>
         </div>
     </form>
