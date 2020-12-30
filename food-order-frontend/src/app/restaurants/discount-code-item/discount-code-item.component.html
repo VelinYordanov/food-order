@@ -11,7 +11,7 @@
     <p *ngIf="discountCode.isOncePerUser">Once per user</p>
     <p *ngIf="!discountCode.isOncePerUser">Can be used multiple times per user</p>
     <div>
-        <button mat-raised-button>Edit</button>
+        <button mat-raised-button (click)="openEditDialog()">Edit</button>
         <button mat-raised-button
             color="warn"
             (click)="delete()">Delete</button>

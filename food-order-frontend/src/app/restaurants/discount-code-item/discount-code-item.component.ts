@@ -6,11 +6,13 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { EMPTY, Subject } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { EditDiscountCodeComponent } from '../edit-discount-code/edit-discount-code.component';
 import { DiscountCodeItem } from '../models/discount-code-item';
 import { RestaurantService } from '../services/restaurant.service';
 
@@ -29,7 +31,8 @@ export class DiscountCodeItemComponent implements OnInit, OnDestroy {
   constructor(
     private authenticationService: AuthenticationService,
     private restaurantService: RestaurantService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -58,6 +61,17 @@ export class DiscountCodeItemComponent implements OnInit, OnDestroy {
         );
         this.onDelete.emit(discountCode);
       });
+  }
+
+  openEditDialog(): void {
+    const dialogRef = this.dialog.open(EditDiscountCodeComponent, {
+      width: '90%',
+      data: this.discountCode
+    });
+
+    dialogRef.afterClosed().subscribe(edittedDiscountCode => {
+      console.log(edittedDiscountCode);
+    });
   }
 
   delete() {
