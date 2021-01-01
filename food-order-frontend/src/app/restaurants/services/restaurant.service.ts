@@ -12,6 +12,7 @@ import { DiscountCodeDto } from '../models/discount-code-dto';
 import { DiscountCodeItem } from '../models/discount-code-item';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { DiscountCodeEdit } from '../models/discount-code-edit';
+import { GraphData } from '../models/graph-data';
 
 @Injectable({
   providedIn: 'root',
@@ -113,6 +114,20 @@ export class RestaurantService {
     return this.httpClient.put<DiscountCodeItem>(
       `${this.BASE_URL}/${restaurantId}/discount-codes/${discountCodeId}`,
       discountCode
+    );
+  }
+
+  getMonthyGraphData(restaurantId: string, month: number, year: number) {
+    return this.httpClient.get<GraphData<Date, number>[]>(
+      `${this.BASE_URL}/${restaurantId}/orders/monthly-graph`,
+      { params: { month: String(month), year: String(year) } }
+    );
+  }
+
+  getYearlyGraph(restaurantId: string, year: number) {
+    return this.httpClient.get<GraphData<string, number>[]>(
+      `${this.BASE_URL}/${restaurantId}/orders/yearly-graph`,
+      { params: { year: String(year) } }
     );
   }
 }

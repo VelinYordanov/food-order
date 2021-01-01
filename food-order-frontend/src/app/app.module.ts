@@ -19,6 +19,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 
+import { ChartsModule } from 'ng2-charts';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -53,6 +55,7 @@ import { DiscountCodesListComponent } from './restaurants/discount-codes-list/di
 import { DiscountCodeItemComponent } from './restaurants/discount-code-item/discount-code-item.component';
 import { EditDiscountCodeComponent } from './restaurants/edit-discount-code/edit-discount-code.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { YearlyGraphComponent } from './restaurants/yearly-graph/yearly-graph.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +86,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     DiscountCodesListComponent,
     DiscountCodeItemComponent,
     EditDiscountCodeComponent,
+    YearlyGraphComponent,
   ],
   imports: [
     JwtModule.forRoot({
@@ -106,6 +110,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatDatepickerModule,
     MatMomentDateModule,
     MatTooltipModule,
+
+    ChartsModule,
 
     BrowserModule,
     AppRoutingModule,
