@@ -1,7 +1,9 @@
 package com.github.velinyordanov.foodorder.services.impl;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -34,6 +36,7 @@ import com.github.velinyordanov.foodorder.dto.DiscountCodeEditDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeListDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
+import com.github.velinyordanov.foodorder.dto.GraphData;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.OrderStatusDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
@@ -511,5 +514,52 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 	result.setTimesUsed(savedDiscountCode.getOrders().size());
 
 	return result;
+    }
+
+    @Override
+    public Collection<GraphData<LocalDate, Long>> getOrderMonthlyGraphData(String restaurantId, int year, int month) {
+	Collection<GraphData<LocalDate, Long>> result = this.foodOrderData.orders()
+		.getOrderMonthlyGraphData(restaurantId, month, year)
+		.stream()
+		.map(graphData -> new GraphData<LocalDate, Long>(
+			graphData.getX().toLocalDate(),
+			graphData.getY()))
+		.collect(Collectors.toList());
+
+	int daysForMonth = this.dateService.getNumberOfDaysForMonth(year, month);
+
+	for (int i = 1; i <= daysForMonth; i++) {
+	    LocalDate date = LocalDate.of(year, month, i);
+	    if (result.stream()
+		    .filter(graphData -> date.isEqual(graphData.getX()))
+		    .findFirst()
+		    .isEmpty()) {
+		result.add(new GraphData<LocalDate, Long>(date, 0l));
+	    }
+	}
+
+	return result.stream()
+		.sorted(Comparator.comparing(GraphData::getX))
+		.collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<GraphData<String, Long>> getYearlyGraphData(String restaurantId, int year) {
+	Collection<GraphData<Integer, Long>> result = this.foodOrderData.orders()
+		.getYearlyGraphData(restaurantId, year);
+
+	for (int i = 1; i <= 12; i++) {
+	    int current = i;
+	    if (result.stream().filter(graphData -> current == graphData.getX()).findAny().isEmpty()) {
+		result.add(new GraphData<Integer, Long>(i, 0l));
+	    }
+	}
+
+	return result
+		.stream()
+		.sorted(Comparator.comparing(GraphData::getX))
+		.map(graphData -> new GraphData<String, Long>(this.dateService.getMonthName(graphData.getX()),
+			graphData.getY()))
+		.collect(Collectors.toList());
     }
 }

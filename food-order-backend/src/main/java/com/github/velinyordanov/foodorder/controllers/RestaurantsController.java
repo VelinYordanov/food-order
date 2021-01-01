@@ -1,5 +1,6 @@
 package com.github.velinyordanov.foodorder.controllers;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ import com.github.velinyordanov.foodorder.dto.DiscountCodeEditDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeListDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
+import com.github.velinyordanov.foodorder.dto.GraphData;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.OrderStatusDto;
@@ -39,7 +41,7 @@ import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserDto;
-import com.github.velinyordanov.foodorder.services.JwtTokenService;
+import com.github.velinyordanov.foodorder.services.DateService;
 import com.github.velinyordanov.foodorder.services.RestaurantsService;
 
 @RestController
@@ -51,9 +53,13 @@ public class RestaurantsController {
     private static final int DEFAULT_PAGE_SIZE = 15;
 
     private final RestaurantsService restaurantsService;
+    private final DateService dateService;
 
-    public RestaurantsController(RestaurantsService restaurantsService, JwtTokenService jwtTokenService) {
+    public RestaurantsController(
+	    RestaurantsService restaurantsService,
+	    DateService dateService) {
 	this.restaurantsService = restaurantsService;
+	this.dateService = dateService;
     }
 
     @GetMapping()
@@ -198,4 +204,38 @@ public class RestaurantsController {
 	    @RequestBody @Valid DiscountCodeEditDto discountCodeEditDto) {
 	return this.restaurantsService.editDiscountCode(restaurantId, discountCodeId, discountCodeEditDto);
     }
+
+    @GetMapping("{restaurantId}/orders/monthly-graph")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public Collection<GraphData<LocalDate, Long>> getOrdersMonthlyGraphData(
+	    @PathVariable String restaurantId,
+	    @RequestParam("year") Optional<Integer> yearOptional,
+	    @RequestParam("month") Optional<Integer> monthOptional) {
+	LocalDate now = this.dateService.now();
+
+	int year = yearOptional
+		.filter(requestedYear -> requestedYear > 0)
+		.orElse(now.getYear());
+
+	int month = monthOptional
+		.filter(requestedMonth -> requestedMonth > 0 && requestedMonth <= 12)
+		.orElse(now.getMonthValue());
+
+	return this.restaurantsService.getOrderMonthlyGraphData(restaurantId, year, month);
+    }
+
+    @GetMapping("{restaurantId}/orders/yearly-graph")
+    @PreAuthorize(ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+    public Collection<GraphData<String, Long>> getOrdersYearlyGraphData(
+	    @PathVariable String restaurantId,
+	    @RequestParam("year") Optional<Integer> yearOptional) {
+	LocalDate now = this.dateService.now();
+
+	int year = yearOptional
+		.filter(requestedYear -> requestedYear > 0)
+		.orElse(now.getYear());
+
+	return this.restaurantsService.getYearlyGraphData(restaurantId, year);
+    }
+
 }

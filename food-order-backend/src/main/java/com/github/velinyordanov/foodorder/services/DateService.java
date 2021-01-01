@@ -10,4 +10,8 @@ public interface DateService {
     boolean isInThePast(LocalDate date);
 
     boolean isInTheFuture(LocalDate date);
+
+    String getMonthName(int month);
+
+    int getNumberOfDaysForMonth(int year, int month);
 }

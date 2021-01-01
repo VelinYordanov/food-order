@@ -1,5 +1,6 @@
 package com.github.velinyordanov.foodorder.services;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import com.github.velinyordanov.foodorder.dto.DiscountCodeEditDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeListDto;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
+import com.github.velinyordanov.foodorder.dto.GraphData;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.OrderStatusDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
@@ -63,4 +65,8 @@ public interface RestaurantsService {
     DiscountCodeDto deleteDiscountCode(String restaurantId, String discountCodeId);
 
     DiscountCodeListDto editDiscountCode(String restaurantId, String discountCodeId, DiscountCodeEditDto discountCode);
+
+    Collection<GraphData<LocalDate, Long>> getOrderMonthlyGraphData(String restaurantId, int year, int month);
+
+    Collection<GraphData<String, Long>> getYearlyGraphData(String restaurantId, int year);
 }
