@@ -58,6 +58,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { YearlyGraphComponent } from './restaurants/yearly-graph/yearly-graph.component';
 import { MonthlyGraphComponent } from './restaurants/monthly-graph/monthly-graph.component';
 import { GraphsComponent } from './restaurants/graphs/graphs.component';
+import { NavigationComponent } from './shared/navigation/navigation.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { GraphsComponent } from './restaurants/graphs/graphs.component';
     YearlyGraphComponent,
     MonthlyGraphComponent,
     GraphsComponent,
+    NavigationComponent,
   ],
   imports: [
     JwtModule.forRoot({

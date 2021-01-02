@@ -1,0 +1,46 @@
+<nav>
+    <h2>Food Order</h2>
+    <ul *ngIf="!isLoggedIn()">
+        <li>
+            <a routerLink="/login"
+                routerLinkActive="active">Login</a>
+        </li>
+        <li>
+            <a routerLink="/register"
+                routerLinkActive="active">Register</a>
+        </li>
+    </ul>
+    <ul *ngIf="isLoggedIn() && isRestaurant()">
+        <li>
+            <a routerLink="/restaurant-profile"
+                [routerLinkActiveOptions]="{exact: true}"
+                routerLinkActive="active">Hello, {{user.username}}</a>
+        </li>
+        <li>
+            <a routerLink="/restaurant-profile/orders"
+                routerLinkActive="active">Orders</a>
+        </li>
+        <li>
+            <a routerLink="/restaurant-profile/graphs"
+                routerLinkActive="active">Graphs</a>
+        </li>
+        <li>
+            <a routerLink="/restaurant-profile/discount-codes"
+                routerLinkActive="active">Discount Codes</a>
+        </li>
+        <li (click)="logOut()">
+            <a>Log out</a>
+        </li>
+    </ul>
+    <ul *ngIf="isLoggedIn() && isCustomer()">
+        <li>
+            <a routerLink="/customer-profile"
+                routerLinkActive="active">Hello, {{user.username}}</a>
+        </li>
+        <li>
+            <a routerLink="/restaurants"
+                routerLinkActive="active">Restaurants</a>
+        </li>
+        <li (click)="logOut()">Log out</li>
+    </ul>
+</nav>
