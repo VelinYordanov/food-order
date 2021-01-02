@@ -13,11 +13,13 @@ import { RestaurantListComponent } from './restaurants/restaurant-list/restauran
 import { RestaurantProfileComponent } from './restaurants/restaurant-profile/restaurant-profile.component';
 import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-code/generate-discount-code.component';
 import { DiscountCodesListComponent } from './restaurants/discount-codes-list/discount-codes-list.component';
+import { GraphsComponent } from './restaurants/graphs/graphs.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'restaurant-profile', component: RestaurantProfileComponent },
   { path: 'restaurant-profile/orders', component: RestaurantOrdersComponent },
+  { path: 'restaurant-profile/graphs', component: GraphsComponent },
   {
     path: 'restaurant-profile/discount-codes/add',
     component: GenerateDiscountCodeComponent,
