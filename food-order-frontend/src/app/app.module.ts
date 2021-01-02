@@ -57,6 +57,7 @@ import { EditDiscountCodeComponent } from './restaurants/edit-discount-code/edit
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { YearlyGraphComponent } from './restaurants/yearly-graph/yearly-graph.component';
 import { MonthlyGraphComponent } from './restaurants/monthly-graph/monthly-graph.component';
+import { GraphsComponent } from './restaurants/graphs/graphs.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +90,7 @@ import { MonthlyGraphComponent } from './restaurants/monthly-graph/monthly-graph
     EditDiscountCodeComponent,
     YearlyGraphComponent,
     MonthlyGraphComponent,
+    GraphsComponent,
   ],
   imports: [
     JwtModule.forRoot({
