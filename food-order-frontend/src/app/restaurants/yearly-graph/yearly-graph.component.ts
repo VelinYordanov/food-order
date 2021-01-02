@@ -1,9 +1,9 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
-import { ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
-import { EMPTY, ReplaySubject, Subject } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import {
   catchError,
   map,
@@ -27,13 +27,7 @@ const MY_FORMATS = {
   styleUrls: ['./yearly-graph.component.scss'],
   providers: [{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
 })
-export class YearlyGraphComponent implements OnInit, OnDestroy {
-  @Input('year') set year(value: number) {
-    if (value) {
-      this.yearChanges$.next(value);
-    }
-  }
-
+export class YearlyGraphComponent implements OnInit {
   public date: FormControl = new FormControl();
 
   public lineChartData: ChartDataSets[] = [{ data: [], label: '' }];
@@ -54,8 +48,6 @@ export class YearlyGraphComponent implements OnInit, OnDestroy {
   public lineChartLegend = true;
   public lineChartType = 'line';
   public lineChartPlugins = [];
-
-  private yearChanges$ = new ReplaySubject<number>(1);
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -86,10 +78,6 @@ export class YearlyGraphComponent implements OnInit, OnDestroy {
         this.lineChartLabels = graphData.map((data) => data.x);
         this.lineChartData[0].data = graphData.map((data) => data.y);
       });
-  }
-
-  ngOnDestroy(): void {
-    this.yearChanges$.complete();
   }
 
   getLabel(year: number) {

@@ -1,6 +1,23 @@
+<div>
+    <h2>Monthly graph</h2>
+    <mat-form-field appearance="outline">
+        <mat-label>Select month</mat-label>
+        <input matInput
+            [matDatepicker]="datepicker"
+            #dateInput
+            [formControl]="date"
+            readonly
+            (focus)="datepicker.open()">
+        <mat-datepicker #datepicker
+            panelClass="no-click-header"
+            startView="year"
+            (monthSelected)="onMonthSelected($event, datepicker)"
+            (closed)="dateInput.blur()"></mat-datepicker>
+    </mat-form-field>
+</div>
 <div *ngIf="lineChartLabels.length">
     <canvas baseChart
-        width="1000"
+        width="1600"
         height="400"
         [datasets]="lineChartData"
         [labels]="lineChartLabels"

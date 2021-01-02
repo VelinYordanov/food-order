@@ -1,31 +1,29 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
-import { combineLatest, EMPTY, ReplaySubject } from 'rxjs';
-import { catchError, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import { catchError, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { RestaurantService } from '../services/restaurant.service';
+
+const MY_FORMATS = {
+  display: {
+    dateInput: 'MM.yyyy',
+  },
+};
 
 @Component({
   selector: 'app-monthly-graph',
   templateUrl: './monthly-graph.component.html',
   styleUrls: ['./monthly-graph.component.scss'],
-  providers:[DatePipe]
+  providers:[DatePipe, { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }]
 })
 export class MonthlyGraphComponent implements OnInit {
-  @Input('year') set year(value: number) {
-    if (value) {
-      this.yearChanges$.next(value);
-    }
-  }
-
-  @Input('month') set month(value: number) {
-    if (value) {
-      this.monthChanges$.next(value);
-    }
-  }
+  public date: FormControl = new FormControl();
 
   public lineChartData: ChartDataSets[] = [{ data: [], label: '' }];
 
@@ -46,9 +44,6 @@ export class MonthlyGraphComponent implements OnInit {
   public lineChartType = 'line';
   public lineChartPlugins = [];
 
-  private yearChanges$ = new ReplaySubject<number>(1);
-  private monthChanges$ = new ReplaySubject<number>(1);
-
   constructor(
     private authenticationService: AuthenticationService,
     private restaurantService: RestaurantService,
@@ -57,14 +52,11 @@ export class MonthlyGraphComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    combineLatest(
-      [
-        this.yearChanges$,
-        this.monthChanges$
-      ]
-    ).pipe(
+    this.date.valueChanges
+    .pipe(
         withLatestFrom(this.authenticationService.user$),
-        switchMap(([[year, month], restaurant]) =>
+        map(([date, restaurant]) => [date.month() + 1, date.year(), restaurant]),
+        switchMap(([month, year, restaurant]) =>
           this.restaurantService.getMonthyGraphData(restaurant.id, month, year)
           .pipe(
             catchError((error) => {
@@ -85,12 +77,12 @@ export class MonthlyGraphComponent implements OnInit {
       });
   }
 
-  ngOnDestroy(): void {
-    this.yearChanges$.complete();
-    this.monthChanges$.complete();
-  }
-
   getLabel(month: number, year: number) {
     return `Monthly Graph for ${month}.${year}`;
+  }
+
+  onMonthSelected(date: Date, datepicker) {
+    this.date.setValue(date);
+    datepicker.close();
   }
 }
