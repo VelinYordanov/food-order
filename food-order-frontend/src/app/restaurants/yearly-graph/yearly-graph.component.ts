@@ -1,16 +1,31 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 import { EMPTY, ReplaySubject, Subject } from 'rxjs';
-import { catchError, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import {
+  catchError,
+  map,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { RestaurantService } from '../services/restaurant.service';
+
+const MY_FORMATS = {
+  display: {
+    dateInput: 'yyyy',
+  },
+};
 
 @Component({
   selector: 'app-yearly-graph',
   templateUrl: './yearly-graph.component.html',
   styleUrls: ['./yearly-graph.component.scss'],
+  providers: [{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
 })
 export class YearlyGraphComponent implements OnInit, OnDestroy {
   @Input('year') set year(value: number) {
@@ -19,7 +34,9 @@ export class YearlyGraphComponent implements OnInit, OnDestroy {
     }
   }
 
-  public lineChartData: ChartDataSets[] = [{ data: [], label: 'Series A' }];
+  public date: FormControl = new FormControl();
+
+  public lineChartData: ChartDataSets[] = [{ data: [], label: '' }];
 
   public lineChartLabels: Label[] = [];
 
@@ -47,12 +64,12 @@ export class YearlyGraphComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.yearChanges$
+    this.date.valueChanges
       .pipe(
+        map((date) => date.year()),
         withLatestFrom(this.authenticationService.user$),
         switchMap(([year, restaurant]) =>
-          this.restaurantService.getYearlyGraph(restaurant.id, year)
-          .pipe(
+          this.restaurantService.getYearlyGraph(restaurant.id, year).pipe(
             catchError((error) => {
               this.alertService.displayMessage(
                 error?.error?.description ||
@@ -61,13 +78,13 @@ export class YearlyGraphComponent implements OnInit, OnDestroy {
               );
               return EMPTY;
             }),
-            tap(_ => this.lineChartData[0].label = this.getLabel(year)),
+            tap((_) => (this.lineChartData[0].label = this.getLabel(year)))
           )
         )
       )
-      .subscribe(graphData => {
-        this.lineChartLabels = graphData.map(data => data.x);
-        this.lineChartData[0].data = graphData.map(data => data.y);
+      .subscribe((graphData) => {
+        this.lineChartLabels = graphData.map((data) => data.x);
+        this.lineChartData[0].data = graphData.map((data) => data.y);
       });
   }
 
@@ -77,5 +94,10 @@ export class YearlyGraphComponent implements OnInit, OnDestroy {
 
   getLabel(year: number) {
     return `Yearly Graph for ${year}`;
+  }
+
+  onYearSelected(date: Date, datepicker) {
+    this.date.setValue(date);
+    datepicker.close();
   }
 }

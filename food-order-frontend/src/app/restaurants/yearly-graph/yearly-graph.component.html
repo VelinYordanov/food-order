@@ -1,3 +1,21 @@
+<div>
+    <h2>Yearly graph</h2>
+    <mat-form-field appearance="outline">
+        <mat-label>Select year</mat-label>
+        <input matInput
+            [matDatepicker]="datepicker"
+            #dateInput
+            [formControl]="date"
+            readonly
+            (focus)="datepicker.open()">
+        <mat-datepicker #datepicker
+            panelClass="no-click-header"
+            startView="multi-year"
+            (yearSelected)="onYearSelected($event, datepicker)"
+            (closed)="dateInput.blur()"></mat-datepicker>
+    </mat-form-field>
+</div>
+
 <div *ngIf="lineChartLabels.length">
     <canvas baseChart
         width="1000"

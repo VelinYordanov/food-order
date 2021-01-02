@@ -27,7 +27,7 @@ export class MonthlyGraphComponent implements OnInit {
     }
   }
 
-  public lineChartData: ChartDataSets[] = [{ data: [], label: 'Series A' }];
+  public lineChartData: ChartDataSets[] = [{ data: [], label: '' }];
 
   public lineChartLabels: Label[] = [];
 
