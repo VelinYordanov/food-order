@@ -3,6 +3,7 @@
     <div class="checkout">
         <button mat-stroked-button
             (click)="goToAddress()"
+            [disabled]="!numberOfFoods"
             color="primary">Checkout</button>
     </div>
 </section>

@@ -29,10 +29,12 @@
         <div>
             <button mat-raised-button
                 (click)="applyDiscountCode()"
+                [disabled]="!(numberOfFoods$ | async)"
                 color="primary">Apply discount code!</button>
         </div>
         <button mat-stroked-button
             (click)="submitOrder()"
+            [disabled]="!(numberOfFoods$ | async)"
             color="primary">Confirm</button>
     </div>
 </section>

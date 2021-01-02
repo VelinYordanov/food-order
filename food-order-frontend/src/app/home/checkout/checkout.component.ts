@@ -2,7 +2,16 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
-import { catchError, filter, finalize, map, switchMap, switchMapTo, withLatestFrom } from 'rxjs/operators';
+import {
+  catchError,
+  filter,
+  finalize,
+  map,
+  switchMap,
+  switchMapTo,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { CustomerService } from 'src/app/customers/services/customer.service';
@@ -14,13 +23,15 @@ import { UtilService } from 'src/app/shared/services/util.service';
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
-  styleUrls: ['./checkout.component.scss']
+  styleUrls: ['./checkout.component.scss'],
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
   comment: FormControl;
   discountCodeFormControl: FormControl;
 
   selectedAddress$: Observable<Address>;
+
+  numberOfFoods$: Observable<number>;
 
   discountCode: DiscountCode = null;
 
@@ -32,13 +43,23 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private customerService: CustomerService,
     private cartService: CartService,
-    private utilService:UtilService,
+    private utilService: UtilService,
     private router: Router,
-    private activatedRoute: ActivatedRoute) { }
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.setUpSubmitOrder();
     this.setUpDiscountCodeLookup();
+
+    this.numberOfFoods$ = this.cartService.selectedItems$.pipe(
+      map((items) =>
+        items
+          .map((item) => item.quantity)
+          .reduce((total, current) => total + current, 0),
+      ),
+      tap(console.log)
+    );
 
     this.selectedAddress$ = this.cartService.selectedAddress$;
 
@@ -66,18 +87,23 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private setUpDiscountCodeLookup() {
     this.applyDiscountCodeClicks
       .pipe(
-        map(_ => this.discountCodeFormControl.value),
-        filter(code => !!code),
+        map((_) => this.discountCodeFormControl.value),
+        filter((code) => !!code),
         withLatestFrom(this.cartService.selectedRestaurant$),
         switchMap(([code, restaurant]) =>
-          this.customerService.getDiscountCode(restaurant.id, code)
-            .pipe(
-              catchError(error => {
-                this.alertService.displayMessage(error?.error?.description || 'An error occurred while looking up discount code. Try again later.', 'error');
-                return EMPTY;
-              })
-            ))
-      ).subscribe(discountCode => this.discountCode = discountCode);
+          this.customerService.getDiscountCode(restaurant.id, code).pipe(
+            catchError((error) => {
+              this.alertService.displayMessage(
+                error?.error?.description ||
+                  'An error occurred while looking up discount code. Try again later.',
+                'error'
+              );
+              return EMPTY;
+            })
+          )
+        )
+      )
+      .subscribe((discountCode) => (this.discountCode = discountCode));
   }
 
   private setUpSubmitOrder() {
@@ -85,47 +111,55 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       .pipe(
         switchMapTo(
           combineLatest([
-            this.authenticationService.user$
-              .pipe(
-                map(user => user.id)
-              ),
-            this.cartService.selectedRestaurant$
-              .pipe(
-                map(restaurant => restaurant.id)
-              ),
-            this.cartService.selectedAddress$
-              .pipe(
-                map(address => address.id)
-              ),
-            this.cartService.selectedItems$
-              .pipe(
-                map(items => items.map(item => ({ id: item.food.id, quantity: item.quantity })))
-              ),
-          ])
-            .pipe(
-              switchMap(([customerId, restaurantId, addressId, foods]) =>
-                this.customerService.submitOrder(
-                  {
-                    restaurantId,
-                    customerId,
-                    addressId,
-                    foods,
-                    discountCodeId: this.discountCode?.id,
-                    comment: this.comment.value
-                  }
+            this.authenticationService.user$.pipe(map((user) => user.id)),
+            this.cartService.selectedRestaurant$.pipe(
+              map((restaurant) => restaurant.id)
+            ),
+            this.cartService.selectedAddress$.pipe(
+              map((address) => address.id)
+            ),
+            this.cartService.selectedItems$.pipe(
+              map((items) =>
+                items.map((item) => ({
+                  id: item.food.id,
+                  quantity: item.quantity,
+                }))
+              )
+            ),
+          ]).pipe(
+            switchMap(([customerId, restaurantId, addressId, foods]) =>
+              this.customerService
+                .submitOrder({
+                  restaurantId,
+                  customerId,
+                  addressId,
+                  foods,
+                  discountCodeId: this.discountCode?.id,
+                  comment: this.comment.value,
+                })
+                .pipe(
+                  catchError((error) => {
+                    this.alertService.displayMessage(
+                      error?.error?.description ||
+                        'An error occurred while submitting order. Try again later',
+                      'error'
+                    );
+                    return EMPTY;
+                  })
                 )
-                  .pipe(
-                    catchError(error => {
-                      this.alertService.displayMessage(error?.error?.description || 'An error occurred while submitting order. Try again later', 'error');
-                      return EMPTY;
-                    })
-                  )),
-              finalize(() => this.cartService.clearCart())
-            )
-        ))
-      .subscribe(order => {
-          this.alertService.displayMessage('Successfully submitted order.', 'success');
-          this.router.navigate(['../', order.id], { relativeTo: this.activatedRoute });
-      })
+            ),
+            finalize(() => this.cartService.clearCart())
+          )
+        )
+      )
+      .subscribe((order) => {
+        this.alertService.displayMessage(
+          'Successfully submitted order.',
+          'success'
+        );
+        this.router.navigate(['../', order.id], {
+          relativeTo: this.activatedRoute,
+        });
+      });
   }
 }
