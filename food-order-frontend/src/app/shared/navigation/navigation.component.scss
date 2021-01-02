@@ -45,3 +45,20 @@ ul {
 .active {
   border-bottom: 1px solid #ffffff;
 }
+
+.shopping-cart {
+  position: relative;
+}
+
+.cart-items-number {
+  position: absolute;
+  padding: 4px;
+  border-radius: 50%;
+  background-color: green;
+  top: -10px;
+  right: -15px;
+  text-align: center;
+  width: 18px;
+  height: 18px;
+  font-size: 13px;
+}

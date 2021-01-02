@@ -1,5 +1,7 @@
 <nav>
-    <h2>Food Order</h2>
+    <h2>
+        <a routerLink="/">Food Order</a>
+    </h2>
     <ul *ngIf="!isLoggedIn()">
         <li>
             <a routerLink="/login"
@@ -36,6 +38,15 @@
         <li>
             <a routerLink="/customer-profile"
                 routerLinkActive="active">Hello, {{user.username}}</a>
+        </li>
+        <li>
+            <div class="shopping-cart">
+                <a href="/restaurants/{{selectedRestaurant.id}}">
+                    <mat-icon>shopping_cart</mat-icon>
+                </a>
+                <span *ngIf="numberOfItems"
+                    class="cart-items-number">{{numberOfItems}}</span>
+            </div>
         </li>
         <li>
             <a routerLink="/restaurants"

@@ -11,7 +11,7 @@ import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 })
 export class CartService {
   private currentRestaurant = new BehaviorSubject<OrderRestaurant>(JSON.parse(this.storageService.getItem('restaurant')));
-  private selectedAddress = new BehaviorSubject<Address>(null);
+  private selectedAddress = new BehaviorSubject<Address>(JSON.parse(this.storageService.getItem('address')));
   private foodCart = new BehaviorSubject<CartItem[]>(JSON.parse(this.storageService.getItem("cart")));
 
   selectedRestaurant$: Observable<OrderRestaurant> = this.currentRestaurant.asObservable();
@@ -21,6 +21,7 @@ export class CartService {
   constructor(private storageService: StorageService) {
     this.selectedItems$.subscribe(items => this.storageService.setItem('cart', JSON.stringify(items)));
     this.currentRestaurant.subscribe(restaurant => this.storageService.setItem('restaurant', JSON.stringify(restaurant)));
+    this.selectedAddress.subscribe(address => this.storageService.setItem('address', JSON.stringify(address)));
   }
 
   updateSelectedAddress(address: Address) {
