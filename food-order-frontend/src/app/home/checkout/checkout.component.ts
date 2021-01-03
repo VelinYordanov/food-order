@@ -57,8 +57,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         items
           .map((item) => item.quantity)
           .reduce((total, current) => total + current, 0),
-      ),
-      tap(console.log)
+      )
     );
 
     this.selectedAddress$ = this.cartService.selectedAddress$;

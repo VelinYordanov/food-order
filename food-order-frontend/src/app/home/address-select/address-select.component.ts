@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, Subscription } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
 import { CustomerService } from 'src/app/customers/services/customer.service';
@@ -13,11 +13,14 @@ import { UtilService } from 'src/app/shared/services/util.service';
 @Component({
   selector: 'app-address-select',
   templateUrl: './address-select.component.html',
-  styleUrls: ['./address-select.component.scss']
+  styleUrls: ['./address-select.component.scss'],
 })
-export class AddressSelectComponent implements OnInit {
+export class AddressSelectComponent
+  implements OnInit, AfterViewInit, OnDestroy {
   addressForm: FormGroup;
   addresses$: Observable<Address[]>;
+
+  private selectedAddressSubscription: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -27,24 +30,36 @@ export class AddressSelectComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private customerService: CustomerService,
-    private utilService: UtilService) { }
+    private utilService: UtilService
+  ) {}
 
   ngOnInit(): void {
     this.addressForm = this.formBuilder.group({
-      address: [null, Validators.required]
+      address: [null, Validators.required],
     });
 
-    this.addresses$ = this.authenticationService.user$
-      .pipe(
-        switchMap(user =>
-          this.customerService.getCustomerAddresses(user.id)
-            .pipe(
-              catchError(error => {
-                this.alertService.displayMessage(error?.error?.description || "An error occurred while loading addresses. Try again later.", 'error');
-                return EMPTY;
-              })
-            ))
+    this.addressForm.valueChanges.subscribe(console.log);
+
+    this.addresses$ = this.authenticationService.user$.pipe(
+      switchMap((user) =>
+        this.customerService.getCustomerAddresses(user.id).pipe(
+          catchError((error) => {
+            this.alertService.displayMessage(
+              error?.error?.description ||
+                'An error occurred while loading addresses. Try again later.',
+              'error'
+            );
+            return EMPTY;
+          })
+        )
       )
+    );
+  }
+
+  ngAfterViewInit(): void {
+    this.selectedAddressSubscription = this.cartService.selectedAddress$.subscribe(
+      (address) => this.addressForm.get('address').setValue(address)
+    );
   }
 
   getAddressData(address: Address) {
@@ -52,7 +67,19 @@ export class AddressSelectComponent implements OnInit {
   }
 
   confirmAddress() {
-    this.cartService.updateSelectedAddress(this.addressForm.get('address').value);
-    this.router.navigate(['../', 'checkout'], { relativeTo: this.activatedRoute });
+    this.cartService.updateSelectedAddress(
+      this.addressForm.get('address').value
+    );
+    this.router.navigate(['../', 'checkout'], {
+      relativeTo: this.activatedRoute,
+    });
+  }
+
+  compareAddresses(address1: Address, address2: Address) {
+    return address1.id === address2.id;
+  }
+
+  ngOnDestroy(): void {
+    this.selectedAddressSubscription.unsubscribe();
   }
 }

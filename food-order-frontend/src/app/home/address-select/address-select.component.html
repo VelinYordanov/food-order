@@ -4,7 +4,8 @@
             <mat-form-field appearance="outline"
                 class="form-field">
                 <mat-label>Address</mat-label>
-                <mat-select formControlName="address">
+                <mat-select formControlName="address"
+                    [compareWith]="compareAddresses">
                     <mat-option *ngFor="let address of addresses"
                         [value]="address">
                         {{getAddressData(address)}}
