@@ -39,11 +39,9 @@ const routes: Routes = [
   { path: 'order/:id', component: SuccessfulOrderComponent },
   {
     path: 'customer-profile',
-    component: CustomerProfileComponent,
-    canActivate: [CustomerOnlyGuard],
+    loadChildren: () =>
+      import('./customers/customers.module').then((m) => m.CustomersModule),
   },
-  { path: 'customer-profile/addresses/add', component: AddressCreateComponent },
-  { path: 'customer-profile/addresses/:id', component: AddressUpdateComponent },
   { path: 'restaurants', component: RestaurantListComponent },
   { path: 'restaurants/:id', component: RestaurantDetailsComponent },
 ];
