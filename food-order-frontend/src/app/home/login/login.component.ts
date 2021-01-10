@@ -5,6 +5,7 @@ import { LoginService } from '../services/login-service.service';
 import { exhaustMap, catchError, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { Router } from '@angular/router';
+import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private loginService: LoginService,
     private router: Router,
+    private alertService: AlertService,
     private authenticationService: AuthenticationService,
   ) { }
 
@@ -41,6 +43,7 @@ export class LoginComponent implements OnInit {
 
             return login$.pipe(catchError(error => { 
               this.loginForm.enable();
+              this.alertService.displayMessage(error?.error?.description || 'An error occurred while logging in. Try again later.', 'error');
               return EMPTY;
             }))
           }

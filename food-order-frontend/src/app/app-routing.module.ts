@@ -14,10 +14,16 @@ import { RestaurantProfileComponent } from './restaurants/restaurant-profile/res
 import { GenerateDiscountCodeComponent } from './restaurants/generate-discount-code/generate-discount-code.component';
 import { DiscountCodesListComponent } from './restaurants/discount-codes-list/discount-codes-list.component';
 import { GraphsComponent } from './restaurants/graphs/graphs.component';
+import { RestaurantOnlyGuard } from './restaurants/guards/restaurant-only.guard';
+import { CustomerOnlyGuard } from './customers/guards/customer-only.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'restaurant-profile', component: RestaurantProfileComponent },
+  {
+    path: 'restaurant-profile',
+    component: RestaurantProfileComponent,
+    canActivate: [RestaurantOnlyGuard],
+  },
   { path: 'restaurant-profile/orders', component: RestaurantOrdersComponent },
   { path: 'restaurant-profile/graphs', component: GraphsComponent },
   {
@@ -31,7 +37,11 @@ const routes: Routes = [
   { path: 'order/checkout', component: CheckoutComponent },
   { path: 'order/address', component: AddressSelectComponent },
   { path: 'order/:id', component: SuccessfulOrderComponent },
-  { path: 'customer-profile', component: CustomerProfileComponent },
+  {
+    path: 'customer-profile',
+    component: CustomerProfileComponent,
+    canActivate: [CustomerOnlyGuard],
+  },
   { path: 'customer-profile/addresses/add', component: AddressCreateComponent },
   { path: 'customer-profile/addresses/:id', component: AddressUpdateComponent },
   { path: 'restaurants', component: RestaurantListComponent },
