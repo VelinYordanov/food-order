@@ -478,6 +478,10 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 		.findByIdAndRestaurant(discountCodeId, restaurantId)
 		.orElseThrow(() -> new NotFoundException("Discount code not found"));
 
+	if (!code.getOrders().isEmpty()) {
+	    throw new BadRequestException("Discount code has orders associated with it and cannot be deleted.");
+	}
+
 	this.foodOrderData.discountCodes().delete(code);
 
 	return this.mapper.map(code, DiscountCodeDto.class);
