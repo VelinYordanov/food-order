@@ -23,7 +23,7 @@ import { CustomerService } from '../services/customer.service';
   templateUrl: './customer-orders.component.html',
   styleUrls: ['./customer-orders.component.scss'],
 })
-export class CutomerOrdersComponent implements OnInit, OnDestroy {
+export class CustomerOrdersComponent implements OnInit, OnDestroy {
   private pageSelects$ = new Subject<number>();
   pagedOrders$: Observable<Page<Order>>;
 

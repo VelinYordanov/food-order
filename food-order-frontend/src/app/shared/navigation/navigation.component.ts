@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, scan } from 'rxjs/operators';
+import { filter, map, scan, tap } from 'rxjs/operators';
 import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 import { User } from '../models/user';
 import { AuthenticationService } from '../services/authentication.service';
@@ -26,7 +26,7 @@ export class NavigationComponent implements OnInit {
 
     this.cartService.selectedItems$
     .pipe(
-      map(item => item.map(x => x.quantity).reduce((acc, current) => acc + current, 0)),
+      map(items => items.map(x => x.quantity).reduce((acc, current) => acc + current, 0)),
     ).subscribe(numberOfItems => this.numberOfItems = numberOfItems);
 
     this.authenticationService.user$.subscribe(user => this.user = user);

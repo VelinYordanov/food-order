@@ -12,7 +12,7 @@ import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 export class CartService {
   private currentRestaurant = new BehaviorSubject<OrderRestaurant>(JSON.parse(this.storageService.getItem('restaurant')));
   private selectedAddress = new BehaviorSubject<Address>(JSON.parse(this.storageService.getItem('address')));
-  private foodCart = new BehaviorSubject<CartItem[]>(JSON.parse(this.storageService.getItem("cart")));
+  private foodCart = new BehaviorSubject<CartItem[]>(JSON.parse(this.storageService.getItem("cart")) || []);
 
   selectedRestaurant$: Observable<OrderRestaurant> = this.currentRestaurant.asObservable();
   selectedAddress$: Observable<Address> = this.selectedAddress.asObservable();
