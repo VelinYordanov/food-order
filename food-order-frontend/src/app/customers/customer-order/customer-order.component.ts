@@ -49,6 +49,6 @@ export class CustomerOrderComponent implements OnInit {
   }
 
   trackOrder(orderId: string) {
-    this.router.navigate(['order', orderId]);
+    this.router.navigate(['customer', 'order', orderId]);
   }
 }

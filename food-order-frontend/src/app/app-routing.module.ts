@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AddressSelectComponent } from './customers/address-select/address-select.component';
-import { CheckoutComponent } from './customers/checkout/checkout.component';
 import { LoginComponent } from './home/login/login.component';
-import { SuccessfulOrderComponent } from './customers/successful-order/successful-order.component';
 import { RestaurantDetailsComponent } from './restaurants/restaurant-details/restaurant-details.component';
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
+import { RestaurantOnlyGuard } from './restaurants/guards/restaurant-only.guard';
+import { CustomerOnlyGuard } from './customers/guards/customer-only.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   {
     path: 'restaurant',
+    canLoad: [RestaurantOnlyGuard],
     loadChildren: () =>
       import('./restaurants/restaurants.module').then(
         (m) => m.RestaurantsModule
@@ -18,6 +18,7 @@ const routes: Routes = [
   },
   {
     path: 'customer',
+    canLoad: [CustomerOnlyGuard],
     loadChildren: () =>
       import('./customers/customers.module').then((m) => m.CustomersModule),
   },
