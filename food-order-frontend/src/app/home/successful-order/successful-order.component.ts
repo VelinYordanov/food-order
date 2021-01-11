@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, EMPTY, Observable } from 'rxjs';
-import { catchError, filter, map, switchMap, switchMapTo, withLatestFrom } from 'rxjs/operators';
+import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
+import { catchError, filter, map, switchMap, switchMapTo, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { Order } from 'src/app/customers/models/order';
 import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -16,9 +16,10 @@ import { OrderStatus } from '../../customers/models/order-status';
   templateUrl: './successful-order.component.html',
   styleUrls: ['./successful-order.component.scss']
 })
-export class SuccessfulOrderComponent implements OnInit {
+export class SuccessfulOrderComponent implements OnInit, OnDestroy {
   order: Order;
 
+  private onDestroy$: Subject<void> = new Subject<void>();
   private orderStatuses: EnumData[] = [];
 
   constructor(
@@ -52,6 +53,7 @@ export class SuccessfulOrderComponent implements OnInit {
         userId$
       ]
     ).pipe(
+      takeUntil(this.onDestroy$),
       switchMap(([orderId, userId]) =>
         this.customerService.getOrderById(userId, orderId)
           .pipe(
@@ -64,14 +66,24 @@ export class SuccessfulOrderComponent implements OnInit {
 
     userId$
       .pipe(
+        takeUntil(this.onDestroy$),
         withLatestFrom(orderId$),
-        switchMap((([userId, orderId]) => this.realTimeNotificationsService.subscribe(`/notifications/customers/${userId}/orders/${orderId}`)))
+        switchMap((([userId, orderId]) => this.realTimeNotificationsService
+          .subscribe(`/notifications/customers/${userId}/orders/${orderId}`)
+          .pipe(
+            takeUntil(this.onDestroy$)
+          )))
       ).subscribe(order => {
         if(this.order) {
           const orderStatus = JSON.parse(order) as OrderStatus;
           this.order.status = orderStatus.status;
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getOrderStatus(status: number): string {
