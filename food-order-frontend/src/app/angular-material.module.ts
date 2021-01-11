@@ -14,6 +14,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {
   MatMomentDateModule,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
@@ -36,8 +37,9 @@ import {
     MatDatepickerModule,
     MatMomentDateModule,
     MatTooltipModule,
+    MatSlideToggleModule,
   ],
-  exports:[
+  exports: [
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
@@ -52,10 +54,11 @@ import {
     MatDatepickerModule,
     MatMomentDateModule,
     MatTooltipModule,
+    MatSlideToggleModule,
   ],
-  providers:[
+  providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
-  ]
+  ],
 })
-export class AngularMaterialModule { }
+export class AngularMaterialModule {}
