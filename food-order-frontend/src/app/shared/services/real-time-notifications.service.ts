@@ -30,7 +30,7 @@ export class RealTimeNotificationsService {
     return new Observable((observer) => {
       this.messageClient.activate();
 
-      this.messageClient.onStompError = (error) => observer.error(error.body);
+      this.messageClient.onStompError = (error) => observer.error(error?.body);
       this.messageClient.onConnect = (connect) => {
         observer.next(connect.body);
       };

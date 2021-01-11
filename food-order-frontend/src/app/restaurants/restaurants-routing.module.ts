@@ -9,7 +9,7 @@ import { DiscountCodesListComponent } from './discount-codes-list/discount-codes
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'profile',
     component: RestaurantProfileComponent,
   },
   { path: 'orders', component: RestaurantOrdersComponent },

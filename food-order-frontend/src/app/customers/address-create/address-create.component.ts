@@ -36,7 +36,7 @@ export class AddressCreateComponent implements OnInit {
             ))
       ).subscribe(address => {
         this.alertService.displayMessage("Successfully added address!", 'success');
-        this.router.navigate(['customer-profile']);
+        this.router.navigate(['customers', 'profile']);
       })
   }
 }

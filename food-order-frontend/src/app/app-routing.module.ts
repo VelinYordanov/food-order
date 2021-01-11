@@ -10,7 +10,7 @@ import { RestaurantListComponent } from './restaurants/restaurant-list/restauran
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   {
-    path: 'restaurant-profile',
+    path: 'restaurant',
     loadChildren: () =>
       import('./restaurants/restaurants.module').then(
         (m) => m.RestaurantsModule
@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: 'order/address', component: AddressSelectComponent },
   { path: 'order/:id', component: SuccessfulOrderComponent },
   {
-    path: 'customer-profile',
+    path: 'customer',
     loadChildren: () =>
       import('./customers/customers.module').then((m) => m.CustomersModule),
   },

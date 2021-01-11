@@ -5,7 +5,7 @@
     <p *ngIf="address.street">Street {{address.street}} {{address.streetNumber}}</p>
     <p *ngIf="address.neighborhood">{{address.neighborhood}}</p>
     <p class="actions">
-        <a [routerLink]="['addresses', address.id]"
+        <a [routerLink]="['..', 'addresses', address.id]"
             class="action">Edit</a>
         <span>|</span>
         <span (click)="delete()"

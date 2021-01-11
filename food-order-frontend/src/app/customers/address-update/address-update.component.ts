@@ -67,7 +67,7 @@ export class AddressUpdateComponent implements OnInit {
           ))
       ).subscribe(address => {
         this.alertService.displayMessage('Successfully editted address.', 'success');
-        this.router.navigate(['customer-profile']);
+        this.router.navigate(['customer', 'profile']);
       })
   }
 }

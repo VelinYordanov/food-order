@@ -5,7 +5,7 @@ import { AddressUpdateComponent } from './address-update/address-update.componen
 import { CustomerProfileComponent } from './customer-profile/customer-profile.component';
 
 const routes: Routes = [
-  { path: '', component: CustomerProfileComponent },
+  { path: 'profile', component: CustomerProfileComponent },
   { path: 'addresses/add', component: AddressCreateComponent },
   { path: 'addresses/:id', component: AddressUpdateComponent },
 ];

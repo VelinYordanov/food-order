@@ -14,20 +14,20 @@
     </ul>
     <ul *ngIf="isLoggedIn() && isRestaurant()">
         <li>
-            <a routerLink="/restaurant-profile"
+            <a routerLink="/restaurant/profile"
                 [routerLinkActiveOptions]="{exact: true}"
                 routerLinkActive="active">Hello, {{user.username}}</a>
         </li>
         <li>
-            <a routerLink="/restaurant-profile/orders"
+            <a routerLink="/restaurant/orders"
                 routerLinkActive="active">Orders</a>
         </li>
         <li>
-            <a routerLink="/restaurant-profile/graphs"
+            <a routerLink="/restaurant/graphs"
                 routerLinkActive="active">Graphs</a>
         </li>
         <li>
-            <a routerLink="/restaurant-profile/discount-codes"
+            <a routerLink="/restaurant/discount-codes"
                 routerLinkActive="active">Discount Codes</a>
         </li>
         <li (click)="logOut()">
@@ -36,7 +36,7 @@
     </ul>
     <ul *ngIf="isLoggedIn() && isCustomer()">
         <li>
-            <a routerLink="/customer-profile"
+            <a routerLink="/customer/profile"
                 routerLinkActive="active">Hello, {{user.username}}</a>
         </li>
         <li *ngIf="selectedRestaurant && numberOfItems">

@@ -3,7 +3,7 @@
     <section class="addresses">
         <section class="add-address">
             <h3>
-                <a routerLink="addresses/add">Add an address</a>
+                <a [routerLink]="['..', 'addresses', 'add']">Add an address</a>
             </h3>
         </section>
         <section *ngFor="let address of addresses">
