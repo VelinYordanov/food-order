@@ -42,6 +42,8 @@ export class CartService {
 
   loadCart(items: CartItem[]) {
     const existingItems = this.foodCart.getValue();
+    console.log(`Existing items ${JSON.stringify(existingItems)}`);
+    console.log(`Items ${JSON.stringify(items)}`);
     items.forEach(item => {
       const currentItem = existingItems.find(existingItem => existingItem.food.id === item.food.id);
       if(currentItem) {
@@ -51,6 +53,7 @@ export class CartService {
       }
     })
 
+    console.log(`Existing items after loading ${JSON.stringify(existingItems)}`);
     this.foodCart.next(existingItems);
   }
 

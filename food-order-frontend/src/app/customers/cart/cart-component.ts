@@ -30,7 +30,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   goToAddress() {
-    this.router.navigate(['order', 'address']);
+    this.router.navigate(['customer', 'order', 'address']);
   }
 
   ngOnDestroy(): void {

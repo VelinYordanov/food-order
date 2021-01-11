@@ -12,6 +12,10 @@ import { AddressComponent } from './address/address.component';
 import { AddressItemComponent } from './address-item/address-item.component';
 
 import { AngularMaterialModule } from '../angular-material.module';
+import { AddressSelectComponent } from './address-select/address-select.component';
+import { CheckoutComponent } from './checkout/checkout.component';
+import { SuccessfulOrderComponent } from './successful-order/successful-order.component';
+import { SharedModule } from '../shared.module';
 
 @NgModule({
   declarations: [
@@ -24,12 +28,16 @@ import { AngularMaterialModule } from '../angular-material.module';
     AddressListComponent,
     AddressComponent,
     AddressItemComponent,
+    AddressSelectComponent,
+    CheckoutComponent,
+    SuccessfulOrderComponent,
   ],
   imports: [
     CommonModule,
     CustomersRoutingModule,
     ReactiveFormsModule,
     AngularMaterialModule,
+    SharedModule,
   ],
 })
 export class CustomersModule {}

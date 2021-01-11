@@ -15,14 +15,10 @@ import { SwalToken } from 'src/app/shared/injection-tokens/swal-injection-token'
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
 import { RestaurantItemComponent } from './restaurants/restaurant-item/restaurant-item.component';
 import { RestaurantDetailsComponent } from './restaurants/restaurant-details/restaurant-details.component';
-import { CartComponent } from './home/cart/cart-component';
-import { CartItemsComponent } from './home/cart-items/cart-items.component';
-import { CheckoutComponent } from './home/checkout/checkout.component';
-import { AddressSelectComponent } from './home/address-select/address-select.component';
-import { SuccessfulOrderComponent } from './home/successful-order/successful-order.component';
 import { NavigationComponent } from './shared/navigation/navigation.component';
 
 import { AngularMaterialModule } from './angular-material.module';
+import { SharedModule } from './shared.module';
 
 @NgModule({
   declarations: [
@@ -31,11 +27,6 @@ import { AngularMaterialModule } from './angular-material.module';
     RestaurantListComponent,
     RestaurantItemComponent,
     RestaurantDetailsComponent,
-    CartComponent,
-    CartItemsComponent,
-    CheckoutComponent,
-    AddressSelectComponent,
-    SuccessfulOrderComponent,
     NavigationComponent,
   ],
   imports: [
@@ -46,7 +37,7 @@ import { AngularMaterialModule } from './angular-material.module';
       },
     }),
     AngularMaterialModule,
-
+    SharedModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,

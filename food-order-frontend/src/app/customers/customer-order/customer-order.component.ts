@@ -43,8 +43,8 @@ export class CustomerOrderComponent implements OnInit {
 
   loadCart(order: Order) {
     const cartItems = order.foods.map((food) => ({ food, quantity: food.quantity }));
-    this.cartService.loadCart(cartItems);
     this.cartService.setRestaurant(order.restaurant);
+    this.cartService.loadCart(cartItems);
     this.router.navigate(['restaurants', order.restaurant.id]);
   }
 

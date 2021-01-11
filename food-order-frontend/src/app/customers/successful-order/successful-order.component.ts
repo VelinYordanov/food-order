@@ -9,7 +9,7 @@ import { AuthenticationService } from 'src/app/shared/services/authentication.se
 import { EnumsService } from 'src/app/shared/services/enums.service';
 import { EnumData } from 'src/app/shared/models/enum-data';
 import { RealTimeNotificationsService } from 'src/app/shared/services/real-time-notifications.service';
-import { OrderStatus } from '../../customers/models/order-status';
+import { OrderStatus } from '../models/order-status';
 
 @Component({
   selector: 'app-successful-order',
