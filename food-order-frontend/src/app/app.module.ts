@@ -19,6 +19,7 @@ import { NavigationComponent } from './shared/navigation/navigation.component';
 
 import { AngularMaterialModule } from './angular-material.module';
 import { SharedModule } from './shared.module';
+import { RegisterComponent } from './home/register/register.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { SharedModule } from './shared.module';
     RestaurantItemComponent,
     RestaurantDetailsComponent,
     NavigationComponent,
+    RegisterComponent,
   ],
   imports: [
     JwtModule.forRoot({
