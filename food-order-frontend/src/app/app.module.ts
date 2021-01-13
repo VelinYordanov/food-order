@@ -20,6 +20,7 @@ import { NavigationComponent } from './shared/navigation/navigation.component';
 import { AngularMaterialModule } from './angular-material.module';
 import { SharedModule } from './shared.module';
 import { RegisterComponent } from './home/register/register.component';
+import { RestaurantRegisterComponent } from './home/restaurant-register/restaurant-register.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { RegisterComponent } from './home/register/register.component';
     RestaurantDetailsComponent,
     NavigationComponent,
     RegisterComponent,
+    RestaurantRegisterComponent,
   ],
   imports: [
     JwtModule.forRoot({
