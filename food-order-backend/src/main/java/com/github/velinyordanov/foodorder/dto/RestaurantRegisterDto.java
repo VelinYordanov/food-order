@@ -1,14 +1,14 @@
 package com.github.velinyordanov.foodorder.dto;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.github.velinyordanov.foodorder.config.ValidationConstraints;
 
 public class RestaurantRegisterDto {
-    @NotEmpty(message = ValidationConstraints.EMPTY_USERNAME)
+    @NotBlank(message = ValidationConstraints.EMPTY_USERNAME)
     @Email(message = ValidationConstraints.NOT_EMAIL)
     @Size(
 	    min = ValidationConstraints.MIN_LENGTH_USERNAME,
@@ -16,7 +16,7 @@ public class RestaurantRegisterDto {
 	    message = ValidationConstraints.USERNAME_OUT_OF_BOUNDS)
     private String email;
 
-    @NotEmpty(message = ValidationConstraints.EMPTY_PASSWORD)
+    @NotBlank(message = ValidationConstraints.EMPTY_PASSWORD)
     @Size(
 	    min = ValidationConstraints.MIN_LENGTH_PASSWORD,
 	    max = ValidationConstraints.MAX_LENGTH_PASSWORD,
@@ -29,7 +29,7 @@ public class RestaurantRegisterDto {
 	    message = ValidationConstraints.PASSWORD_PATTERN)
     private String password;
 
-    @NotEmpty(message = ValidationConstraints.EMPTY_NAME)
+    @NotBlank(message = ValidationConstraints.EMPTY_NAME)
     @Pattern(regexp = ValidationConstraints.NAME_PATTERN, message = ValidationConstraints.NAME_DOES_NOT_MATCH_PATTERN)
     @Size(
 	    min = ValidationConstraints.MIN_LENGTH_NAME,

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 public class FoodCreateDto {
@@ -15,6 +16,7 @@ public class FoodCreateDto {
     @NotBlank(message = "Description is required")
     private String description;
 
+    @NotNull(message = "Price is required")
     @Positive(message = "Price must be above 0")
     private BigDecimal price;
 
