@@ -19,7 +19,6 @@ import { OrderStatus } from '../models/order-status';
 export class SuccessfulOrderComponent implements OnInit, OnDestroy {
   order: Order;
 
-  private onDestroy$: Subject<void> = new Subject<void>();
   private orderStatuses: EnumData[] = [];
 
   constructor(
@@ -53,7 +52,6 @@ export class SuccessfulOrderComponent implements OnInit, OnDestroy {
         userId$
       ]
     ).pipe(
-      takeUntil(this.onDestroy$),
       switchMap(([orderId, userId]) =>
         this.customerService.getOrderById(userId, orderId)
           .pipe(
@@ -66,13 +64,9 @@ export class SuccessfulOrderComponent implements OnInit, OnDestroy {
 
     userId$
       .pipe(
-        takeUntil(this.onDestroy$),
         withLatestFrom(orderId$),
         switchMap((([userId, orderId]) => this.realTimeNotificationsService
-          .subscribe(`/notifications/customers/${userId}/orders/${orderId}`)
-          .pipe(
-            takeUntil(this.onDestroy$)
-          )))
+          .subscribe(`/notifications/customers/${userId}/orders/${orderId}`)))
       ).subscribe(order => {
         if(this.order) {
           const orderStatus = JSON.parse(order) as OrderStatus;
@@ -82,8 +76,7 @@ export class SuccessfulOrderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
+    this.realTimeNotificationsService.disconnect();
   }
 
   getOrderStatus(status: number): string {

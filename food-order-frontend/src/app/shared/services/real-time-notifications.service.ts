@@ -41,7 +41,6 @@ export class RealTimeNotificationsService {
 
   public disconnect() {
     this.cancel$.next();
-    this.cancel$.complete();
   }
 
   public subscribe(url: string): Observable<string> {
@@ -55,7 +54,7 @@ export class RealTimeNotificationsService {
     if (!this.messageClient.connected) {
       return this.connect().pipe(
         switchMapTo(subscription$),
-        takeUntil(this.cancel$.pipe(skip(1)))
+        takeUntil(this.cancel$)
       );
     }
 
