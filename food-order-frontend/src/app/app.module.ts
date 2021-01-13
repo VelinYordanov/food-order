@@ -21,7 +21,7 @@ import { AngularMaterialModule } from './angular-material.module';
 import { SharedModule } from './shared.module';
 import { RegisterComponent } from './home/register/register.component';
 import { RestaurantRegisterComponent } from './home/restaurant-register/restaurant-register.component';
-import { CustomerRegisterComponent } from './home/customer-register/customer-register.component';
+import { RegisterCustomerComponent } from './home/register-customer/register-customer.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +33,7 @@ import { CustomerRegisterComponent } from './home/customer-register/customer-reg
     NavigationComponent,
     RegisterComponent,
     RestaurantRegisterComponent,
-    CustomerRegisterComponent,
+    RegisterCustomerComponent,
   ],
   imports: [
     JwtModule.forRoot({

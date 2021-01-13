@@ -3,17 +3,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
 import { catchError, exhaustMap, finalize, tap } from 'rxjs/operators';
-import { RestaurantService } from 'src/app/restaurants/services/restaurant.service';
+import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { RestaurantRegisterDto } from '../models/restaurant-register-dto';
+import { CustomerRegisterDto } from '../models/customer-register-dto';
 
 @Component({
-  selector: 'app-restaurant-register',
-  templateUrl: './restaurant-register.component.html',
-  styleUrls: ['./restaurant-register.component.scss']
+  selector: 'app-register-customer',
+  templateUrl: './register-customer.component.html',
+  styleUrls: ['./register-customer.component.scss']
 })
-export class RestaurantRegisterComponent implements OnInit {
+export class RegisterCustomerComponent implements OnInit {
   registerForm: FormGroup;
 
   readonly minEmailLength = 5;
@@ -23,11 +23,11 @@ export class RestaurantRegisterComponent implements OnInit {
   readonly minNameLength = 3;
   readonly maxNameLength = 100;
 
-  private registerFormSubmitsSubject = new Subject<RestaurantRegisterDto>();
+  private registerFormSubmitsSubject = new Subject<CustomerRegisterDto>();
 
   constructor(
     private formBuilder: FormBuilder,
-    private restaurantService:RestaurantService,
+    private customerSerice: CustomerService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private router: Router) { }
@@ -37,25 +37,25 @@ export class RestaurantRegisterComponent implements OnInit {
       email: [null, [Validators.required, Validators.email, Validators.minLength(this.minEmailLength), Validators.maxLength(this.maxEmailLength)]],
       password: [null, [Validators.required, Validators.minLength(this.minPasswordLength), Validators.maxLength(this.maxPasswordLength)]],
       name: [null, [Validators.required, Validators.minLength(this.minNameLength), Validators.maxLength(this.maxNameLength)]],
-      description: [null]
-    })
+      phoneNumber: [null, [Validators.required, Validators.pattern(/^[0-9]+$/)]]
+    });
 
     this.registerFormSubmitsSubject
       .pipe(
         tap({
           next: _ => this.registerForm.disable()
         }),
-        exhaustMap(restaurant => this.restaurantService.registerRestaurant(restaurant)
+        exhaustMap(customer => this.customerSerice.registerCustomer(customer)
         .pipe(
           catchError(error => {
             this.alertService.displayMessage(error?.error?.description || 'An error occurred while registering the user. Try again laer.', 'error');
             return EMPTY;
           }),
           finalize(() => this.registerForm.enable())
-        ))
+        )),
       ).subscribe(result => {
           this.authenticationService.login(result.token);
-            this.router.navigate(['restaurant','profile']);
+            this.router.navigate(['customer','profile']);
       });
   }
 

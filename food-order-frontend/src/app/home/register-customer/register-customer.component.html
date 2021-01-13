@@ -1,5 +1,5 @@
 <section>
-    <h2>Register restaurant</h2>
+    <h2>Register customer</h2>
     <form [formGroup]="registerForm"
         (ngSubmit)="submit()">
         <div>
@@ -64,11 +64,16 @@
         <div>
             <mat-form-field appearance="outline"
                 class="form-field">
-                <mat-label>Description</mat-label>
-                <textarea matInput
-                    formControlName="description"
-                    cdkTextareaAutosize
-                    cdkAutosizeMinRows="5"></textarea>
+                <mat-label>Phone number</mat-label>
+                <input matInput
+                    formControlName="phoneNumber"
+                    type="text">
+                <mat-error *ngIf="registerForm.get('phoneNumber').hasError('required')">
+                    Phone number is required
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('phoneNumber').hasError('pattern')">
+                    Enter a valid phone number
+                </mat-error>
             </mat-form-field>
         </div>
         <div>

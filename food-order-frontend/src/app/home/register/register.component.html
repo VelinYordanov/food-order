@@ -1,1 +1,10 @@
-<p>register works!</p>
+<section>
+    <div>
+        <mat-slide-toggle [(ngModel)]="isRestaurant"
+            color="primary">Restaurant</mat-slide-toggle>
+    </div>
+    <section>
+        <app-restaurant-register *ngIf="isRestaurant"></app-restaurant-register>
+        <app-register-customer *ngIf="!isRestaurant"></app-register-customer>
+    </section>
+</section>

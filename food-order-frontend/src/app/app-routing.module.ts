@@ -5,9 +5,11 @@ import { RestaurantDetailsComponent } from './restaurants/restaurant-details/res
 import { RestaurantListComponent } from './restaurants/restaurant-list/restaurant-list.component';
 import { RestaurantOnlyGuard } from './restaurants/guards/restaurant-only.guard';
 import { CustomerOnlyGuard } from './customers/guards/customer-only.guard';
+import { RegisterComponent } from './home/register/register.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   {
     path: 'restaurant',
     canLoad: [RestaurantOnlyGuard],

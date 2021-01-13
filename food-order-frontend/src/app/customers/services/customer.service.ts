@@ -5,6 +5,9 @@ import { OrderCreate } from '../models/order-create';
 import { Order } from '../models/order';
 import { DiscountCode } from '../models/discount-code';
 import { Page } from '../../shared/models/page';
+import { CustomerRegisterDto } from '../../home/models/customer-register-dto';
+import { Observable } from 'rxjs';
+import { JwtToken } from 'src/app/home/models/jwt-token';
 
 @Injectable({
   providedIn: 'root'
@@ -48,5 +51,9 @@ export class CustomerService {
 
   getDiscountCode(restaurantId: string, code: string) {
     return this.httpClient.get<DiscountCode>(`/api/restaurants/${restaurantId}/discount-codes/${code}`);
+  }
+
+  registerCustomer(customer: CustomerRegisterDto): Observable<JwtToken> {
+    return this.httpClient.post<JwtToken>(`${this.BASE_URL}`, customer);
   }
 }

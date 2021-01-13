@@ -13,6 +13,9 @@ import { DiscountCodeItem } from '../models/discount-code-item';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { DiscountCodeEdit } from '../models/discount-code-edit';
 import { GraphData } from '../models/graph-data';
+import { JwtToken } from 'src/app/home/models/jwt-token';
+import { Observable } from 'rxjs';
+import { RestaurantRegisterDto } from '../../home/models/restaurant-register-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -129,5 +132,9 @@ export class RestaurantService {
       `${this.BASE_URL}/${restaurantId}/orders/yearly-graph`,
       { params: { year: String(year) } }
     );
+  }
+
+  registerRestaurant(restaurant: RestaurantRegisterDto): Observable<JwtToken> {
+    return this.httpClient.post<JwtToken>(`${this.BASE_URL}`, restaurant);
   }
 }
