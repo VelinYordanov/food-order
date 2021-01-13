@@ -14,8 +14,8 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  minUsernameLength = 5;
-  maxUsernameLength = 50;
+  minEmailLength = 5;
+  maxEmailLength = 100;
   minPasswordLength = 5;
   maxPasswordLength = 50;
 
@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
       });
 
     this.loginForm = this.formBuilder.group({
-      "username": [null, [Validators.required, Validators.minLength(this.minUsernameLength), Validators.maxLength(this.maxUsernameLength)]],
+      "email": [null, [Validators.required, Validators.email, Validators.minLength(this.minEmailLength), Validators.maxLength(this.maxEmailLength)]],
       "password": [null, [Validators.required, Validators.minLength(this.minPasswordLength), Validators.maxLength(this.maxPasswordLength)]],
       "isRestaurant": [false],
     })

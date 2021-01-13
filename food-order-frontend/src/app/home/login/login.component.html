@@ -4,17 +4,20 @@
         <div>
             <mat-form-field appearance="outline"
                 class="form-field">
-                <mat-label>Username</mat-label>
+                <mat-label>Email</mat-label>
                 <input matInput
-                    formControlName="username">
-                <mat-error *ngIf="loginForm.get('username').hasError('required')">
-                    Username is required
+                    formControlName="email">
+                <mat-error *ngIf="loginForm.get('email').hasError('required')">
+                    Email is required
                 </mat-error>
-                <mat-error *ngIf="loginForm.get('username').hasError('minlength')">
-                    Username must be at least {{minUsernameLength}} symbols
+                <mat-error *ngIf="loginForm.get('email').hasError('email')">
+                    Enter a valid email address
                 </mat-error>
-                <mat-error *ngIf="loginForm.get('username').hasError('maxlength')">
-                    Username must be less than {{maxUsernameLength}} symbols
+                <mat-error *ngIf="loginForm.get('email').hasError('minlength')">
+                    Email must be at least {{minEmailLength}} symbols
+                </mat-error>
+                <mat-error *ngIf="loginForm.get('email').hasError('maxlength')">
+                    Email must be less than {{maxEmailLength}} symbols
                 </mat-error>
             </mat-form-field>
         </div>
