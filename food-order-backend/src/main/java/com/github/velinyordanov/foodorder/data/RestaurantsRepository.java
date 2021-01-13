@@ -15,7 +15,7 @@ public interface RestaurantsRepository extends BaseRepository<Restaurant> {
     @Query("select e from #{#entityName} e where e.email = ?1 and e.isDeleted = false")
     Optional<Restaurant> findByEmail(String email);
 
-    boolean existsByEmailOrName(String username, String name);
+    boolean existsByEmailOrName(String email, String name);
 
     @Transactional(readOnly = true)
     @Query("select e from #{#entityName} e where e.isDeleted = false")

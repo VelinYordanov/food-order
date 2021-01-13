@@ -47,7 +47,8 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 	JwtUserDto result = new JwtUserDto();
 	result.setAuthorities(claims.get("authorities", ArrayList.class));
 	result.setId(claims.get("id", String.class));
-	result.setUsername(claims.get("username", String.class));
+	result.setEmail(claims.get("email", String.class));
+	result.setName(claims.get("name", String.class));
 
 	return result;
     }

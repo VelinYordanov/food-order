@@ -4,7 +4,8 @@ import java.util.Collection;
 
 public class JwtUserDto {
     private String id;
-    private String username;
+    private String email;
+    private String name;
     private Collection<String> authorities;
 
     public String getId() {
@@ -15,12 +16,20 @@ public class JwtUserDto {
 	this.id = id;
     }
 
-    public String getUsername() {
-	return username;
+    public String getEmail() {
+	return email;
     }
 
-    public void setUsername(String username) {
-	this.username = username;
+    public void setEmail(String email) {
+	this.email = email;
+    }
+
+    public String getName() {
+	return name;
+    }
+
+    public void setName(String name) {
+	this.name = name;
     }
 
     public Collection<String> getAuthorities() {
@@ -29,15 +38,5 @@ public class JwtUserDto {
 
     public void setAuthorities(Collection<String> authorities) {
 	this.authorities = authorities;
-    }
-
-    @Override
-    public String toString() {
-	return "JwtUserDto [getId()=" + getId()
-		+ ", getUsername()="
-		+ getUsername()
-		+ ", getAuthorities()="
-		+ getAuthorities()
-		+ "]";
     }
 }
