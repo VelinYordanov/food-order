@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Foods")
 public class Food extends BaseEntity {
-    @Column(nullable = false, columnDefinition = "nvarchar(50)")
+    @Column(nullable = false, columnDefinition = "nvarchar(100)")
     private String name;
 
     @Column(nullable = false, columnDefinition = "nvarchar(max)")

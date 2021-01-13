@@ -15,13 +15,19 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 @Entity
 @Table(name = "Categories", uniqueConstraints = @UniqueConstraint(columnNames = { "RestaurantId", "name" }))
 public class Category extends BaseEntity {
-    @Column(nullable = false, columnDefinition = "nvarchar(50)")
-    @Size(min = 3, max = 35, message = "Category name must be between 3 and 35 symbols.")
+    @NotBlank(message = ValidationConstraints.EMPTY_CATEGORY_NAME)
+    @Size(min = ValidationConstraints.MIN_LENGTH_CATEGORY_NAME,
+	    max = ValidationConstraints.MAX_LENGTH_CATEGORY_NAME,
+	    message = ValidationConstraints.CATEGORY_NAME_OUT_OF_BOUNDS)
+    @Column(nullable = false, columnDefinition = "nvarchar(100)")
     private String name;
 
     @ManyToMany(fetch = FetchType.LAZY)

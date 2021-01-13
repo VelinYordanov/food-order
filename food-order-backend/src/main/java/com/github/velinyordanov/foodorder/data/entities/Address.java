@@ -5,37 +5,62 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.github.velinyordanov.foodorder.enums.AddressType;
 import com.github.velinyordanov.foodorder.enums.City;
+import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 @Entity
 @Table(name = "Addresses")
 public class Address extends BaseEntity {
+    @NotNull(message = ValidationConstraints.EMPTY_CITY)
     @Column(name = "City", nullable = false)
     private City city;
 
+    @NotNull(message = ValidationConstraints.EMPTY_ADDRESS_TYPE)
     @Column(name = "AddressType", nullable = false)
     private AddressType addressType;
 
-    @Column(name = "Neighborhood", columnDefinition = "nvarchar(255)")
+    @Size(min = ValidationConstraints.MIN_LENGTH_NEIGHBORHOOD,
+	    max = ValidationConstraints.MAX_LENGTH_NEIGHBORHOOD,
+	    message = ValidationConstraints.NEIGHBORHOOD_OUT_OF_BOUNDS)
+    @Column(name = "Neighborhood", columnDefinition = "nvarchar(100)")
     private String neighborhood;
 
-    @Column(name = "Street", columnDefinition = "nvarchar(255)")
+    @Size(min = ValidationConstraints.MIN_LENGTH_STREET,
+	    max = ValidationConstraints.MAX_LENGTH_STREET,
+	    message = ValidationConstraints.STREET_OUT_OF_BOUNDS)
+    @Column(name = "Street", columnDefinition = "nvarchar(100)")
     private String street;
 
+    @Size(min = ValidationConstraints.MIN_LENGTH_STREET_NUMBER,
+	    max = ValidationConstraints.MAX_LENGTH_STREET_NUMBER,
+	    message = ValidationConstraints.STREET_NUMBER_OUT_OF_BOUNDS)
     @Column(name = "StreetNumber", columnDefinition = "nvarchar(10)")
     private String streetNumber;
 
+    @Size(min = ValidationConstraints.MIN_LENGTH_APARTMENT_BUILDING_NUMBER,
+	    max = ValidationConstraints.MAX_LENGTH_APARTMENT_BUILDING_NUMBER,
+	    message = ValidationConstraints.APARTMENT_BUILDING_NUMBER_OUT_OF_BOUNDS)
     @Column(name = "ApartmentBuildingNumber", columnDefinition = "nvarchar(10)")
     private String apartmentBuildingNumber;
 
+    @Size(min = ValidationConstraints.MIN_LENGTH_ENTRANCE,
+	    max = ValidationConstraints.MAX_LENGTH_ENTRANCE,
+	    message = ValidationConstraints.ENTRANCE_OUT_OF_BOUNDS)
     @Column(name = "Entrance", columnDefinition = "nvarchar(10)")
     private String entrance;
 
+    @Min(value = 0, message = ValidationConstraints.FLOOR_NEGATIVE)
     @Column(name = "Floor")
     private Byte floor;
 
+    @Size(min = ValidationConstraints.MIN_LENGTH_APARTMENT_NUMBER,
+	    max = ValidationConstraints.MAX_LENGTH_APARTMENT_NUMBER,
+	    message = ValidationConstraints.APARTMENT_NUMBER_OUT_OF_BOUNDS)
     @Column(name = "ApartmentNumber", columnDefinition = "nvarchar(10)")
     private String apartmentNumber;
 

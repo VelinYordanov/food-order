@@ -2,19 +2,38 @@ package com.github.velinyordanov.foodorder.data.entities;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 @MappedSuperclass
 public abstract class BaseUser extends BaseEntity implements UserDetails {
     private static final long serialVersionUID = -3258223604220059426L;
 
-    @Column(name = "Email", unique = true, nullable = false, columnDefinition = "nvarchar(50)")
+    @NotBlank(message = ValidationConstraints.EMPTY_EMAIL)
+    @Email(message = ValidationConstraints.NOT_EMAIL)
+    @Size(
+	    min = ValidationConstraints.MIN_LENGTH_EMAIL,
+	    max = ValidationConstraints.MAX_LENGTH_EMAIL,
+	    message = ValidationConstraints.EMAIL_OUT_OF_BOUNDS)
+    @Column(name = "Email", unique = true, nullable = false, columnDefinition = "nvarchar(100)")
     private String email;
 
-    @Column(name = "Name", unique = true, nullable = false, columnDefinition = "nvarchar(50)")
+    @NotBlank(message = ValidationConstraints.EMPTY_NAME)
+    @Pattern(regexp = ValidationConstraints.NAME_PATTERN, message = ValidationConstraints.NAME_DOES_NOT_MATCH_PATTERN)
+    @Size(
+	    min = ValidationConstraints.MIN_LENGTH_NAME,
+	    max = ValidationConstraints.MAX_LENGTH_NAME,
+	    message = ValidationConstraints.NAME_OUT_OF_BOUNDS)
+    @Column(name = "Name", unique = true, nullable = false, columnDefinition = "nvarchar(100)")
     private String name;
 
+    @NotBlank(message = ValidationConstraints.EMPTY_PASSWORD)
     @Column(name = "Password", nullable = false)
     private String password;
 

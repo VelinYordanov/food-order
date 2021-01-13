@@ -5,15 +5,15 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.github.velinyordanov.foodorder.config.ValidationConstraints;
+import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 public class RestaurantRegisterDto {
-    @NotBlank(message = ValidationConstraints.EMPTY_USERNAME)
+    @NotBlank(message = ValidationConstraints.EMPTY_EMAIL)
     @Email(message = ValidationConstraints.NOT_EMAIL)
     @Size(
-	    min = ValidationConstraints.MIN_LENGTH_USERNAME,
-	    max = ValidationConstraints.MAX_LENGTH_USERNAME,
-	    message = ValidationConstraints.USERNAME_OUT_OF_BOUNDS)
+	    min = ValidationConstraints.MIN_LENGTH_EMAIL,
+	    max = ValidationConstraints.MAX_LENGTH_EMAIL,
+	    message = ValidationConstraints.EMAIL_OUT_OF_BOUNDS)
     private String email;
 
     @NotBlank(message = ValidationConstraints.EMPTY_PASSWORD)

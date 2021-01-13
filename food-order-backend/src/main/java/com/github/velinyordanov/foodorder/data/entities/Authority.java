@@ -11,14 +11,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.GrantedAuthority;
+
+import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 @Entity
 @Table(name = "Authorities")
 public class Authority extends BaseEntity implements GrantedAuthority {
     private static final long serialVersionUID = -3851383621543243995L;
 
+    @NotBlank(message = ValidationConstraints.EMPTY_AUTHORITY)
     @Column(name = "Authority", unique = true, nullable = false)
     private String authority;
 
