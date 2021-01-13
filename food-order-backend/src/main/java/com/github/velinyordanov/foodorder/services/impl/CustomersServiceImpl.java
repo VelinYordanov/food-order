@@ -27,9 +27,10 @@ import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
+import com.github.velinyordanov.foodorder.dto.CustomerRegisterDto;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
-import com.github.velinyordanov.foodorder.dto.UserDto;
+import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
@@ -73,8 +74,8 @@ public class CustomersServiceImpl implements CustomersService {
 
     @Override
     @Transactional
-    public String registerCustomer(UserDto user) {
-	if (this.foodOrderData.customers().existsByUsername(user.getUsername())) {
+    public String registerCustomer(CustomerRegisterDto user) {
+	if (this.foodOrderData.customers().existsByEmail(user.getEmail())) {
 	    throw new DuplicateUserException("Customer with this username already exists");
 	}
 
@@ -99,9 +100,9 @@ public class CustomersServiceImpl implements CustomersService {
     }
 
     @Override
-    public String login(UserDto user) {
+    public String login(UserLoginDto user) {
 	UsernamePasswordAuthenticationToken token =
-		new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+		new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
 	token.setDetails(UserType.Customer);
 
 	Authentication authentication = this.authenticationManager.authenticate(token);

@@ -18,25 +18,25 @@ public class Address extends BaseEntity {
     @Column(name = "AddressType", nullable = false)
     private AddressType addressType;
 
-    @Column(name = "Neighborhood")
+    @Column(name = "Neighborhood", columnDefinition = "nvarchar(255)")
     private String neighborhood;
 
-    @Column(name = "Street")
+    @Column(name = "Street", columnDefinition = "nvarchar(255)")
     private String street;
 
-    @Column(name = "StreetNumber")
+    @Column(name = "StreetNumber", columnDefinition = "nvarchar(10)")
     private String streetNumber;
 
-    @Column(name = "ApartmentBuildingNumber")
+    @Column(name = "ApartmentBuildingNumber", columnDefinition = "nvarchar(10)")
     private String apartmentBuildingNumber;
 
-    @Column(name = "Entrance")
+    @Column(name = "Entrance", columnDefinition = "nvarchar(10)")
     private String entrance;
 
     @Column(name = "Floor")
     private Byte floor;
 
-    @Column(name = "ApartmentNumber")
+    @Column(name = "ApartmentNumber", columnDefinition = "nvarchar(10)")
     private String apartmentNumber;
 
     @ManyToOne(optional = false)

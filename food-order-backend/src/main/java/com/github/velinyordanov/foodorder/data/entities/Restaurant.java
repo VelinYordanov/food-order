@@ -19,10 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 public class Restaurant extends BaseUser {
     private static final long serialVersionUID = 7321303086507184708L;
 
-    @Column(name = "Name", unique = true, nullable = false)
-    private String name;
-
-    @Column(name = "Description")
+    @Column(name = "Description", columnDefinition = "nvarchar(max)")
     private String description;
 
     @ManyToMany(
@@ -57,14 +54,6 @@ public class Restaurant extends BaseUser {
 
     @OneToMany(mappedBy = "restaurant")
     private Set<DiscountCode> discountCodes;
-
-    public String getName() {
-	return name;
-    }
-
-    public void setName(String name) {
-	this.name = name;
-    }
 
     public String getDescription() {
 	return description;

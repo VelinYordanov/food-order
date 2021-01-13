@@ -18,7 +18,7 @@ import javax.persistence.UniqueConstraint;
 		@UniqueConstraint(columnNames = { "Code", "RestaurantId" })
 	})
 public class DiscountCode extends BaseEntity {
-    @Column(name = "Code", nullable = false, unique = true)
+    @Column(name = "Code", nullable = false)
     private String code;
 
     @OneToMany(mappedBy = "discountCode")

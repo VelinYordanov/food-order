@@ -43,7 +43,7 @@ import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
-import com.github.velinyordanov.foodorder.dto.UserDto;
+import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
@@ -109,7 +109,7 @@ public class RestaurantsServiceImpl implements RestaurantsService {
 
     @Override
     public String register(RestaurantRegisterDto user) {
-	if (this.foodOrderData.restaurants().existsByUsernameOrName(user.getUsername(), user.getName())) {
+	if (this.foodOrderData.restaurants().existsByEmailOrName(user.getEmail(), user.getName())) {
 	    throw new DuplicateUserException("Username or restaurant name already exists!");
 	}
 
@@ -196,9 +196,9 @@ public class RestaurantsServiceImpl implements RestaurantsService {
     }
 
     @Override
-    public String login(UserDto user) {
+    public String login(UserLoginDto user) {
 	UsernamePasswordAuthenticationToken token =
-		new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+		new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
 	token.setDetails(UserType.Restaurant);
 
 	Authentication authentication = this.authenticationManager.authenticate(token);

@@ -9,16 +9,17 @@ import org.springframework.data.domain.Pageable;
 import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
+import com.github.velinyordanov.foodorder.dto.CustomerRegisterDto;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
-import com.github.velinyordanov.foodorder.dto.UserDto;
+import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 
 public interface CustomersService {
-    String registerCustomer(UserDto data);
+    String registerCustomer(CustomerRegisterDto data);
 
     Optional<Customer> findById(String id);
 
-    String login(UserDto userDto);
+    String login(UserLoginDto userDto);
 
     AddressDto addAddressToCustomer(String customerId, AddressCreateDto address);
 

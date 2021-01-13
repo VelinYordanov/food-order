@@ -12,10 +12,10 @@ import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 
 @Repository
 public interface RestaurantsRepository extends BaseRepository<Restaurant> {
-    @Query("select e from #{#entityName} e where e.username = ?1 and e.isDeleted = false")
-    Optional<Restaurant> findByUsername(String username);
+    @Query("select e from #{#entityName} e where e.email = ?1 and e.isDeleted = false")
+    Optional<Restaurant> findByEmail(String email);
 
-    boolean existsByUsernameOrName(String username, String name);
+    boolean existsByEmailOrName(String username, String name);
 
     @Transactional(readOnly = true)
     @Query("select e from #{#entityName} e where e.isDeleted = false")

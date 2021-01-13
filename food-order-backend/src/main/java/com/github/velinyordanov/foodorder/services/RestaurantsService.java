@@ -23,14 +23,14 @@ import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
-import com.github.velinyordanov.foodorder.dto.UserDto;
+import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 
 public interface RestaurantsService {
     Collection<RestaurantDto> getAll();
 
     String register(RestaurantRegisterDto user);
 
-    String login(UserDto user);
+    String login(UserLoginDto user);
 
     Optional<Restaurant> findById(String id);
 

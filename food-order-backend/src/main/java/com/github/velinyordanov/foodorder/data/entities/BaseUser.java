@@ -9,8 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 public abstract class BaseUser extends BaseEntity implements UserDetails {
     private static final long serialVersionUID = -3258223604220059426L;
 
-    @Column(name = "Username", unique = true, nullable = false)
-    private String username;
+    @Column(name = "Email", unique = true, nullable = false, columnDefinition = "nvarchar(50)")
+    private String email;
+
+    @Column(name = "Name", unique = true, nullable = false, columnDefinition = "nvarchar(50)")
+    private String name;
 
     @Column(name = "Password", nullable = false)
     private String password;
@@ -38,11 +41,23 @@ public abstract class BaseUser extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-	return username;
+	return this.getEmail();
     }
 
-    public void setUsername(String username) {
-	this.username = username;
+    public String getEmail() {
+	return email;
+    }
+
+    public void setEmail(String email) {
+	this.email = email;
+    }
+
+    public String getName() {
+	return name;
+    }
+
+    public void setName(String name) {
+	this.name = name;
     }
 
     @Override

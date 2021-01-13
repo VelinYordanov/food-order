@@ -3,7 +3,6 @@ package com.github.velinyordanov.foodorder.services.impl;
 import java.util.Optional;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +19,8 @@ public class CustomersUserDetailsServiceImpl implements CustomersUserDetailsServ
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-	Optional<Customer> user = this.customersRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	Optional<Customer> user = this.customersRepository.findByEmail(email);
 	return user.orElseThrow(
 		() -> new UsernameNotFoundException("Could not find user with this username and password"));
     }

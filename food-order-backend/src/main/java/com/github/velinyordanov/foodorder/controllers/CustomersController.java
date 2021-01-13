@@ -27,10 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
+import com.github.velinyordanov.foodorder.dto.CustomerRegisterDto;
 import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
-import com.github.velinyordanov.foodorder.dto.UserDto;
+import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.services.CustomersService;
 import com.github.velinyordanov.foodorder.services.impl.JwtTokenServiceImpl;
@@ -58,14 +59,14 @@ public class CustomersController {
     }
 
     @PostMapping("")
-    public JwtTokenDto registerUser(@Valid @RequestBody UserDto data) {
+    public JwtTokenDto registerUser(@Valid @RequestBody CustomerRegisterDto data) {
 	return new JwtTokenDto(this.customersService.registerCustomer(data));
     }
 
     @PostMapping("tokens")
-    public JwtTokenDto loginUser(@Valid @RequestBody UserDto data) {
+    public JwtTokenDto loginUser(@Valid @RequestBody UserLoginDto data) {
 	UsernamePasswordAuthenticationToken token =
-		new UsernamePasswordAuthenticationToken(data.getUsername(), data.getPassword());
+		new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword());
 	token.setDetails(UserType.Customer);
 
 	Authentication authentication = this.authenticationManager.authenticate(token);

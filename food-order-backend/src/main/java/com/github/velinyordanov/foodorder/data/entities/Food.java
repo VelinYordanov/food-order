@@ -16,10 +16,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Foods")
 public class Food extends BaseEntity {
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(50)")
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(max)")
     private String description;
 
     @Column(nullable = false)

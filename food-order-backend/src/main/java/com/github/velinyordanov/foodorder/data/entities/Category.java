@@ -20,7 +20,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "Categories", uniqueConstraints = @UniqueConstraint(columnNames = { "RestaurantId", "name" }))
 public class Category extends BaseEntity {
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(50)")
     @Size(min = 3, max = 35, message = "Category name must be between 3 and 35 symbols.")
     private String name;
 

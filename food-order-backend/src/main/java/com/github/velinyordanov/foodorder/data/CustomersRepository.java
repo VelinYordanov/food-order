@@ -9,8 +9,8 @@ import com.github.velinyordanov.foodorder.data.entities.Customer;
 
 @Repository
 public interface CustomersRepository extends BaseRepository<Customer> {
-    @Query("select e from #{#entityName} e where e.username = ?1 and e.isDeleted = false")
-    public Optional<Customer> findByUsername(String username);
+    @Query("select e from #{#entityName} e where e.email = ?1 and e.isDeleted = false")
+    public Optional<Customer> findByEmail(String email);
 
-    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }

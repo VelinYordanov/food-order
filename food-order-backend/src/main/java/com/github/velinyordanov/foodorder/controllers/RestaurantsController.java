@@ -40,7 +40,7 @@ import com.github.velinyordanov.foodorder.dto.RestaurantDataDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantEditDto;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
-import com.github.velinyordanov.foodorder.dto.UserDto;
+import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 import com.github.velinyordanov.foodorder.services.DateService;
 import com.github.velinyordanov.foodorder.services.RestaurantsService;
 
@@ -78,7 +78,7 @@ public class RestaurantsController {
     }
 
     @PostMapping("tokens")
-    public JwtTokenDto login(@Valid @RequestBody UserDto user) {
+    public JwtTokenDto login(@Valid @RequestBody UserLoginDto user) {
 	return new JwtTokenDto(restaurantsService.login(user));
     }
 

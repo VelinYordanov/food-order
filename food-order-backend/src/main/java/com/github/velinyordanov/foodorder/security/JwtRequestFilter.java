@@ -35,8 +35,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		    .ifPresent(SecurityContextHolder.getContext()::setAuthentication);
 	} else {
 	    logger.warn("Missing bearer token");
-	    chain.doFilter(request, response);
-	    return;
 	}
 
 	chain.doFilter(request, response);

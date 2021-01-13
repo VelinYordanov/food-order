@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 import com.github.velinyordanov.foodorder.config.ValidationConstraints;
 
-public class RestaurantRegisterDto {
+public class CustomerRegisterDto {
     @NotEmpty(message = ValidationConstraints.EMPTY_USERNAME)
     @Email(message = ValidationConstraints.NOT_EMAIL)
     @Size(
@@ -17,16 +17,16 @@ public class RestaurantRegisterDto {
     private String email;
 
     @NotEmpty(message = ValidationConstraints.EMPTY_PASSWORD)
-    @Size(
-	    min = ValidationConstraints.MIN_LENGTH_PASSWORD,
-	    max = ValidationConstraints.MAX_LENGTH_PASSWORD,
-	    message = ValidationConstraints.PASSWORD_OUT_OF_BOUNDS)
     @Pattern(regexp = ValidationConstraints.PASSWORD_PATTERN_LOWERCASE,
 	    message = ValidationConstraints.PASSWORD_PATTERN)
     @Pattern(regexp = ValidationConstraints.PASSWORD_PATTERN_UPPERCASE,
 	    message = ValidationConstraints.PASSWORD_PATTERN)
     @Pattern(regexp = ValidationConstraints.PASSWORD_PATTERN_NUMBER,
 	    message = ValidationConstraints.PASSWORD_PATTERN)
+    @Size(
+	    min = ValidationConstraints.MIN_LENGTH_PASSWORD,
+	    max = ValidationConstraints.MAX_LENGTH_PASSWORD,
+	    message = ValidationConstraints.PASSWORD_OUT_OF_BOUNDS)
     private String password;
 
     @NotEmpty(message = ValidationConstraints.EMPTY_NAME)
@@ -37,7 +37,8 @@ public class RestaurantRegisterDto {
 	    message = ValidationConstraints.NAME_OUT_OF_BOUNDS)
     private String name;
 
-    private String description;
+    @NotEmpty(message = ValidationConstraints.EMPTY_PHONE)
+    private String phoneNumber;
 
     public String getEmail() {
 	return email;
@@ -63,11 +64,11 @@ public class RestaurantRegisterDto {
 	this.name = name;
     }
 
-    public String getDescription() {
-	return description;
+    public String getPhoneNumber() {
+	return phoneNumber;
     }
 
-    public void setDescription(String description) {
-	this.description = description;
+    public void setPhoneNumber(String phoneNumber) {
+	this.phoneNumber = phoneNumber;
     }
 }

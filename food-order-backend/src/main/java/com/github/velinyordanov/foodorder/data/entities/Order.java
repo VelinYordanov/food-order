@@ -36,6 +36,7 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "DiscountCodeId")
     private DiscountCode discountCode;
 
+    @Column(name = "Comment", columnDefinition = "nvarchar(max)")
     private String comment;
 
     public Order() {
