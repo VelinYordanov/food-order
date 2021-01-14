@@ -16,7 +16,7 @@
         <li>
             <a routerLink="/restaurant/profile"
                 [routerLinkActiveOptions]="{exact: true}"
-                routerLinkActive="active">Hello, {{user.username}}</a>
+                routerLinkActive="active">Hello, {{user.name}}</a>
         </li>
         <li>
             <a routerLink="/restaurant/orders"
@@ -37,7 +37,7 @@
     <ul *ngIf="isLoggedIn() && isCustomer()">
         <li>
             <a routerLink="/customer/profile"
-                routerLinkActive="active">Hello, {{user.username}}</a>
+                routerLinkActive="active">Hello, {{user.name}}</a>
         </li>
         <li *ngIf="selectedRestaurant && numberOfItems">
             <div class="shopping-cart">

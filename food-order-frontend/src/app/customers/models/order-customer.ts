@@ -1,5 +1,6 @@
 export interface OrderCustomer {
   id: string;
-  username: string;
+  email: string;
+  name: string;
   phoneNumber: string;
 }

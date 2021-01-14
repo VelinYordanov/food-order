@@ -7,7 +7,7 @@
     </ul>
 
     <p>Status: {{Status[order.status]}}</p>
-    <p>Customer: {{order.customer.username}}, {{order.customer.phoneNumber}}</p>
+    <p>Customer: {{order.customer.name}}, {{order.customer.phoneNumber}}</p>
     <p>Address: {{getAddressData(order.address)}}</p>
     <p *ngIf="order.discountCode">Discount code used: {{order.discountCode.code}}</p>
     <h3 *ngIf="!order.discountCode">{{calculateTotal(order.foods) | currency}}</h3>
