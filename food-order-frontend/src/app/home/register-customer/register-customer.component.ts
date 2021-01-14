@@ -36,7 +36,7 @@ export class RegisterCustomerComponent implements OnInit {
     this.registerForm = this.formBuilder.group({
       email: [null, [Validators.required, Validators.email, Validators.minLength(this.minEmailLength), Validators.maxLength(this.maxEmailLength)]],
       password: [null, [Validators.required, Validators.minLength(this.minPasswordLength), Validators.maxLength(this.maxPasswordLength)]],
-      name: [null, [Validators.required, Validators.minLength(this.minNameLength), Validators.maxLength(this.maxNameLength)]],
+      name: [null, [Validators.required, Validators.pattern(/^(\p{L}| )+$/u), Validators.minLength(this.minNameLength), Validators.maxLength(this.maxNameLength)]],
       phoneNumber: [null, [Validators.required, Validators.pattern(/^[0-9]+$/)]]
     });
 
