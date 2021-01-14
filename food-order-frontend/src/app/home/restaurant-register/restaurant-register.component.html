@@ -20,6 +20,9 @@
                 <mat-error *ngIf="registerForm.get('email').hasError('maxlength')">
                     Email must be less than {{maxEmailLength}} symbols
                 </mat-error>
+                <mat-error *ngIf="registerForm.get('email').hasError('disposable')">
+                    Disposable emails are not allowed
+                </mat-error>
             </mat-form-field>
         </div>
         <div>

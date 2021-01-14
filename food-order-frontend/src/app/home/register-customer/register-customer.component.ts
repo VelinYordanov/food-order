@@ -7,11 +7,12 @@ import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { CustomerRegisterDto } from '../models/customer-register-dto';
+import { AsyncValidatorsService } from '../../shared/validators/async-validators.service';
 
 @Component({
   selector: 'app-register-customer',
   templateUrl: './register-customer.component.html',
-  styleUrls: ['./register-customer.component.scss']
+  styleUrls: ['./register-customer.component.scss'],
 })
 export class RegisterCustomerComponent implements OnInit {
   registerForm: FormGroup;
@@ -30,32 +31,70 @@ export class RegisterCustomerComponent implements OnInit {
     private customerSerice: CustomerService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
-    private router: Router) { }
+    private router: Router,
+    private asyncValidators: AsyncValidatorsService
+  ) {}
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
-      email: [null, [Validators.required, Validators.email, Validators.minLength(this.minEmailLength), Validators.maxLength(this.maxEmailLength)]],
-      password: [null, [Validators.required, Validators.minLength(this.minPasswordLength), Validators.maxLength(this.maxPasswordLength)]],
-      name: [null, [Validators.required, Validators.pattern(/^(\p{L}| )+$/u), Validators.minLength(this.minNameLength), Validators.maxLength(this.maxNameLength)]],
-      phoneNumber: [null, [Validators.required, Validators.pattern(/^[0-9]+$/)]]
+      email: [
+        null,
+        {
+          updateOn: 'blur',
+          validators: [
+            Validators.required,
+            Validators.email,
+            Validators.minLength(this.minEmailLength),
+            Validators.maxLength(this.maxEmailLength),
+          ],
+          asyncValidators: [this.asyncValidators.checkIfDisposable()],
+        },
+      ],
+      password: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(this.minPasswordLength),
+          Validators.maxLength(this.maxPasswordLength),
+        ],
+      ],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(/^(\p{L}| )+$/u),
+          Validators.minLength(this.minNameLength),
+          Validators.maxLength(this.maxNameLength),
+        ],
+      ],
+      phoneNumber: [
+        null,
+        [Validators.required, Validators.pattern(/^[0-9]+$/)],
+      ],
     });
 
     this.registerFormSubmitsSubject
       .pipe(
         tap({
-          next: _ => this.registerForm.disable()
+          next: (_) => this.registerForm.disable(),
         }),
-        exhaustMap(customer => this.customerSerice.registerCustomer(customer)
-        .pipe(
-          catchError(error => {
-            this.alertService.displayMessage(error?.error?.description || 'An error occurred while registering the user. Try again laer.', 'error');
-            return EMPTY;
-          }),
-          finalize(() => this.registerForm.enable())
-        )),
-      ).subscribe(result => {
-          this.authenticationService.login(result.token);
-            this.router.navigate(['customer','profile']);
+        exhaustMap((customer) =>
+          this.customerSerice.registerCustomer(customer).pipe(
+            catchError((error) => {
+              this.alertService.displayMessage(
+                error?.error?.description ||
+                  'An error occurred while registering the user. Try again laer.',
+                'error'
+              );
+              return EMPTY;
+            }),
+            finalize(() => this.registerForm.enable())
+          )
+        )
+      )
+      .subscribe((result) => {
+        this.authenticationService.login(result.token);
+        this.router.navigate(['customer', 'profile']);
       });
   }
 
