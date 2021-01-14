@@ -7,6 +7,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
+import com.github.velinyordanov.foodorder.validation.annotations.NotDisposableEmail;
 
 public class CustomerRegisterDto {
     @NotBlank(message = ValidationConstraints.EMPTY_EMAIL)
@@ -15,6 +16,7 @@ public class CustomerRegisterDto {
 	    min = ValidationConstraints.MIN_LENGTH_EMAIL,
 	    max = ValidationConstraints.MAX_LENGTH_EMAIL,
 	    message = ValidationConstraints.EMAIL_OUT_OF_BOUNDS)
+    @NotDisposableEmail
     private String email;
 
     @NotBlank(message = ValidationConstraints.EMPTY_PASSWORD)

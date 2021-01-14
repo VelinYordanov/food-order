@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -34,5 +35,10 @@ public class FoodOrderConfiguration {
     @Bean
     public JavaTimeModule javaTimeModule() {
 	return new JavaTimeModule();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+	return new RestTemplate();
     }
 }
