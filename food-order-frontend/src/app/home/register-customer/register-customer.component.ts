@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
-import { catchError, exhaustMap, finalize, tap } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, map, tap } from 'rxjs/operators';
 import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { CustomerRegisterDto } from '../models/customer-register-dto';
 import { AsyncValidatorsService } from '../../shared/validators/async-validators.service';
+import { matchingPasswords } from '../../shared/validators/matching-passwords.validator';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { RegisterErrorStateMatcher} from '../services/register-error-state-matcher';
 
 @Component({
   selector: 'app-register-customer',
@@ -16,6 +19,7 @@ import { AsyncValidatorsService } from '../../shared/validators/async-validators
 })
 export class RegisterCustomerComponent implements OnInit {
   registerForm: FormGroup;
+  errorStateMatcher: ErrorStateMatcher;
 
   readonly minEmailLength = 5;
   readonly maxEmailLength = 100;
@@ -36,6 +40,7 @@ export class RegisterCustomerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.errorStateMatcher = new RegisterErrorStateMatcher();
     this.registerForm = this.formBuilder.group({
       email: [
         null,
@@ -58,6 +63,14 @@ export class RegisterCustomerComponent implements OnInit {
           Validators.maxLength(this.maxPasswordLength),
         ],
       ],
+      repeatPassword: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(this.minPasswordLength),
+          Validators.maxLength(this.maxPasswordLength),
+        ],
+      ],
       name: [
         null,
         [
@@ -71,12 +84,16 @@ export class RegisterCustomerComponent implements OnInit {
         null,
         [Validators.required, Validators.pattern(/^[0-9]+$/)],
       ],
-    });
+    }, {validators:[matchingPasswords()]});
 
     this.registerFormSubmitsSubject
       .pipe(
         tap({
           next: (_) => this.registerForm.disable(),
+        }),
+        map(customer => {
+          delete (customer as any).repeatPassword;
+          return customer;
         }),
         exhaustMap((customer) =>
           this.customerSerice.registerCustomer(customer).pipe(
