@@ -68,7 +68,7 @@ export class EditDiscountCodeComponent implements OnInit, OnDestroy {
             .editDiscountCode(
               this.discountCode.id,
               restaurant.id,
-              this.discountCodeForm.value
+              this.discountCodeForm.getRawValue()
             )
             .pipe(
               catchError((error) => {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
 import {
   catchError,
@@ -29,7 +30,9 @@ export class GenerateDiscountCodeComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
-    private restaurantService: RestaurantService
+    private restaurantService: RestaurantService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -64,7 +67,7 @@ export class GenerateDiscountCodeComponent implements OnInit {
 
     this.formSubmits$
       .pipe(
-        filter(_ => this.discountCodeForm.valid),
+        filter((_) => this.discountCodeForm.valid),
         withLatestFrom(this.authenticationService.user$),
         switchMap(([_, restaurant]) =>
           this.restaurantService
@@ -81,12 +84,14 @@ export class GenerateDiscountCodeComponent implements OnInit {
             )
         )
       )
-      .subscribe((discountCode) =>
+      .subscribe((discountCode) => {
         this.alertService.displayMessage(
           'Successfully created discount code',
           'success'
-        )
-      );
+        );
+
+        this.router.navigate(['..'], { relativeTo: this.activatedRoute });
+      });
   }
 
   submit() {
@@ -99,8 +104,7 @@ export class GenerateDiscountCodeComponent implements OnInit {
     var result = '';
     const resultLength = Math.floor(Math.random() * (10 - 5 + 1) + 5);
 
-    const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     var charactersLength = characters.length;
 
     for (var i = 0; i < resultLength; i++) {

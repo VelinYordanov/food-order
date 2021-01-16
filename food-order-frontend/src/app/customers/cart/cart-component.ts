@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { first, map, takeUntil } from 'rxjs/operators';
+import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { CartService } from 'src/app/shared/services/cart.service';
 
 @Component({
@@ -14,7 +15,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private onDestroy$ = new Subject<void>();
 
-  constructor(private router: Router, private cartService: CartService) {}
+  constructor(
+    private router: Router, 
+    private cartService: CartService,
+    private authenticationService : AuthenticationService) {}
 
   ngOnInit(): void {
     this.cartService.selectedItems$
@@ -30,7 +34,10 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   goToAddress() {
-    this.router.navigate(['customer', 'order', 'address']);
+    this.authenticationService.user$
+    .pipe(
+      first(),
+    ).subscribe(user => user ? this.router.navigate(['customer', 'order', 'address']) : this.router.navigate(['login']));
   }
 
   ngOnDestroy(): void {

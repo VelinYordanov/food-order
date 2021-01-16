@@ -6,6 +6,7 @@ import {
   catchError,
   filter,
   finalize,
+  first,
   map,
   switchMap,
   switchMapTo,
@@ -126,6 +127,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
               )
             ),
           ]).pipe(
+            first(),
             switchMap(([customerId, restaurantId, addressId, foods]) =>
               this.customerService
                 .submitOrder({

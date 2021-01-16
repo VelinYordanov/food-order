@@ -76,7 +76,7 @@ export class AddressSelectComponent
   }
 
   compareAddresses(address1: Address, address2: Address) {
-    return address1.id === address2.id;
+    return address1?.id === address2?.id;
   }
 
   ngOnDestroy(): void {
