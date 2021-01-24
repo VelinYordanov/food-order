@@ -99,6 +99,12 @@ public class ValidationConstraints {
 
     public static final String EMPTY_AUTHORITY = "Authority is required";
 
+    public static final String ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION =
+	    "hasAuthority('ROLE_CUSTOMER') and principal.id == #customerId";
+
+    public static final String ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION =
+	    "hasAuthority('ROLE_RESTAURANT') and principal.id == #restaurantId";
+
     private ValidationConstraints() {
     }
 }
