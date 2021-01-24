@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.dto.JwtUserDto;
 import com.github.velinyordanov.foodorder.services.AuthenticationService;
-import com.github.velinyordanov.foodorder.services.CustomersService;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
 import com.github.velinyordanov.foodorder.services.RestaurantsService;
+import com.github.velinyordanov.foodorder.services.customers.CustomersAuthenticationService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -22,18 +22,18 @@ import io.jsonwebtoken.UnsupportedJwtException;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final CustomersService customersService;
+    private final CustomersAuthenticationService customersAuthenticationService;
     private final RestaurantsService restaurantsService;
     private final JwtTokenService jwtTokenUtil;
 
     private final static Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
     public AuthenticationServiceImpl(
-	    @Lazy CustomersService customersService,
+	    @Lazy CustomersAuthenticationService customersAuthenticationService,
 	    @Lazy RestaurantsService restaurantsService,
 	    JwtTokenService jwtTokenUtil) {
 	super();
-	this.customersService = customersService;
+	this.customersAuthenticationService = customersAuthenticationService;
 	this.restaurantsService = restaurantsService;
 	this.jwtTokenUtil = jwtTokenUtil;
     }
@@ -75,10 +75,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		.filter(authority -> "ROLE_CUSTOMER".equals(authority))
 		.findAny()
 		.isPresent()) {
-	    Optional<UsernamePasswordAuthenticationToken> tokenOptional = this.customersService.findById(user.getId())
-		    .map(customer -> new UsernamePasswordAuthenticationToken(customer,
-			    customer.getPassword(),
-			    customer.getAuthorities()));
+	    Optional<UsernamePasswordAuthenticationToken> tokenOptional =
+		    this.customersAuthenticationService.findById(user.getId())
+			    .map(customer -> new UsernamePasswordAuthenticationToken(customer,
+				    customer.getPassword(),
+				    customer.getAuthorities()));
 
 	    if (tokenOptional.isEmpty()) {
 		logger.error("Authentication failed! Customer with id " + user.getId() + " not found!");
