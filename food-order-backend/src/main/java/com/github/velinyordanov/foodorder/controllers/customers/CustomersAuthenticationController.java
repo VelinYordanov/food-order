@@ -13,7 +13,7 @@ import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 import com.github.velinyordanov.foodorder.services.customers.CustomersAuthenticationService;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("customers")
 public class CustomersAuthenticationController {
     private final CustomersAuthenticationService customersAuthenticationService;
 

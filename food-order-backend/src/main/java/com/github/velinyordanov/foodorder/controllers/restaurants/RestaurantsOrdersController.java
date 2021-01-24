@@ -27,7 +27,7 @@ import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsOrders
 import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 @RestController
-@RequestMapping("{restaurantId}/orders")
+@RequestMapping("restaurants/{restaurantId}/orders")
 @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
 public class RestaurantsOrdersController {
     private static final int DEFAULT_PAGE_SIZE = 15;

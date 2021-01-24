@@ -24,8 +24,7 @@ import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsDiscou
 import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 @RestController
-@RequestMapping("{restaurantId}/discount-codes")
-@PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+@RequestMapping("restaurants/{restaurantId}/discount-codes")
 public class RestaurantsDiscountCodesController {
     private final RestaurantsDiscountCodesService restaurantsDiscountCodesService;
 
@@ -33,18 +32,21 @@ public class RestaurantsDiscountCodesController {
 	this.restaurantsDiscountCodesService = restaurantsDiscountCodesService;
     }
 
-    @PostMapping("{restaurantId}/discount-codes")
+    @PostMapping()
+    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public DiscountCodeDto addDiscountCodeToRestaurant(@PathVariable String restaurantId,
 	    @Valid @RequestBody DiscountCodeCreateDto discountCode) {
 	return this.restaurantsDiscountCodesService.addDiscountCodeToRestaurant(restaurantId, discountCode);
     }
 
-    @GetMapping("{restaurantId}/discount-codes")
+    @GetMapping()
+    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public Collection<DiscountCodeListDto> getDiscountCodesForRestaurant(@PathVariable String restaurantId) {
 	return this.restaurantsDiscountCodesService.getDiscountCodesForRestaurant(restaurantId);
     }
 
-    @GetMapping("{restaurantId}/discount-codes/{code}")
+    @GetMapping("{code}")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public DiscountCodeDto getDiscountCode(
 	    @PathVariable String restaurantId,
 	    @PathVariable String code,
@@ -52,14 +54,16 @@ public class RestaurantsDiscountCodesController {
 	return this.restaurantsDiscountCodesService.getDiscountByCode(restaurantId, code, customer.getId());
     }
 
-    @DeleteMapping("{restaurantId}/discount-codes/{discountCodeId}")
+    @DeleteMapping("{discountCodeId}")
+    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public DiscountCodeDto deleteDiscountCode(
 	    @PathVariable String restaurantId,
 	    @PathVariable String discountCodeId) {
 	return this.restaurantsDiscountCodesService.deleteDiscountCode(restaurantId, discountCodeId);
     }
 
-    @PutMapping("{restaurantId}/discount-codes/{discountCodeId}")
+    @PutMapping("{discountCodeId}")
+    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
     public DiscountCodeListDto editDiscountCode(
 	    @PathVariable String restaurantId,
 	    @PathVariable String discountCodeId,

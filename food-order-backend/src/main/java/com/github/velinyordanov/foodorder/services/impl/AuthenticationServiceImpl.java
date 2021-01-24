@@ -5,15 +5,14 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.dto.JwtUserDto;
 import com.github.velinyordanov.foodorder.services.AuthenticationService;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
-import com.github.velinyordanov.foodorder.services.RestaurantsService;
 import com.github.velinyordanov.foodorder.services.customers.CustomersAuthenticationService;
+import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsAuthenticationService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -23,18 +22,18 @@ import io.jsonwebtoken.UnsupportedJwtException;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final CustomersAuthenticationService customersAuthenticationService;
-    private final RestaurantsService restaurantsService;
+    private final RestaurantsAuthenticationService restaurantsAuthenticationService;
     private final JwtTokenService jwtTokenUtil;
 
     private final static Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
     public AuthenticationServiceImpl(
-	    @Lazy CustomersAuthenticationService customersAuthenticationService,
-	    @Lazy RestaurantsService restaurantsService,
+	    CustomersAuthenticationService customersAuthenticationService,
+	    RestaurantsAuthenticationService restaurantsAuthenticationService,
 	    JwtTokenService jwtTokenUtil) {
 	super();
 	this.customersAuthenticationService = customersAuthenticationService;
-	this.restaurantsService = restaurantsService;
+	this.restaurantsAuthenticationService = restaurantsAuthenticationService;
 	this.jwtTokenUtil = jwtTokenUtil;
     }
 
@@ -57,10 +56,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		.filter(authority -> "ROLE_RESTAURANT".equals(authority))
 		.findAny()
 		.isPresent()) {
-	    Optional<UsernamePasswordAuthenticationToken> tokenOptional = this.restaurantsService.findById(user.getId())
-		    .map(restaurant -> new UsernamePasswordAuthenticationToken(restaurant,
-			    restaurant.getPassword(),
-			    restaurant.getAuthorities()));
+	    Optional<UsernamePasswordAuthenticationToken> tokenOptional =
+		    this.restaurantsAuthenticationService.findById(user.getId())
+			    .map(restaurant -> new UsernamePasswordAuthenticationToken(restaurant,
+				    restaurant.getPassword(),
+				    restaurant.getAuthorities()));
 	    ;
 
 	    if (tokenOptional.isEmpty()) {

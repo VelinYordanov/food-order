@@ -40,7 +40,7 @@ public class CustomersAddressesController {
 	return this.customersAddressesService.editAddress(customerId, addressId, address);
     }
 
-    @GetMapping("addresses")
+    @GetMapping()
     public Collection<AddressDto> getAddressesForCustomer(@PathVariable String customerId) {
 	return this.customersAddressesService.getAddressesForCustomer(customerId);
     }

@@ -17,7 +17,7 @@ import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsFoodsS
 import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 @RestController
-@RequestMapping("{restaurantId}/foods")
+@RequestMapping("restaurants/{restaurantId}/foods")
 @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
 public class RestaurantsFoodsController {
     private final RestaurantsFoodsService restaurantsFoodsService;
