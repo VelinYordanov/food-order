@@ -1,4 +1,6 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:16-jdk-alpine
+RUN mkdir -p /home/java/app
 WORKDIR /home/java/app
 COPY . .
+RUN chmod 774 mvnw
 CMD ["./mvnw","spring-boot:run"]
