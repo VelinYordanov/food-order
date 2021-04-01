@@ -11,23 +11,22 @@ import com.github.velinyordanov.foodorder.services.RestaurantsUserDetailsService
 
 @Component
 public class RestaurantAuthenticationProvider extends DaoAuthenticationProvider {
-    public RestaurantAuthenticationProvider(
-	    RestaurantsUserDetailsService restaurantsUserDetailsService,
-	    PasswordEncoder passwordEncoder) {
-	this.setUserDetailsService(restaurantsUserDetailsService);
-	this.setPasswordEncoder(passwordEncoder);
-    }
-
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-	Object details = authentication.getDetails();
-	if (details instanceof UserType) {
-	    UserType userType = (UserType) details;
-	    if (UserType.Restaurant.equals(userType)) {
-		return super.authenticate(authentication);
-	    }
+	public RestaurantAuthenticationProvider(RestaurantsUserDetailsService restaurantsUserDetailsService,
+			PasswordEncoder passwordEncoder) {
+		this.setUserDetailsService(restaurantsUserDetailsService);
+		this.setPasswordEncoder(passwordEncoder);
 	}
 
-	return null;
-    }
+	@Override
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		Object details = authentication.getDetails();
+		if (details instanceof UserType) {
+			UserType userType = (UserType) details;
+			if (UserType.Restaurant.equals(userType)) {
+				return super.authenticate(authentication);
+			}
+		}
+
+		return null;
+	}
 }

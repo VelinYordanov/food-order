@@ -7,9 +7,9 @@ import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 
 public interface RestaurantsAuthenticationService {
-    String register(RestaurantRegisterDto user);
+	String register(RestaurantRegisterDto user);
 
-    String login(UserLoginDto user);
+	String login(UserLoginDto user);
 
-    Optional<Restaurant> findById(String id);
+	Optional<Restaurant> findById(String id);
 }

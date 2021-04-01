@@ -16,135 +16,123 @@ import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 @Entity
 @Table(name = "Addresses")
 public class Address extends BaseEntity {
-    @NotNull(message = ValidationConstraints.EMPTY_CITY)
-    @Column(name = "City", nullable = false)
-    private City city;
+	@NotNull(message = ValidationConstraints.EMPTY_CITY)
+	@Column(name = "City", nullable = false)
+	private City city;
 
-    @NotNull(message = ValidationConstraints.EMPTY_ADDRESS_TYPE)
-    @Column(name = "AddressType", nullable = false)
-    private AddressType addressType;
+	@NotNull(message = ValidationConstraints.EMPTY_ADDRESS_TYPE)
+	@Column(name = "AddressType", nullable = false)
+	private AddressType addressType;
 
-    @Size(min = ValidationConstraints.MIN_LENGTH_NEIGHBORHOOD,
-	    max = ValidationConstraints.MAX_LENGTH_NEIGHBORHOOD,
-	    message = ValidationConstraints.NEIGHBORHOOD_OUT_OF_BOUNDS)
-    @Column(name = "Neighborhood", columnDefinition = "nvarchar(100)")
-    private String neighborhood;
+	@Size(min = ValidationConstraints.MIN_LENGTH_NEIGHBORHOOD, max = ValidationConstraints.MAX_LENGTH_NEIGHBORHOOD, message = ValidationConstraints.NEIGHBORHOOD_OUT_OF_BOUNDS)
+	@Column(name = "Neighborhood", columnDefinition = "nvarchar(100)")
+	private String neighborhood;
 
-    @Size(min = ValidationConstraints.MIN_LENGTH_STREET,
-	    max = ValidationConstraints.MAX_LENGTH_STREET,
-	    message = ValidationConstraints.STREET_OUT_OF_BOUNDS)
-    @Column(name = "Street", columnDefinition = "nvarchar(100)")
-    private String street;
+	@Size(min = ValidationConstraints.MIN_LENGTH_STREET, max = ValidationConstraints.MAX_LENGTH_STREET, message = ValidationConstraints.STREET_OUT_OF_BOUNDS)
+	@Column(name = "Street", columnDefinition = "nvarchar(100)")
+	private String street;
 
-    @Size(min = ValidationConstraints.MIN_LENGTH_STREET_NUMBER,
-	    max = ValidationConstraints.MAX_LENGTH_STREET_NUMBER,
-	    message = ValidationConstraints.STREET_NUMBER_OUT_OF_BOUNDS)
-    @Column(name = "StreetNumber", columnDefinition = "nvarchar(10)")
-    private String streetNumber;
+	@Size(min = ValidationConstraints.MIN_LENGTH_STREET_NUMBER, max = ValidationConstraints.MAX_LENGTH_STREET_NUMBER, message = ValidationConstraints.STREET_NUMBER_OUT_OF_BOUNDS)
+	@Column(name = "StreetNumber", columnDefinition = "nvarchar(10)")
+	private String streetNumber;
 
-    @Size(min = ValidationConstraints.MIN_LENGTH_APARTMENT_BUILDING_NUMBER,
-	    max = ValidationConstraints.MAX_LENGTH_APARTMENT_BUILDING_NUMBER,
-	    message = ValidationConstraints.APARTMENT_BUILDING_NUMBER_OUT_OF_BOUNDS)
-    @Column(name = "ApartmentBuildingNumber", columnDefinition = "nvarchar(10)")
-    private String apartmentBuildingNumber;
+	@Size(min = ValidationConstraints.MIN_LENGTH_APARTMENT_BUILDING_NUMBER, max = ValidationConstraints.MAX_LENGTH_APARTMENT_BUILDING_NUMBER, message = ValidationConstraints.APARTMENT_BUILDING_NUMBER_OUT_OF_BOUNDS)
+	@Column(name = "ApartmentBuildingNumber", columnDefinition = "nvarchar(10)")
+	private String apartmentBuildingNumber;
 
-    @Size(min = ValidationConstraints.MIN_LENGTH_ENTRANCE,
-	    max = ValidationConstraints.MAX_LENGTH_ENTRANCE,
-	    message = ValidationConstraints.ENTRANCE_OUT_OF_BOUNDS)
-    @Column(name = "Entrance", columnDefinition = "nvarchar(10)")
-    private String entrance;
+	@Size(min = ValidationConstraints.MIN_LENGTH_ENTRANCE, max = ValidationConstraints.MAX_LENGTH_ENTRANCE, message = ValidationConstraints.ENTRANCE_OUT_OF_BOUNDS)
+	@Column(name = "Entrance", columnDefinition = "nvarchar(10)")
+	private String entrance;
 
-    @Min(value = 0, message = ValidationConstraints.FLOOR_NEGATIVE)
-    @Column(name = "Floor")
-    private Byte floor;
+	@Min(value = 0, message = ValidationConstraints.FLOOR_NEGATIVE)
+	@Column(name = "Floor")
+	private Byte floor;
 
-    @Size(min = ValidationConstraints.MIN_LENGTH_APARTMENT_NUMBER,
-	    max = ValidationConstraints.MAX_LENGTH_APARTMENT_NUMBER,
-	    message = ValidationConstraints.APARTMENT_NUMBER_OUT_OF_BOUNDS)
-    @Column(name = "ApartmentNumber", columnDefinition = "nvarchar(10)")
-    private String apartmentNumber;
+	@Size(min = ValidationConstraints.MIN_LENGTH_APARTMENT_NUMBER, max = ValidationConstraints.MAX_LENGTH_APARTMENT_NUMBER, message = ValidationConstraints.APARTMENT_NUMBER_OUT_OF_BOUNDS)
+	@Column(name = "ApartmentNumber", columnDefinition = "nvarchar(10)")
+	private String apartmentNumber;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "CustomerId")
-    private Customer customer;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "CustomerId")
+	private Customer customer;
 
-    public City getCity() {
-	return city;
-    }
+	public City getCity() {
+		return city;
+	}
 
-    public void setCity(City city) {
-	this.city = city;
-    }
+	public void setCity(City city) {
+		this.city = city;
+	}
 
-    public String getStreetNumber() {
-	return streetNumber;
-    }
+	public String getStreetNumber() {
+		return streetNumber;
+	}
 
-    public void setStreetNumber(String streetNumber) {
-	this.streetNumber = streetNumber;
-    }
+	public void setStreetNumber(String streetNumber) {
+		this.streetNumber = streetNumber;
+	}
 
-    public Customer getCustomer() {
-	return customer;
-    }
+	public Customer getCustomer() {
+		return customer;
+	}
 
-    public void setCustomer(Customer customer) {
-	this.customer = customer;
-    }
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 
-    public AddressType getAddressType() {
-	return addressType;
-    }
+	public AddressType getAddressType() {
+		return addressType;
+	}
 
-    public void setAddressType(AddressType addressType) {
-	this.addressType = addressType;
-    }
+	public void setAddressType(AddressType addressType) {
+		this.addressType = addressType;
+	}
 
-    public String getNeighborhood() {
-	return neighborhood;
-    }
+	public String getNeighborhood() {
+		return neighborhood;
+	}
 
-    public void setNeighborhood(String neighborhood) {
-	this.neighborhood = neighborhood;
-    }
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
 
-    public String getStreet() {
-	return street;
-    }
+	public String getStreet() {
+		return street;
+	}
 
-    public void setStreet(String street) {
-	this.street = street;
-    }
+	public void setStreet(String street) {
+		this.street = street;
+	}
 
-    public String getApartmentBuildingNumber() {
-	return apartmentBuildingNumber;
-    }
+	public String getApartmentBuildingNumber() {
+		return apartmentBuildingNumber;
+	}
 
-    public void setApartmentBuildingNumber(String apartmentBuildingNumber) {
-	this.apartmentBuildingNumber = apartmentBuildingNumber;
-    }
+	public void setApartmentBuildingNumber(String apartmentBuildingNumber) {
+		this.apartmentBuildingNumber = apartmentBuildingNumber;
+	}
 
-    public String getEntrance() {
-	return entrance;
-    }
+	public String getEntrance() {
+		return entrance;
+	}
 
-    public void setEntrance(String entrance) {
-	this.entrance = entrance;
-    }
+	public void setEntrance(String entrance) {
+		this.entrance = entrance;
+	}
 
-    public Byte getFloor() {
-	return floor;
-    }
+	public Byte getFloor() {
+		return floor;
+	}
 
-    public void setFloor(Byte floor) {
-	this.floor = floor;
-    }
+	public void setFloor(Byte floor) {
+		this.floor = floor;
+	}
 
-    public String getApartmentNumber() {
-	return apartmentNumber;
-    }
+	public String getApartmentNumber() {
+		return apartmentNumber;
+	}
 
-    public void setApartmentNumber(String apartmentNumber) {
-	this.apartmentNumber = apartmentNumber;
-    }
+	public void setApartmentNumber(String apartmentNumber) {
+		this.apartmentNumber = apartmentNumber;
+	}
 }

@@ -20,94 +20,88 @@ import com.github.velinyordanov.foodorder.services.customers.CustomersAddressesS
 
 @Service
 public class CustomersAddressesServiceImpl implements CustomersAddressesService {
-    private final Mapper mapper;
-    private final FoodOrderData foodOrderData;
+	private final Mapper mapper;
+	private final FoodOrderData foodOrderData;
 
-    public CustomersAddressesServiceImpl(
-	    Mapper mapper,
-	    FoodOrderData foodOrderData,
-	    SimpMessagingTemplate messagingTemplate,
-	    DiscountCodesService discountCodesService) {
-	this.mapper = mapper;
-	this.foodOrderData = foodOrderData;
-    }
-
-    @Override
-    public AddressDto addAddressToCustomer(String customerId, AddressCreateDto address) {
-	Optional<Customer> customerOptional = this.foodOrderData.customers().findById(customerId);
-	if (customerOptional.isEmpty()) {
-	    throw new NotFoundException(MessageFormat.format("Customer with id {0} not found", customerId));
+	public CustomersAddressesServiceImpl(Mapper mapper, FoodOrderData foodOrderData,
+			SimpMessagingTemplate messagingTemplate, DiscountCodesService discountCodesService) {
+		this.mapper = mapper;
+		this.foodOrderData = foodOrderData;
 	}
 
-	Address addressToAdd = this.mapper.map(address, Address.class);
-	Customer customer = customerOptional.get();
-	customer.addAddress(addressToAdd);
-	return this.mapper.map(this.foodOrderData.addresses().save(addressToAdd), AddressDto.class);
-    }
+	@Override
+	public AddressDto addAddressToCustomer(String customerId, AddressCreateDto address) {
+		Optional<Customer> customerOptional = this.foodOrderData.customers().findById(customerId);
+		if (customerOptional.isEmpty()) {
+			throw new NotFoundException(MessageFormat.format("Customer with id {0} not found", customerId));
+		}
 
-    @Override
-    public AddressDto editAddress(String customerId, String addressId, AddressDto address) {
-	Optional<Address> addressOptional = this.foodOrderData.addresses().findById(addressId);
-
-	if (addressOptional.isEmpty()) {
-	    throw new NotFoundException(MessageFormat.format("Address with id {0} not found", addressId));
+		Address addressToAdd = this.mapper.map(address, Address.class);
+		Customer customer = customerOptional.get();
+		customer.addAddress(addressToAdd);
+		return this.mapper.map(this.foodOrderData.addresses().save(addressToAdd), AddressDto.class);
 	}
 
-	Address addressToUpdate = addressOptional.get();
-	if (!customerId.equals(addressToUpdate.getCustomer().getId())) {
-	    throw new NotFoundException(
-		    MessageFormat.format("No such address found for customer with id {0}", customerId));
+	@Override
+	public AddressDto editAddress(String customerId, String addressId, AddressDto address) {
+		Optional<Address> addressOptional = this.foodOrderData.addresses().findById(addressId);
+
+		if (addressOptional.isEmpty()) {
+			throw new NotFoundException(MessageFormat.format("Address with id {0} not found", addressId));
+		}
+
+		Address addressToUpdate = addressOptional.get();
+		if (!customerId.equals(addressToUpdate.getCustomer().getId())) {
+			throw new NotFoundException(
+					MessageFormat.format("No such address found for customer with id {0}", customerId));
+		}
+
+		this.mapper.map(address, addressToUpdate);
+		addressToUpdate.setId(addressId);
+
+		return this.mapper.map(this.foodOrderData.addresses().save(addressToUpdate), AddressDto.class);
 	}
 
-	this.mapper.map(address, addressToUpdate);
-	addressToUpdate.setId(addressId);
+	@Override
+	public Collection<AddressDto> getAddressesForCustomer(String customerId) {
+		if (!this.foodOrderData.customers().existsById(customerId)) {
+			throw new NotFoundException(MessageFormat.format("Customer with id {0} not found.", customerId));
+		}
 
-	return this.mapper.map(this.foodOrderData.addresses().save(addressToUpdate), AddressDto.class);
-    }
-
-    @Override
-    public Collection<AddressDto> getAddressesForCustomer(String customerId) {
-	if (!this.foodOrderData.customers().existsById(customerId)) {
-	    throw new NotFoundException(MessageFormat.format("Customer with id {0} not found.", customerId));
+		return this.foodOrderData.addresses().findByCustomerId(customerId).stream()
+				.map(address -> this.mapper.map(address, AddressDto.class)).collect(Collectors.toList());
 	}
 
-	return this.foodOrderData.addresses()
-		.findByCustomerId(customerId)
-		.stream()
-		.map(address -> this.mapper.map(address, AddressDto.class))
-		.collect(Collectors.toList());
-    }
+	@Override
+	public AddressDto deleteCustomerAddress(String customerId, String addressId) {
+		Optional<Address> addressOptional = this.foodOrderData.addresses().findById(addressId);
+		if (addressOptional.isEmpty()) {
+			throw new NotFoundException(MessageFormat.format("No address with id {0} found", addressId));
+		}
 
-    @Override
-    public AddressDto deleteCustomerAddress(String customerId, String addressId) {
-	Optional<Address> addressOptional = this.foodOrderData.addresses().findById(addressId);
-	if (addressOptional.isEmpty()) {
-	    throw new NotFoundException(MessageFormat.format("No address with id {0} found", addressId));
+		Address addressToDelete = addressOptional.get();
+		if (!customerId.equals(addressToDelete.getCustomer().getId())) {
+			throw new NotFoundException(
+					MessageFormat.format("No such address found for customer with id {0}", customerId));
+		}
+
+		addressToDelete.setIsDeleted(true);
+		return this.mapper.map(this.foodOrderData.addresses().save(addressToDelete), AddressDto.class);
 	}
 
-	Address addressToDelete = addressOptional.get();
-	if (!customerId.equals(addressToDelete.getCustomer().getId())) {
-	    throw new NotFoundException(
-		    MessageFormat.format("No such address found for customer with id {0}", customerId));
+	@Override
+	public AddressDto getCustomerAddress(String customerId, String addressId) {
+		Optional<Address> addressOptional = this.foodOrderData.addresses().findById(addressId);
+		if (addressOptional.isEmpty()) {
+			throw new NotFoundException(MessageFormat.format("No address with id {0} found", addressId));
+		}
+
+		Address address = addressOptional.get();
+		if (!customerId.equals(address.getCustomer().getId())) {
+			throw new NotFoundException(
+					MessageFormat.format("No such address found for customer with id {0}", customerId));
+		}
+
+		return this.mapper.map(address, AddressDto.class);
 	}
-
-	addressToDelete.setIsDeleted(true);
-	return this.mapper.map(this.foodOrderData.addresses().save(addressToDelete), AddressDto.class);
-    }
-
-    @Override
-    public AddressDto getCustomerAddress(String customerId, String addressId) {
-	Optional<Address> addressOptional = this.foodOrderData.addresses().findById(addressId);
-	if (addressOptional.isEmpty()) {
-	    throw new NotFoundException(MessageFormat.format("No address with id {0} found", addressId));
-	}
-
-	Address address = addressOptional.get();
-	if (!customerId.equals(address.getCustomer().getId())) {
-	    throw new NotFoundException(
-		    MessageFormat.format("No such address found for customer with id {0}", customerId));
-	}
-
-	return this.mapper.map(address, AddressDto.class);
-    }
 }

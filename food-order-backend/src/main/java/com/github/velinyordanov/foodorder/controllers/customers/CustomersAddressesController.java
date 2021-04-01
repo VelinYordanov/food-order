@@ -21,37 +21,35 @@ import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 @RequestMapping("customers/{customerId}/addresses")
 @PreAuthorize(ValidationConstraints.ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION)
 public class CustomersAddressesController {
-    private final CustomersAddressesService customersAddressesService;
+	private final CustomersAddressesService customersAddressesService;
 
-    public CustomersAddressesController(CustomersAddressesService customersAddressesService) {
-	this.customersAddressesService = customersAddressesService;
-    }
+	public CustomersAddressesController(CustomersAddressesService customersAddressesService) {
+		this.customersAddressesService = customersAddressesService;
+	}
 
-    @PostMapping()
-    public AddressDto addAddressToCustomer(@PathVariable String customerId, @RequestBody AddressCreateDto address) {
-	return this.customersAddressesService.addAddressToCustomer(customerId, address);
-    }
+	@PostMapping()
+	public AddressDto addAddressToCustomer(@PathVariable String customerId, @RequestBody AddressCreateDto address) {
+		return this.customersAddressesService.addAddressToCustomer(customerId, address);
+	}
 
-    @PutMapping("{addressId}")
-    public AddressDto updateAddress(
-	    @PathVariable String customerId,
-	    @PathVariable String addressId,
-	    @RequestBody AddressDto address) {
-	return this.customersAddressesService.editAddress(customerId, addressId, address);
-    }
+	@PutMapping("{addressId}")
+	public AddressDto updateAddress(@PathVariable String customerId, @PathVariable String addressId,
+			@RequestBody AddressDto address) {
+		return this.customersAddressesService.editAddress(customerId, addressId, address);
+	}
 
-    @GetMapping()
-    public Collection<AddressDto> getAddressesForCustomer(@PathVariable String customerId) {
-	return this.customersAddressesService.getAddressesForCustomer(customerId);
-    }
+	@GetMapping()
+	public Collection<AddressDto> getAddressesForCustomer(@PathVariable String customerId) {
+		return this.customersAddressesService.getAddressesForCustomer(customerId);
+	}
 
-    @DeleteMapping("{addressId}")
-    public AddressDto deleteCustomerAddress(@PathVariable String customerId, @PathVariable String addressId) {
-	return this.customersAddressesService.deleteCustomerAddress(customerId, addressId);
-    }
+	@DeleteMapping("{addressId}")
+	public AddressDto deleteCustomerAddress(@PathVariable String customerId, @PathVariable String addressId) {
+		return this.customersAddressesService.deleteCustomerAddress(customerId, addressId);
+	}
 
-    @GetMapping("{addressId}")
-    public AddressDto getCustomerAddress(@PathVariable String customerId, @PathVariable String addressId) {
-	return this.customersAddressesService.getCustomerAddress(customerId, addressId);
-    }
+	@GetMapping("{addressId}")
+	public AddressDto getCustomerAddress(@PathVariable String customerId, @PathVariable String addressId) {
+		return this.customersAddressesService.getCustomerAddress(customerId, addressId);
+	}
 }

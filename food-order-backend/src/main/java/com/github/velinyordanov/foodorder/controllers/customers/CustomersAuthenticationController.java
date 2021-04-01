@@ -15,19 +15,19 @@ import com.github.velinyordanov.foodorder.services.customers.CustomersAuthentica
 @RestController
 @RequestMapping("customers")
 public class CustomersAuthenticationController {
-    private final CustomersAuthenticationService customersAuthenticationService;
+	private final CustomersAuthenticationService customersAuthenticationService;
 
-    public CustomersAuthenticationController(CustomersAuthenticationService customersAuthenticationService) {
-	this.customersAuthenticationService = customersAuthenticationService;
-    }
+	public CustomersAuthenticationController(CustomersAuthenticationService customersAuthenticationService) {
+		this.customersAuthenticationService = customersAuthenticationService;
+	}
 
-    @PostMapping("")
-    public JwtTokenDto registerUser(@Valid @RequestBody CustomerRegisterDto data) {
-	return new JwtTokenDto(this.customersAuthenticationService.registerCustomer(data));
-    }
+	@PostMapping("")
+	public JwtTokenDto registerUser(@Valid @RequestBody CustomerRegisterDto data) {
+		return new JwtTokenDto(this.customersAuthenticationService.registerCustomer(data));
+	}
 
-    @PostMapping("tokens")
-    public JwtTokenDto loginUser(@Valid @RequestBody UserLoginDto data) {
-	return this.customersAuthenticationService.login(data);
-    }
+	@PostMapping("tokens")
+	public JwtTokenDto loginUser(@Valid @RequestBody UserLoginDto data) {
+		return this.customersAuthenticationService.login(data);
+	}
 }

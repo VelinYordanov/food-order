@@ -1,19 +1,19 @@
 package com.github.velinyordanov.foodorder.data;
 
 public interface FoodOrderData {
-    AuthoritiesRepository authorities();
+	AuthoritiesRepository authorities();
 
-    CategoriesRepository categories();
+	CategoriesRepository categories();
 
-    CustomersRepository customers();
+	CustomersRepository customers();
 
-    FoodsRepository foods();
+	FoodsRepository foods();
 
-    OrdersRepository orders();
+	OrdersRepository orders();
 
-    RestaurantsRepository restaurants();
+	RestaurantsRepository restaurants();
 
-    AddressesRepository addresses();
+	AddressesRepository addresses();
 
-    DiscountCodesRepository discountCodes();
+	DiscountCodesRepository discountCodes();
 }

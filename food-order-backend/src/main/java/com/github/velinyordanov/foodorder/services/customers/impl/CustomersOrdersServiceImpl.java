@@ -23,87 +23,74 @@ import com.github.velinyordanov.foodorder.services.customers.CustomersOrdersServ
 
 @Service
 public class CustomersOrdersServiceImpl implements CustomersOrdersService {
-    private final Mapper mapper;
-    private final FoodOrderData foodOrderData;
-    private final SimpMessagingTemplate messagingTemplate;
-    private final DiscountCodesService discountCodesService;
+	private final Mapper mapper;
+	private final FoodOrderData foodOrderData;
+	private final SimpMessagingTemplate messagingTemplate;
+	private final DiscountCodesService discountCodesService;
 
-    public CustomersOrdersServiceImpl(
-	    Mapper mapper,
-	    FoodOrderData foodOrderData,
-	    SimpMessagingTemplate messagingTemplate,
-	    DiscountCodesService discountCodesService) {
-	this.mapper = mapper;
-	this.foodOrderData = foodOrderData;
-	this.messagingTemplate = messagingTemplate;
-	this.discountCodesService = discountCodesService;
-    }
-
-    @Override
-    public OrderDto addOrderToCustomer(String customerId, OrderCreateDto order) {
-	if (!customerId.equals(order.getCustomerId())) {
-	    throw new BadRequestException("Customer is not valid");
+	public CustomersOrdersServiceImpl(Mapper mapper, FoodOrderData foodOrderData,
+			SimpMessagingTemplate messagingTemplate, DiscountCodesService discountCodesService) {
+		this.mapper = mapper;
+		this.foodOrderData = foodOrderData;
+		this.messagingTemplate = messagingTemplate;
+		this.discountCodesService = discountCodesService;
 	}
 
-	Address address = this.foodOrderData
-		.addresses()
-		.findById(order.getAddressId())
-		.orElseThrow(() -> new NotFoundException("No such address found"));
+	@Override
+	public OrderDto addOrderToCustomer(String customerId, OrderCreateDto order) {
+		if (!customerId.equals(order.getCustomerId())) {
+			throw new BadRequestException("Customer is not valid");
+		}
 
-	if (!order.getCustomerId().equals(address.getCustomer().getId())) {
-	    throw new NotFoundException("No such address found");
+		Address address = this.foodOrderData.addresses().findById(order.getAddressId())
+				.orElseThrow(() -> new NotFoundException("No such address found"));
+
+		if (!order.getCustomerId().equals(address.getCustomer().getId())) {
+			throw new NotFoundException("No such address found");
+		}
+
+		this.foodOrderData.restaurants().findById(order.getRestaurantId())
+				.orElseThrow(() -> new NotFoundException("No such restaurant found"));
+
+		Collection<Food> restaurantFoods = this.foodOrderData.foods().findByRestaurantId(order.getRestaurantId());
+
+		if (!order.getFoods().stream()
+				.allMatch(food -> restaurantFoods.stream().anyMatch(f -> f.getId().equals(food.getId())))) {
+			throw new NotFoundException("No such food found");
+		}
+
+		Order orderToAdd = this.mapper.map(order, Order.class);
+
+		if (order.getDiscountCodeId() != null) {
+			DiscountCode discountCode = this.foodOrderData.discountCodes().findById(order.getDiscountCodeId())
+					.orElseThrow(() -> new NotFoundException("Discount code not found"));
+
+			this.discountCodesService.validateDiscountCode(discountCode, customerId);
+
+			orderToAdd.setDiscountCode(discountCode);
+		}
+
+		OrderDto result = this.mapper.map(this.foodOrderData.orders().save(orderToAdd), OrderDto.class);
+		this.messagingTemplate.convertAndSend(
+				MessageFormat.format("/notifications/restaurants/{0}/orders", result.getRestaurant().getId()), result);
+		return result;
 	}
 
-	this.foodOrderData
-		.restaurants()
-		.findById(order.getRestaurantId())
-		.orElseThrow(() -> new NotFoundException("No such restaurant found"));
-
-	Collection<Food> restaurantFoods = this.foodOrderData.foods()
-		.findByRestaurantId(order.getRestaurantId());
-
-	if (!order.getFoods()
-		.stream()
-		.allMatch(food -> restaurantFoods.stream().anyMatch(f -> f.getId().equals(food.getId())))) {
-	    throw new NotFoundException("No such food found");
+	@Override
+	public Page<OrderDto> getCustomerOrders(String customerId, Pageable pageable) {
+		return this.foodOrderData.orders().findByCustomerId(customerId, pageable)
+				.map(order -> this.mapper.map(order, OrderDto.class));
 	}
 
-	Order orderToAdd = this.mapper.map(order, Order.class);
+	@Override
+	public OrderDto getCustomerOrder(String customerId, String orderId) {
+		Order order = this.foodOrderData.orders().findById(orderId)
+				.orElseThrow(() -> new NotFoundException("Order not found"));
 
-	if (order.getDiscountCodeId() != null) {
-	    DiscountCode discountCode = this.foodOrderData.discountCodes()
-		    .findById(order.getDiscountCodeId())
-		    .orElseThrow(() -> new NotFoundException("Discount code not found"));
+		if (!customerId.equals(order.getCustomer().getId())) {
+			throw new NotFoundException("Order not found for customer");
+		}
 
-	    this.discountCodesService.validateDiscountCode(discountCode, customerId);
-
-	    orderToAdd.setDiscountCode(discountCode);
+		return this.mapper.map(order, OrderDto.class);
 	}
-
-	OrderDto result = this.mapper.map(this.foodOrderData.orders().save(orderToAdd), OrderDto.class);
-	this.messagingTemplate.convertAndSend(
-		MessageFormat.format("/notifications/restaurants/{0}/orders", result.getRestaurant().getId()),
-		result);
-	return result;
-    }
-
-    @Override
-    public Page<OrderDto> getCustomerOrders(String customerId, Pageable pageable) {
-	return this.foodOrderData.orders()
-		.findByCustomerId(customerId, pageable)
-		.map(order -> this.mapper.map(order, OrderDto.class));
-    }
-
-    @Override
-    public OrderDto getCustomerOrder(String customerId, String orderId) {
-	Order order = this.foodOrderData.orders()
-		.findById(orderId)
-		.orElseThrow(() -> new NotFoundException("Order not found"));
-
-	if (!customerId.equals(order.getCustomer().getId())) {
-	    throw new NotFoundException("Order not found for customer");
-	}
-
-	return this.mapper.map(order, OrderDto.class);
-    }
 }

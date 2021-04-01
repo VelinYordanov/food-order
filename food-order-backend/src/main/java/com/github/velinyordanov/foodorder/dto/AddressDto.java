@@ -4,103 +4,103 @@ import com.github.velinyordanov.foodorder.enums.AddressType;
 import com.github.velinyordanov.foodorder.enums.City;
 
 public class AddressDto {
-    private String id;
+	private String id;
 
-    private City city;
+	private City city;
 
-    private AddressType addressType;
+	private AddressType addressType;
 
-    private String neighborhood;
+	private String neighborhood;
 
-    private String street;
+	private String street;
 
-    private String streetNumber;
+	private String streetNumber;
 
-    private String apartmentBuildingNumber;
+	private String apartmentBuildingNumber;
 
-    private String entrance;
+	private String entrance;
 
-    private Byte floor;
+	private Byte floor;
 
-    private String apartmentNumber;
+	private String apartmentNumber;
 
-    public City getCity() {
-	return city;
-    }
+	public City getCity() {
+		return city;
+	}
 
-    public void setCity(City city) {
-	this.city = city;
-    }
+	public void setCity(City city) {
+		this.city = city;
+	}
 
-    public String getStreetNumber() {
-	return streetNumber;
-    }
+	public String getStreetNumber() {
+		return streetNumber;
+	}
 
-    public void setStreetNumber(String streetNumber) {
-	this.streetNumber = streetNumber;
-    }
+	public void setStreetNumber(String streetNumber) {
+		this.streetNumber = streetNumber;
+	}
 
-    public String getId() {
-	return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setId(String id) {
-	this.id = id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public AddressType getAddressType() {
-	return addressType;
-    }
+	public AddressType getAddressType() {
+		return addressType;
+	}
 
-    public void setAddressType(AddressType addressType) {
-	this.addressType = addressType;
-    }
+	public void setAddressType(AddressType addressType) {
+		this.addressType = addressType;
+	}
 
-    public String getNeighborhood() {
-	return neighborhood;
-    }
+	public String getNeighborhood() {
+		return neighborhood;
+	}
 
-    public void setNeighborhood(String neighborhood) {
-	this.neighborhood = neighborhood;
-    }
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
 
-    public String getStreet() {
-	return street;
-    }
+	public String getStreet() {
+		return street;
+	}
 
-    public void setStreet(String street) {
-	this.street = street;
-    }
+	public void setStreet(String street) {
+		this.street = street;
+	}
 
-    public String getApartmentBuildingNumber() {
-	return apartmentBuildingNumber;
-    }
+	public String getApartmentBuildingNumber() {
+		return apartmentBuildingNumber;
+	}
 
-    public void setApartmentBuildingNumber(String apartmentBuildingNumber) {
-	this.apartmentBuildingNumber = apartmentBuildingNumber;
-    }
+	public void setApartmentBuildingNumber(String apartmentBuildingNumber) {
+		this.apartmentBuildingNumber = apartmentBuildingNumber;
+	}
 
-    public String getEntrance() {
-	return entrance;
-    }
+	public String getEntrance() {
+		return entrance;
+	}
 
-    public void setEntrance(String entrance) {
-	this.entrance = entrance;
-    }
+	public void setEntrance(String entrance) {
+		this.entrance = entrance;
+	}
 
-    public Byte getFloor() {
-	return floor;
-    }
+	public Byte getFloor() {
+		return floor;
+	}
 
-    public void setFloor(Byte floor) {
-	this.floor = floor;
-    }
+	public void setFloor(Byte floor) {
+		this.floor = floor;
+	}
 
-    public String getApartmentNumber() {
-	return apartmentNumber;
-    }
+	public String getApartmentNumber() {
+		return apartmentNumber;
+	}
 
-    public void setApartmentNumber(String apartmentNumber) {
-	this.apartmentNumber = apartmentNumber;
-    }
+	public void setApartmentNumber(String apartmentNumber) {
+		this.apartmentNumber = apartmentNumber;
+	}
 }

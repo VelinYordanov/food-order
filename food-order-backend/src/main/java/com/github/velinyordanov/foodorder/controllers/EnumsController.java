@@ -17,24 +17,24 @@ import com.github.velinyordanov.foodorder.services.EnumsService;
 @RequestMapping("enums")
 @PreAuthorize("isAuthenticated()")
 public class EnumsController {
-    private final EnumsService enumsService;
+	private final EnumsService enumsService;
 
-    public EnumsController(EnumsService enumsService) {
-	this.enumsService = enumsService;
-    }
+	public EnumsController(EnumsService enumsService) {
+		this.enumsService = enumsService;
+	}
 
-    @GetMapping("address-types")
-    public Collection<EnumDto> getAddressTypes() {
-	return this.enumsService.getEnumOptions(AddressType.class);
-    }
+	@GetMapping("address-types")
+	public Collection<EnumDto> getAddressTypes() {
+		return this.enumsService.getEnumOptions(AddressType.class);
+	}
 
-    @GetMapping("cities")
-    public Collection<EnumDto> getCities() {
-	return this.enumsService.getEnumOptions(City.class);
-    }
+	@GetMapping("cities")
+	public Collection<EnumDto> getCities() {
+		return this.enumsService.getEnumOptions(City.class);
+	}
 
-    @GetMapping("order-statuses")
-    public Collection<EnumDto> getOrderStatuses() {
-	return this.enumsService.getEnumOptions(Status.class);
-    }
+	@GetMapping("order-statuses")
+	public Collection<EnumDto> getOrderStatuses() {
+		return this.enumsService.getEnumOptions(Status.class);
+	}
 }

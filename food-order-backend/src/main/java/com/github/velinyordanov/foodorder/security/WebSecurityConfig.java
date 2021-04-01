@@ -17,42 +17,32 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Order(1)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final RestaurantAuthenticationProvider restaurantAuthenticationProvider;
-    private final CustomerAuthenticationProvider customerAuthenticationProvider;
+	private final RestaurantAuthenticationProvider restaurantAuthenticationProvider;
+	private final CustomerAuthenticationProvider customerAuthenticationProvider;
 
-    public WebSecurityConfig(
-	    RestaurantAuthenticationProvider restaurantAuthenticationProvider,
-	    CustomerAuthenticationProvider customerAuthenticationProvider) {
-	super();
-	this.restaurantAuthenticationProvider = restaurantAuthenticationProvider;
-	this.customerAuthenticationProvider = customerAuthenticationProvider;
-    }
+	public WebSecurityConfig(RestaurantAuthenticationProvider restaurantAuthenticationProvider,
+			CustomerAuthenticationProvider customerAuthenticationProvider) {
+		super();
+		this.restaurantAuthenticationProvider = restaurantAuthenticationProvider;
+		this.customerAuthenticationProvider = customerAuthenticationProvider;
+	}
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-	return super.authenticationManagerBean();
-    }
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-	auth
-		.authenticationProvider(restaurantAuthenticationProvider)
-		.authenticationProvider(customerAuthenticationProvider);
-    }
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(restaurantAuthenticationProvider)
+				.authenticationProvider(customerAuthenticationProvider);
+	}
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-	// We will use method security.
-	httpSecurity.csrf()
-		.disable()
-		.httpBasic()
-		.disable()
-		.authorizeRequests()
-		.anyRequest()
-		.permitAll()
-		.and()
-		.sessionManagement()
-		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
+	@Override
+	protected void configure(HttpSecurity httpSecurity) throws Exception {
+		// We will use method security.
+		httpSecurity.csrf().disable().httpBasic().disable().authorizeRequests().anyRequest().permitAll().and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
 }

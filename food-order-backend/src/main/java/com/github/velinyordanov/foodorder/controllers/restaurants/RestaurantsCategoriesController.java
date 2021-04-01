@@ -22,29 +22,26 @@ import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 @RequestMapping("restaurants/{restaurantId}/categories")
 @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
 public class RestaurantsCategoriesController {
-    private final RestaurantsCategoriesService restaurantsCategoriesService;
+	private final RestaurantsCategoriesService restaurantsCategoriesService;
 
-    public RestaurantsCategoriesController(RestaurantsCategoriesService restaurantsCategoriesService) {
-	this.restaurantsCategoriesService = restaurantsCategoriesService;
-    }
+	public RestaurantsCategoriesController(RestaurantsCategoriesService restaurantsCategoriesService) {
+		this.restaurantsCategoriesService = restaurantsCategoriesService;
+	}
 
-    @GetMapping
-    public Collection<CategoryDto> getCategories(@PathVariable String restaurantId) {
-	return this.restaurantsCategoriesService.getCategoriesForRestaurant(restaurantId);
-    }
+	@GetMapping
+	public Collection<CategoryDto> getCategories(@PathVariable String restaurantId) {
+		return this.restaurantsCategoriesService.getCategoriesForRestaurant(restaurantId);
+	}
 
-    @DeleteMapping("{categoryId}")
-    public void deleteCategoryFromRestaurant(
-	    @PathVariable String restaurantId,
-	    @PathVariable String categoryId) {
-	this.restaurantsCategoriesService.deleteCategory(restaurantId, categoryId);
-    }
+	@DeleteMapping("{categoryId}")
+	public void deleteCategoryFromRestaurant(@PathVariable String restaurantId, @PathVariable String categoryId) {
+		this.restaurantsCategoriesService.deleteCategory(restaurantId, categoryId);
+	}
 
-    @PostMapping()
-    public CategoryDto addCategoryToRestaurant(
-	    @PathVariable String restaurantId,
-	    @RequestBody @Valid CategoryCreateDto categoryCreateDto) {
-	return this.restaurantsCategoriesService.addCategoryForRestaurant(restaurantId, categoryCreateDto)
-		.orElseThrow(() -> new IllegalStateException("An error occurred while creating category"));
-    }
+	@PostMapping()
+	public CategoryDto addCategoryToRestaurant(@PathVariable String restaurantId,
+			@RequestBody @Valid CategoryCreateDto categoryCreateDto) {
+		return this.restaurantsCategoriesService.addCategoryForRestaurant(restaurantId, categoryCreateDto)
+				.orElseThrow(() -> new IllegalStateException("An error occurred while creating category"));
+	}
 }

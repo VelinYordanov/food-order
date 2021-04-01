@@ -10,70 +10,70 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 
 public class DiscountCodeCreateDto {
-    @NotBlank(message = "Code is required")
-    @Size(min = 5, max = 10, message = "Discount code must be between 5 and 10 symbols long.")
-    private String code;
+	@NotBlank(message = "Code is required")
+	@Size(min = 5, max = 10, message = "Discount code must be between 5 and 10 symbols long.")
+	private String code;
 
-    @Range(min = 1, max = 100, message = "Discount percentage must be between 1 and 100")
-    private int discountPercentage;
+	@Range(min = 1, max = 100, message = "Discount percentage must be between 1 and 100")
+	private int discountPercentage;
 
-    @NotNull(message = "Valid from is required")
-    @FutureOrPresent(message = "Valid from date must be present or future")
-    private LocalDate validFrom;
+	@NotNull(message = "Valid from is required")
+	@FutureOrPresent(message = "Valid from date must be present or future")
+	private LocalDate validFrom;
 
-    @NotNull(message = "Valid to is required")
-    @FutureOrPresent(message = "Valid to date must be in the present or future")
-    private LocalDate validTo;
+	@NotNull(message = "Valid to is required")
+	@FutureOrPresent(message = "Valid to date must be in the present or future")
+	private LocalDate validTo;
 
-    private boolean isSingleUse;
+	private boolean isSingleUse;
 
-    private boolean isOncePerUser;
+	private boolean isOncePerUser;
 
-    public String getCode() {
-	return code;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-	this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public int getDiscountPercentage() {
-	return discountPercentage;
-    }
+	public int getDiscountPercentage() {
+		return discountPercentage;
+	}
 
-    public void setDiscountPercentage(int discountPercentage) {
-	this.discountPercentage = discountPercentage;
-    }
+	public void setDiscountPercentage(int discountPercentage) {
+		this.discountPercentage = discountPercentage;
+	}
 
-    public LocalDate getValidFrom() {
-	return validFrom;
-    }
+	public LocalDate getValidFrom() {
+		return validFrom;
+	}
 
-    public void setValidFrom(LocalDate validFrom) {
-	this.validFrom = validFrom;
-    }
+	public void setValidFrom(LocalDate validFrom) {
+		this.validFrom = validFrom;
+	}
 
-    public LocalDate getValidTo() {
-	return validTo;
-    }
+	public LocalDate getValidTo() {
+		return validTo;
+	}
 
-    public void setValidTo(LocalDate validTo) {
-	this.validTo = validTo;
-    }
+	public void setValidTo(LocalDate validTo) {
+		this.validTo = validTo;
+	}
 
-    public boolean getIsSingleUse() {
-	return isSingleUse;
-    }
+	public boolean getIsSingleUse() {
+		return isSingleUse;
+	}
 
-    public void setIsSingleUse(boolean isSingleUse) {
-	this.isSingleUse = isSingleUse;
-    }
+	public void setIsSingleUse(boolean isSingleUse) {
+		this.isSingleUse = isSingleUse;
+	}
 
-    public boolean getIsOncePerUser() {
-	return isOncePerUser;
-    }
+	public boolean getIsOncePerUser() {
+		return isOncePerUser;
+	}
 
-    public void setIsOncePerUser(boolean isOncePerUser) {
-	this.isOncePerUser = isOncePerUser;
-    }
+	public void setIsOncePerUser(boolean isOncePerUser) {
+		this.isOncePerUser = isOncePerUser;
+	}
 }

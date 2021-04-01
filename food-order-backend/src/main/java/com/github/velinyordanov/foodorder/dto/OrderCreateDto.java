@@ -6,67 +6,67 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 public class OrderCreateDto {
-    @NotBlank(message = "No restaurant provided")
-    private String restaurantId;
+	@NotBlank(message = "No restaurant provided")
+	private String restaurantId;
 
-    @NotBlank(message = "No customer provided")
-    private String customerId;
+	@NotBlank(message = "No customer provided")
+	private String customerId;
 
-    @NotBlank(message = "No address provided")
-    private String addressId;
+	@NotBlank(message = "No address provided")
+	private String addressId;
 
-    @NotEmpty(message = "No foods provided")
-    private Collection<OrderFoodDto> foods;
+	@NotEmpty(message = "No foods provided")
+	private Collection<OrderFoodDto> foods;
 
-    private String discountCodeId;
+	private String discountCodeId;
 
-    private String comment;
+	private String comment;
 
-    public String getRestaurantId() {
-	return restaurantId;
-    }
+	public String getRestaurantId() {
+		return restaurantId;
+	}
 
-    public void setRestaurantId(String restaurantId) {
-	this.restaurantId = restaurantId;
-    }
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
 
-    public String getCustomerId() {
-	return customerId;
-    }
+	public String getCustomerId() {
+		return customerId;
+	}
 
-    public void setCustomerId(String customerId) {
-	this.customerId = customerId;
-    }
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
 
-    public String getAddressId() {
-	return addressId;
-    }
+	public String getAddressId() {
+		return addressId;
+	}
 
-    public void setAddressId(String addressId) {
-	this.addressId = addressId;
-    }
+	public void setAddressId(String addressId) {
+		this.addressId = addressId;
+	}
 
-    public Collection<OrderFoodDto> getFoods() {
-	return foods;
-    }
+	public Collection<OrderFoodDto> getFoods() {
+		return foods;
+	}
 
-    public void setFoods(Collection<OrderFoodDto> foods) {
-	this.foods = foods;
-    }
+	public void setFoods(Collection<OrderFoodDto> foods) {
+		this.foods = foods;
+	}
 
-    public String getDiscountCodeId() {
-	return discountCodeId;
-    }
+	public String getDiscountCodeId() {
+		return discountCodeId;
+	}
 
-    public void setDiscountCodeId(String discountCodeId) {
-	this.discountCodeId = discountCodeId;
-    }
+	public void setDiscountCodeId(String discountCodeId) {
+		this.discountCodeId = discountCodeId;
+	}
 
-    public String getComment() {
-	return comment;
-    }
+	public String getComment() {
+		return comment;
+	}
 
-    public void setComment(String comment) {
-	this.comment = comment;
-    }
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
 }

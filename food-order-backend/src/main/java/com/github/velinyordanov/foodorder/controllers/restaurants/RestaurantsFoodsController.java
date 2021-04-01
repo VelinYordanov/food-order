@@ -20,30 +20,26 @@ import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 @RequestMapping("restaurants/{restaurantId}/foods")
 @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
 public class RestaurantsFoodsController {
-    private final RestaurantsFoodsService restaurantsFoodsService;
+	private final RestaurantsFoodsService restaurantsFoodsService;
 
-    public RestaurantsFoodsController(RestaurantsFoodsService restaurantsFoodsService) {
-	this.restaurantsFoodsService = restaurantsFoodsService;
-    }
+	public RestaurantsFoodsController(RestaurantsFoodsService restaurantsFoodsService) {
+		this.restaurantsFoodsService = restaurantsFoodsService;
+	}
 
-    @PostMapping()
-    public FoodDto addFoodToRestaurant(@PathVariable String restaurantId,
-	    @RequestBody @Valid FoodCreateDto foodCreateDto) {
-	return this.restaurantsFoodsService.addFoodToRestaurant(restaurantId, foodCreateDto);
-    }
+	@PostMapping()
+	public FoodDto addFoodToRestaurant(@PathVariable String restaurantId,
+			@RequestBody @Valid FoodCreateDto foodCreateDto) {
+		return this.restaurantsFoodsService.addFoodToRestaurant(restaurantId, foodCreateDto);
+	}
 
-    @PutMapping("{foodId}")
-    public FoodDto editFood(
-	    @PathVariable String restaurantId,
-	    @PathVariable String foodId,
-	    @RequestBody @Valid FoodCreateDto foodCreateDto) {
-	return this.restaurantsFoodsService.editFood(restaurantId, foodId, foodCreateDto);
-    }
+	@PutMapping("{foodId}")
+	public FoodDto editFood(@PathVariable String restaurantId, @PathVariable String foodId,
+			@RequestBody @Valid FoodCreateDto foodCreateDto) {
+		return this.restaurantsFoodsService.editFood(restaurantId, foodId, foodCreateDto);
+	}
 
-    @DeleteMapping("{foodId}")
-    public void deleteFoodFromRestaurant(
-	    @PathVariable String restaurantId,
-	    @PathVariable String foodId) {
-	this.restaurantsFoodsService.deleteFood(restaurantId, foodId);
-    }
+	@DeleteMapping("{foodId}")
+	public void deleteFoodFromRestaurant(@PathVariable String restaurantId, @PathVariable String foodId) {
+		this.restaurantsFoodsService.deleteFood(restaurantId, foodId);
+	}
 }

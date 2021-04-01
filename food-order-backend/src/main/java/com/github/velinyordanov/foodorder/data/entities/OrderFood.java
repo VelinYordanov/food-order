@@ -11,51 +11,51 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Orders_Foods")
 public class OrderFood {
-    @EmbeddedId
-    private OrderFoodId orderFoodId;
+	@EmbeddedId
+	private OrderFoodId orderFoodId;
 
-    @ManyToOne
-    @MapsId("orderId")
-    @JoinColumn(name = "OrderId")
-    private Order order;
+	@ManyToOne
+	@MapsId("orderId")
+	@JoinColumn(name = "OrderId")
+	private Order order;
 
-    @ManyToOne
-    @MapsId("foodId")
-    @JoinColumn(name = "FoodId")
-    private Food food;
+	@ManyToOne
+	@MapsId("foodId")
+	@JoinColumn(name = "FoodId")
+	private Food food;
 
-    @Column(name = "Quantity", nullable = false)
-    private int quantity;
+	@Column(name = "Quantity", nullable = false)
+	private int quantity;
 
-    public OrderFoodId getOrderFoodId() {
-	return orderFoodId;
-    }
+	public OrderFoodId getOrderFoodId() {
+		return orderFoodId;
+	}
 
-    public void setOrderFoodId(OrderFoodId orderFoodId) {
-	this.orderFoodId = orderFoodId;
-    }
+	public void setOrderFoodId(OrderFoodId orderFoodId) {
+		this.orderFoodId = orderFoodId;
+	}
 
-    public Order getOrder() {
-	return order;
-    }
+	public Order getOrder() {
+		return order;
+	}
 
-    public void setOrder(Order order) {
-	this.order = order;
-    }
+	public void setOrder(Order order) {
+		this.order = order;
+	}
 
-    public Food getFood() {
-	return food;
-    }
+	public Food getFood() {
+		return food;
+	}
 
-    public void setFood(Food food) {
-	this.food = food;
-    }
+	public void setFood(Food food) {
+		this.food = food;
+	}
 
-    public int getQuantity() {
-	return quantity;
-    }
+	public int getQuantity() {
+		return quantity;
+	}
 
-    public void setQuantity(int quantity) {
-	this.quantity = quantity;
-    }
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
 }

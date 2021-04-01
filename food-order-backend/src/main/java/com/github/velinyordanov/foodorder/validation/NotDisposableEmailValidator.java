@@ -18,32 +18,30 @@ import com.github.velinyordanov.foodorder.validation.annotations.NotDisposableEm
 
 @Component
 public class NotDisposableEmailValidator implements ConstraintValidator<NotDisposableEmail, String> {
-    private static final Log LOGGER = LogFactory.getLog(NotDisposableEmailValidator.class);
+	private static final Log LOGGER = LogFactory.getLog(NotDisposableEmailValidator.class);
 
-    private final RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
-    @Value("${disposable.email.validation.url}")
-    private String url;
+	@Value("${disposable.email.validation.url}")
+	private String url;
 
-    public NotDisposableEmailValidator(RestTemplate restTemplate) {
-	this.restTemplate = restTemplate;
-    }
-
-    @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
-	LOGGER.info(MessageFormat.format("Checking if email {0} is disposable", value));
-
-	try {
-	    DisposableEmailValidationApiResponse response = this.restTemplate.getForObject(
-		    this.url,
-		    DisposableEmailValidationApiResponse.class,
-		    Collections.singletonMap("email", value));
-
-	    return "false".equals(response.getDisposable());
-	} catch (RestClientException e) {
-	    // Do not want to stop registration if api is offline
-	    return true;
+	public NotDisposableEmailValidator(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
 	}
-    }
+
+	@Override
+	public boolean isValid(String value, ConstraintValidatorContext context) {
+		LOGGER.info(MessageFormat.format("Checking if email {0} is disposable", value));
+
+		try {
+			DisposableEmailValidationApiResponse response = this.restTemplate.getForObject(this.url,
+					DisposableEmailValidationApiResponse.class, Collections.singletonMap("email", value));
+
+			return "false".equals(response.getDisposable());
+		} catch (RestClientException e) {
+			// Do not want to stop registration if api is offline
+			return true;
+		}
+	}
 
 }

@@ -14,22 +14,22 @@ import com.github.velinyordanov.foodorder.dto.GraphData;
 
 @Repository
 public interface OrdersRepository extends BaseRepository<Order> {
-    @Transactional(readOnly = true)
-    @Query("select e from #{#entityName} e where e.customer.id = ?1 and e.isDeleted = false")
-    Page<Order> findByCustomerId(String customerId, Pageable pageable);
+	@Transactional(readOnly = true)
+	@Query("select e from #{#entityName} e where e.customer.id = ?1 and e.isDeleted = false")
+	Page<Order> findByCustomerId(String customerId, Pageable pageable);
 
-    @Transactional(readOnly = true)
-    @Query("select e from #{#entityName} e where e.restaurant.id = ?1 and e.isDeleted = false")
-    Page<Order> findByRestaurantId(String restaurantId, Pageable page);
+	@Transactional(readOnly = true)
+	@Query("select e from #{#entityName} e where e.restaurant.id = ?1 and e.isDeleted = false")
+	Page<Order> findByRestaurantId(String restaurantId, Pageable page);
 
-    @Query("select new com.github.velinyordanov.foodorder.dto.GraphData(CAST(e.createdOn as date), count(e))"
-	    + "from #{#entityName} e"
-	    + " where e.restaurant.id = ?1 and year(e.createdOn) = ?3 and month(e.createdOn) = ?2 "
-	    + "group by CAST(e.createdOn as date)")
-    Collection<GraphData<Date, Long>> getOrderMonthlyGraphData(String restaurantId, int month, int year);
+	@Query("select new com.github.velinyordanov.foodorder.dto.GraphData(CAST(e.createdOn as date), count(e))"
+			+ "from #{#entityName} e"
+			+ " where e.restaurant.id = ?1 and year(e.createdOn) = ?3 and month(e.createdOn) = ?2 "
+			+ "group by CAST(e.createdOn as date)")
+	Collection<GraphData<Date, Long>> getOrderMonthlyGraphData(String restaurantId, int month, int year);
 
-    @Query("select new com.github.velinyordanov.foodorder.dto.GraphData(month(e.createdOn), count(e)) "
-	    + "from #{#entityName} e where e.restaurant.id = ?1 and year(e.createdOn) = ?2 "
-	    + "group by month(e.createdOn)")
-    Collection<GraphData<Integer, Long>> getYearlyGraphData(String restaurantId, int year);
+	@Query("select new com.github.velinyordanov.foodorder.dto.GraphData(month(e.createdOn), count(e)) "
+			+ "from #{#entityName} e where e.restaurant.id = ?1 and year(e.createdOn) = ?2 "
+			+ "group by month(e.createdOn)")
+	Collection<GraphData<Integer, Long>> getYearlyGraphData(String restaurantId, int year);
 }

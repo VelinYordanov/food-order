@@ -8,13 +8,13 @@ import com.github.velinyordanov.foodorder.dto.DiscountCodeEditDto;
 import com.github.velinyordanov.foodorder.dto.DiscountCodeListDto;
 
 public interface RestaurantsDiscountCodesService {
-    DiscountCodeDto addDiscountCodeToRestaurant(String restaurantId, DiscountCodeCreateDto discountCode);
+	DiscountCodeDto addDiscountCodeToRestaurant(String restaurantId, DiscountCodeCreateDto discountCode);
 
-    DiscountCodeDto getDiscountByCode(String restaurantId, String code, String customerId);
+	DiscountCodeDto getDiscountByCode(String restaurantId, String code, String customerId);
 
-    Collection<DiscountCodeListDto> getDiscountCodesForRestaurant(String restaurantId);
+	Collection<DiscountCodeListDto> getDiscountCodesForRestaurant(String restaurantId);
 
-    DiscountCodeDto deleteDiscountCode(String restaurantId, String discountCodeId);
+	DiscountCodeDto deleteDiscountCode(String restaurantId, String discountCodeId);
 
-    DiscountCodeListDto editDiscountCode(String restaurantId, String discountCodeId, DiscountCodeEditDto discountCode);
+	DiscountCodeListDto editDiscountCode(String restaurantId, String discountCodeId, DiscountCodeEditDto discountCode);
 }

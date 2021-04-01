@@ -4,7 +4,7 @@ import com.github.velinyordanov.foodorder.data.entities.BaseUser;
 import com.github.velinyordanov.foodorder.dto.JwtUserDto;
 
 public interface JwtTokenService {
-    JwtUserDto parseToken(String token);
+	JwtUserDto parseToken(String token);
 
-    String generateToken(BaseUser user);
+	String generateToken(BaseUser user);
 }

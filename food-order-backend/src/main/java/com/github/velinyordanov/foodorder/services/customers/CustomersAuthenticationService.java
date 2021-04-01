@@ -8,9 +8,9 @@ import com.github.velinyordanov.foodorder.dto.JwtTokenDto;
 import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 
 public interface CustomersAuthenticationService {
-    String registerCustomer(CustomerRegisterDto data);
+	String registerCustomer(CustomerRegisterDto data);
 
-    JwtTokenDto login(UserLoginDto userDto);
+	JwtTokenDto login(UserLoginDto userDto);
 
-    Optional<Customer> findById(String id);
+	Optional<Customer> findById(String id);
 }

@@ -21,28 +21,26 @@ import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 @RestController
 @RequestMapping("restaurants")
 public class RestaurantsController {
-    private final RestaurantsService restaurantsService;
+	private final RestaurantsService restaurantsService;
 
-    public RestaurantsController(
-	    RestaurantsService restaurantsService) {
-	this.restaurantsService = restaurantsService;
-    }
+	public RestaurantsController(RestaurantsService restaurantsService) {
+		this.restaurantsService = restaurantsService;
+	}
 
-    @GetMapping()
-    public Collection<RestaurantDto> getAll() {
-	return this.restaurantsService.getAll();
-    }
+	@GetMapping()
+	public Collection<RestaurantDto> getAll() {
+		return this.restaurantsService.getAll();
+	}
 
-    @GetMapping("{restaurantId}")
-    public RestaurantDataDto getRestaurantData(@PathVariable String restaurantId) {
-	return this.restaurantsService.getRestaurantData(restaurantId);
-    }
+	@GetMapping("{restaurantId}")
+	public RestaurantDataDto getRestaurantData(@PathVariable String restaurantId) {
+		return this.restaurantsService.getRestaurantData(restaurantId);
+	}
 
-    @PutMapping("{restaurantId}")
-    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public RestaurantDataDto editRestaurant(
-	    @PathVariable String restaurantId,
-	    @RequestBody @Valid RestaurantEditDto restaurantEditDto) {
-	return this.restaurantsService.editRestaurant(restaurantId, restaurantEditDto);
-    }
+	@PutMapping("{restaurantId}")
+	@PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+	public RestaurantDataDto editRestaurant(@PathVariable String restaurantId,
+			@RequestBody @Valid RestaurantEditDto restaurantEditDto) {
+		return this.restaurantsService.editRestaurant(restaurantId, restaurantEditDto);
+	}
 }

@@ -12,12 +12,12 @@ import com.github.velinyordanov.foodorder.dto.RestaurantDto;
 
 @Repository
 public interface RestaurantsRepository extends BaseRepository<Restaurant> {
-    @Query("select e from #{#entityName} e where e.email = ?1 and e.isDeleted = false")
-    Optional<Restaurant> findByEmail(String email);
+	@Query("select e from #{#entityName} e where e.email = ?1 and e.isDeleted = false")
+	Optional<Restaurant> findByEmail(String email);
 
-    boolean existsByEmailOrName(String email, String name);
+	boolean existsByEmailOrName(String email, String name);
 
-    @Transactional(readOnly = true)
-    @Query("select e from #{#entityName} e where e.isDeleted = false")
-    List<RestaurantDto> getRestaurantsList();
+	@Transactional(readOnly = true)
+	@Query("select e from #{#entityName} e where e.isDeleted = false")
+	List<RestaurantDto> getRestaurantsList();
 }

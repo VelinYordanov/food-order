@@ -26,48 +26,42 @@ import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 @RestController
 @RequestMapping("restaurants/{restaurantId}/discount-codes")
 public class RestaurantsDiscountCodesController {
-    private final RestaurantsDiscountCodesService restaurantsDiscountCodesService;
+	private final RestaurantsDiscountCodesService restaurantsDiscountCodesService;
 
-    public RestaurantsDiscountCodesController(RestaurantsDiscountCodesService restaurantsDiscountCodesService) {
-	this.restaurantsDiscountCodesService = restaurantsDiscountCodesService;
-    }
+	public RestaurantsDiscountCodesController(RestaurantsDiscountCodesService restaurantsDiscountCodesService) {
+		this.restaurantsDiscountCodesService = restaurantsDiscountCodesService;
+	}
 
-    @PostMapping()
-    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public DiscountCodeDto addDiscountCodeToRestaurant(@PathVariable String restaurantId,
-	    @Valid @RequestBody DiscountCodeCreateDto discountCode) {
-	return this.restaurantsDiscountCodesService.addDiscountCodeToRestaurant(restaurantId, discountCode);
-    }
+	@PostMapping()
+	@PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+	public DiscountCodeDto addDiscountCodeToRestaurant(@PathVariable String restaurantId,
+			@Valid @RequestBody DiscountCodeCreateDto discountCode) {
+		return this.restaurantsDiscountCodesService.addDiscountCodeToRestaurant(restaurantId, discountCode);
+	}
 
-    @GetMapping()
-    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public Collection<DiscountCodeListDto> getDiscountCodesForRestaurant(@PathVariable String restaurantId) {
-	return this.restaurantsDiscountCodesService.getDiscountCodesForRestaurant(restaurantId);
-    }
+	@GetMapping()
+	@PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+	public Collection<DiscountCodeListDto> getDiscountCodesForRestaurant(@PathVariable String restaurantId) {
+		return this.restaurantsDiscountCodesService.getDiscountCodesForRestaurant(restaurantId);
+	}
 
-    @GetMapping("{code}")
-    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
-    public DiscountCodeDto getDiscountCode(
-	    @PathVariable String restaurantId,
-	    @PathVariable String code,
-	    @AuthenticationPrincipal Customer customer) {
-	return this.restaurantsDiscountCodesService.getDiscountByCode(restaurantId, code, customer.getId());
-    }
+	@GetMapping("{code}")
+	@PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+	public DiscountCodeDto getDiscountCode(@PathVariable String restaurantId, @PathVariable String code,
+			@AuthenticationPrincipal Customer customer) {
+		return this.restaurantsDiscountCodesService.getDiscountByCode(restaurantId, code, customer.getId());
+	}
 
-    @DeleteMapping("{discountCodeId}")
-    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public DiscountCodeDto deleteDiscountCode(
-	    @PathVariable String restaurantId,
-	    @PathVariable String discountCodeId) {
-	return this.restaurantsDiscountCodesService.deleteDiscountCode(restaurantId, discountCodeId);
-    }
+	@DeleteMapping("{discountCodeId}")
+	@PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+	public DiscountCodeDto deleteDiscountCode(@PathVariable String restaurantId, @PathVariable String discountCodeId) {
+		return this.restaurantsDiscountCodesService.deleteDiscountCode(restaurantId, discountCodeId);
+	}
 
-    @PutMapping("{discountCodeId}")
-    @PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
-    public DiscountCodeListDto editDiscountCode(
-	    @PathVariable String restaurantId,
-	    @PathVariable String discountCodeId,
-	    @RequestBody @Valid DiscountCodeEditDto discountCodeEditDto) {
-	return this.restaurantsDiscountCodesService.editDiscountCode(restaurantId, discountCodeId, discountCodeEditDto);
-    }
+	@PutMapping("{discountCodeId}")
+	@PreAuthorize(ValidationConstraints.ONLY_CURRENT_RESTAURANT_SECURITY_EXPRESSION)
+	public DiscountCodeListDto editDiscountCode(@PathVariable String restaurantId, @PathVariable String discountCodeId,
+			@RequestBody @Valid DiscountCodeEditDto discountCodeEditDto) {
+		return this.restaurantsDiscountCodesService.editDiscountCode(restaurantId, discountCodeId, discountCodeEditDto);
+	}
 }

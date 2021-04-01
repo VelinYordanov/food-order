@@ -31,85 +31,80 @@ import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 
 @ControllerAdvice
 public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Log LOGGER = LogFactory.getLog(NotValidExceptionHandler.class);
+	private static final Log LOGGER = LogFactory.getLog(NotValidExceptionHandler.class);
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-	    HttpHeaders headers,
-	    HttpStatus status,
-	    WebRequest request) {
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-	Map<String, Object> body = new LinkedHashMap<>();
-	body.put("timestamp", new Date());
-	body.put("status", status.value());
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", new Date());
+		body.put("status", status.value());
 
-	List<String> errors = ex.getBindingResult()
-		.getFieldErrors()
-		.stream()
-		.map(x -> x.getDefaultMessage())
-		.collect(Collectors.toList());
+		List<String> errors = ex.getBindingResult().getFieldErrors().stream().map(x -> x.getDefaultMessage())
+				.collect(Collectors.toList());
 
-	body.put("errors", errors);
+		body.put("errors", errors);
 
-	return new ResponseEntity<>(body, headers, status);
-    }
+		return new ResponseEntity<>(body, headers, status);
+	}
 
-    @ExceptionHandler({ DisabledException.class, LockedException.class })
-    public ResponseEntity<Map<String, String>> handleSecurityException(Exception ex) {
-	return this.buildResponse(ex, "User disabled or locked", HttpStatus.UNAUTHORIZED);
-    }
+	@ExceptionHandler({ DisabledException.class, LockedException.class })
+	public ResponseEntity<Map<String, String>> handleSecurityException(Exception ex) {
+		return this.buildResponse(ex, "User disabled or locked", HttpStatus.UNAUTHORIZED);
+	}
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Map<String, String>> handleBadCredentials(BadCredentialsException ex) {
-	return this.buildResponse(ex, "User not found", HttpStatus.UNAUTHORIZED);
-    }
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<Map<String, String>> handleBadCredentials(BadCredentialsException ex) {
+		return this.buildResponse(ex, "User not found", HttpStatus.UNAUTHORIZED);
+	}
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, String>> handleAccessDenied(AccessDeniedException ex) {
-	return this.buildResponse(ex, "Acces is denied", HttpStatus.FORBIDDEN);
-    }
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<Map<String, String>> handleAccessDenied(AccessDeniedException ex) {
+		return this.buildResponse(ex, "Acces is denied", HttpStatus.FORBIDDEN);
+	}
 
-    @ExceptionHandler(DuplicateUserException.class)
-    public ResponseEntity<Map<String, String>> handleUserDuplicate(DuplicateUserException ex) {
-	return this.buildResponse(ex, "User already exists", HttpStatus.BAD_REQUEST);
-    }
+	@ExceptionHandler(DuplicateUserException.class)
+	public ResponseEntity<Map<String, String>> handleUserDuplicate(DuplicateUserException ex) {
+		return this.buildResponse(ex, "User already exists", HttpStatus.BAD_REQUEST);
+	}
 
-    @ExceptionHandler(DuplicateCategoryException.class)
-    public ResponseEntity<Map<String, String>> handleDuplicateCategory(DuplicateCategoryException ex) {
-	return this.buildResponse(ex, "Category already exists", HttpStatus.BAD_REQUEST);
-    }
+	@ExceptionHandler(DuplicateCategoryException.class)
+	public ResponseEntity<Map<String, String>> handleDuplicateCategory(DuplicateCategoryException ex) {
+		return this.buildResponse(ex, "Category already exists", HttpStatus.BAD_REQUEST);
+	}
 
-    @ExceptionHandler(NonEmptyCategoryException.class)
-    public ResponseEntity<Map<String, String>> handleNonEmptyCategoryException(NonEmptyCategoryException ex) {
-	return this.buildResponse(ex, "Category has foods associated with it", HttpStatus.BAD_REQUEST);
-    }
+	@ExceptionHandler(NonEmptyCategoryException.class)
+	public ResponseEntity<Map<String, String>> handleNonEmptyCategoryException(NonEmptyCategoryException ex) {
+		return this.buildResponse(ex, "Category has foods associated with it", HttpStatus.BAD_REQUEST);
+	}
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException ex) {
-	return this.buildResponse(ex, "Entity not found", HttpStatus.NOT_FOUND);
-    }
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException ex) {
+		return this.buildResponse(ex, "Entity not found", HttpStatus.NOT_FOUND);
+	}
 
-    @ExceptionHandler(ExistingDiscountCodeException.class)
-    public ResponseEntity<Map<String, String>> handleExistingDiscountCodeException(ExistingDiscountCodeException ex) {
-	return this.buildResponse(ex, "Discount code already exists for restaurant", HttpStatus.BAD_REQUEST);
-    }
+	@ExceptionHandler(ExistingDiscountCodeException.class)
+	public ResponseEntity<Map<String, String>> handleExistingDiscountCodeException(ExistingDiscountCodeException ex) {
+		return this.buildResponse(ex, "Discount code already exists for restaurant", HttpStatus.BAD_REQUEST);
+	}
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, String>> handleBadRequestException(BadRequestException ex) {
-	return this.buildResponse(ex, "Bad request", HttpStatus.BAD_REQUEST);
-    }
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity<Map<String, String>> handleBadRequestException(BadRequestException ex) {
+		return this.buildResponse(ex, "Bad request", HttpStatus.BAD_REQUEST);
+	}
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
-	LOGGER.error("Internal server error", ex);
-	return this.buildResponse(ex, "An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
+		LOGGER.error("Internal server error", ex);
+		return this.buildResponse(ex, "An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
-    private ResponseEntity<Map<String, String>> buildResponse(Exception ex, String title, HttpStatus httpStatus) {
-	Map<String, String> body = new HashMap<String, String>();
-	body.put("title", title);
-	body.put("description", ex.getLocalizedMessage());
+	private ResponseEntity<Map<String, String>> buildResponse(Exception ex, String title, HttpStatus httpStatus) {
+		Map<String, String> body = new HashMap<String, String>();
+		body.put("title", title);
+		body.put("description", ex.getLocalizedMessage());
 
-	return ResponseEntity.status(httpStatus).body(body);
-    }
+		return ResponseEntity.status(httpStatus).body(body);
+	}
 }

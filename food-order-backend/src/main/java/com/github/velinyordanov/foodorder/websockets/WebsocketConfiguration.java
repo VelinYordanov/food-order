@@ -13,30 +13,29 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer {
-    private final AuthenticationChannelInterceptor channelInterceptor;
-    private final WebsocketErrorHandler websocketErrorHandler;
+	private final AuthenticationChannelInterceptor channelInterceptor;
+	private final WebsocketErrorHandler websocketErrorHandler;
 
-    public WebsocketConfiguration(
-	    AuthenticationChannelInterceptor channelInterceptor,
-	    WebsocketErrorHandler websocketErrorHandler) {
-	this.channelInterceptor = channelInterceptor;
-	this.websocketErrorHandler = websocketErrorHandler;
-    }
+	public WebsocketConfiguration(AuthenticationChannelInterceptor channelInterceptor,
+			WebsocketErrorHandler websocketErrorHandler) {
+		this.channelInterceptor = channelInterceptor;
+		this.websocketErrorHandler = websocketErrorHandler;
+	}
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-	config.enableSimpleBroker("/notifications");
-	config.setApplicationDestinationPrefixes("/app");
-    }
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry config) {
+		config.enableSimpleBroker("/notifications");
+		config.setApplicationDestinationPrefixes("/app");
+	}
 
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-	registry.addEndpoint("/ws").withSockJS();
-	registry.setErrorHandler(this.websocketErrorHandler);
-    }
+	@Override
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		registry.addEndpoint("/ws").withSockJS();
+		registry.setErrorHandler(this.websocketErrorHandler);
+	}
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-	registration.interceptors(this.channelInterceptor);
-    }
+	@Override
+	public void configureClientInboundChannel(ChannelRegistration registration) {
+		registration.interceptors(this.channelInterceptor);
+	}
 }

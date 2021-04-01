@@ -16,9 +16,9 @@ import com.github.velinyordanov.foodorder.validation.NotDisposableEmailValidator
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = { NotDisposableEmailValidator.class })
 public @interface NotDisposableEmail {
-    String message() default "Disposable emails are not allowed.";
+	String message() default "Disposable emails are not allowed.";
 
-    Class<?>[] groups() default {};
+	Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+	Class<? extends Payload>[] payload() default {};
 }

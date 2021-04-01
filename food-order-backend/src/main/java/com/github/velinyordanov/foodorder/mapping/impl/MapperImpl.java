@@ -8,20 +8,20 @@ import com.github.velinyordanov.foodorder.mapping.Mapper;
 
 @Component
 public class MapperImpl implements Mapper {
-    private final ModelMapper modelMapper;
+	private final ModelMapper modelMapper;
 
-    @Autowired
-    public MapperImpl(ModelMapper mapper) {
-	this.modelMapper = mapper;
-    }
+	@Autowired
+	public MapperImpl(ModelMapper mapper) {
+		this.modelMapper = mapper;
+	}
 
-    @Override
-    public <TDest> TDest map(Object source, Class<TDest> destination) {
-	return this.modelMapper.map(source, destination);
-    }
+	@Override
+	public <TDest> TDest map(Object source, Class<TDest> destination) {
+		return this.modelMapper.map(source, destination);
+	}
 
-    @Override
-    public void map(Object source, Object destination) {
-	this.modelMapper.map(source, destination);
-    }
+	@Override
+	public void map(Object source, Object destination) {
+		this.modelMapper.map(source, destination);
+	}
 }

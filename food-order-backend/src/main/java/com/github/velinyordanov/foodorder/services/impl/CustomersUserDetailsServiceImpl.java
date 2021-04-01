@@ -12,16 +12,16 @@ import com.github.velinyordanov.foodorder.services.CustomersUserDetailsService;
 
 @Service
 public class CustomersUserDetailsServiceImpl implements CustomersUserDetailsService {
-    private final CustomersRepository customersRepository;
+	private final CustomersRepository customersRepository;
 
-    public CustomersUserDetailsServiceImpl(CustomersRepository customersRepository) {
-	this.customersRepository = customersRepository;
-    }
+	public CustomersUserDetailsServiceImpl(CustomersRepository customersRepository) {
+		this.customersRepository = customersRepository;
+	}
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-	Optional<Customer> user = this.customersRepository.findByEmail(email);
-	return user.orElseThrow(
-		() -> new UsernameNotFoundException("Could not find user with this username and password"));
-    }
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Optional<Customer> user = this.customersRepository.findByEmail(email);
+		return user.orElseThrow(
+				() -> new UsernameNotFoundException("Could not find user with this username and password"));
+	}
 }

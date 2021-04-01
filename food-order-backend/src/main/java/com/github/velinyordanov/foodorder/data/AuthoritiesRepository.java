@@ -9,6 +9,6 @@ import com.github.velinyordanov.foodorder.data.entities.Authority;
 
 @Repository
 public interface AuthoritiesRepository extends BaseRepository<Authority> {
-    @Query("select e from #{#entityName} e where e.authority = ?1 and e.isDeleted = false")
-    Optional<Authority> findFirstByAuthority(String authority);
+	@Query("select e from #{#entityName} e where e.authority = ?1 and e.isDeleted = false")
+	Optional<Authority> findFirstByAuthority(String authority);
 }

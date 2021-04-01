@@ -15,28 +15,26 @@ import com.github.velinyordanov.foodorder.services.AuthenticationService;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-    private final AuthenticationService authenticationService;
+	private final AuthenticationService authenticationService;
 
-    public JwtRequestFilter(
-	    AuthenticationService authenticationService) {
-	this.authenticationService = authenticationService;
-    }
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-	    throws ServletException,
-	    IOException {
-
-	final String requestTokenHeader = request.getHeader("Authorization");
-
-	if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-	    String jwtToken = requestTokenHeader.substring(7);
-	    this.authenticationService.getAuthenticationToken(jwtToken)
-		    .ifPresent(SecurityContextHolder.getContext()::setAuthentication);
-	} else {
-	    logger.warn("Missing bearer token");
+	public JwtRequestFilter(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
 	}
 
-	chain.doFilter(request, response);
-    }
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws ServletException, IOException {
+
+		final String requestTokenHeader = request.getHeader("Authorization");
+
+		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+			String jwtToken = requestTokenHeader.substring(7);
+			this.authenticationService.getAuthenticationToken(jwtToken)
+					.ifPresent(SecurityContextHolder.getContext()::setAuthentication);
+		} else {
+			logger.warn("Missing bearer token");
+		}
+
+		chain.doFilter(request, response);
+	}
 }
