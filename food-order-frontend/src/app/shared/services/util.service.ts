@@ -15,7 +15,7 @@ export class UtilService {
   }
 
   calculateTotal(foods: OrderFoodResponse[]) {
-    return foods.reduce((acc, curr) => acc + curr.price, 0);
+    return foods.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
   }
 
   calculateTotalWithDiscount(foods: OrderFoodResponse[], discountPercentage: number) {
