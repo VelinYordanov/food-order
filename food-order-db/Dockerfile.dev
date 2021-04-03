@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/mssql/server:2017-CU8-ubuntu
+ENV ACCEPT_EULA=Y
+ENV MSSQL_PID=Express
+ARG SA_PASSWORD
+ENV SA_PASSWORD=$SA_PASSWORD
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN chmod 774 entrypoint.sh run-initialization.sh
+
+CMD /bin/bash ./entrypoint.sh
