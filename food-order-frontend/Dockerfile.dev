@@ -5,4 +5,4 @@ WORKDIR /home/node/app
 COPY --chown=node:node package.json package-lock.json ./
 RUN npm ci
 COPY --chown=node:node . .
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start-container"]
