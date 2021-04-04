@@ -1,7 +1,7 @@
 services:
   nginx:
     build:
-      context: ./food-order-nginx
+      context: ./food-order-nginx/dev
       dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
@@ -12,6 +12,8 @@ services:
       dockerfile: Dockerfile.dev
       args:
         - SA_PASSWORD=${SA_PASSWORD}
+    volumes: 
+      - db-data:/var/opt/mssql
     ports:
       - "1533:1433"
     environment: 
@@ -34,3 +36,5 @@ services:
       - "8080:8080"
     volumes:
       - ./food-order-backend:/home/java/app
+volumes:
+  db-data:
