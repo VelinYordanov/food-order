@@ -3,4 +3,5 @@ RUN mkdir -p /home/java/app
 WORKDIR /home/java/app
 COPY . .
 RUN chmod 774 mvnw
+RUN ./mvnw clean install -DskipTests
 CMD ["./mvnw","spring-boot:run"]
