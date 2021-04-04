@@ -4,4 +4,4 @@ WORKDIR /home/java/app
 COPY . .
 RUN chmod 774 mvnw
 RUN ./mvnw clean install -DskipTests
-CMD ["./mvnw","spring-boot:run"]
+CMD ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000"
