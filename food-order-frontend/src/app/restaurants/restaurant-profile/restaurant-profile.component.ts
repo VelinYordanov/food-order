@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { EMPTY, Observable, Subject } from 'rxjs';
-import { catchError, filter, first, map, startWith, switchMap, switchMapTo, tap } from 'rxjs/operators';
+import { catchError, filter, first, map, retry, startWith, switchMap, switchMapTo, takeUntil, tap } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { RealTimeNotificationsService } from 'src/app/shared/services/real-time-notifications.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Category } from '../models/category';
 import { Restaurant } from '../models/restaurant';
@@ -13,6 +12,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { Food } from '../models/food';
 import { RestaurantAddFoodDialogComponent } from '../restaurant-add-food-dialog/restaurant-add-food-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { RxStomp, RxStompState } from '@stomp/rx-stomp';
 
 @Component({
   selector: 'app-restaurant-profile',
@@ -30,12 +30,13 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   filteredFoods$: Observable<Food[]>;
 
   private editRestaurantClicksSubject = new Subject();
+  private cancel$ = new Subject<void>();
 
   constructor(
+    private messageService: RxStomp,
     private formBuilder: FormBuilder,
     private restaurantService: RestaurantService,
     private authenticationService: AuthenticationService,
-    private notificationsService: RealTimeNotificationsService,
     private dialog: MatDialog,
     private alertService: AlertService) { }
 
@@ -46,6 +47,12 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
       category: [null],
     });
 
+    this.messageService.connectionState$
+      .pipe(
+        first(),
+        filter(cs => cs !== RxStompState.OPEN))
+      .subscribe(cs => this.messageService.activate());
+
     this.search = this.formBuilder.control('');
 
     this.restaurantForm.disable();
@@ -54,7 +61,14 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
       .pipe(
         map(restaurant => restaurant.id),
         first(),
-        switchMap(id => this.notificationsService.subscribe(`/notifications/restaurants/${id}/orders`)))
+        switchMap(id => this.messageService.watch(`/notifications/restaurants/${id}/orders`)
+          .pipe(
+            map(x => x.body),
+            retry(),
+            catchError(error => EMPTY),
+            takeUntil(this.cancel$)
+          )),
+      )
       .subscribe(console.log);
 
     this.filteredFoods$ = this.search.valueChanges
@@ -75,10 +89,10 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
               })
             ))
       ).subscribe(result => {
-          this.restaurant = result;
-          this.search.updateValueAndValidity();
-          this.restaurantForm.disable();
-          this.alertService.displayMessage('Successfully editted restaurant.', 'success');
+        this.restaurant = result;
+        this.search.updateValueAndValidity();
+        this.restaurantForm.disable();
+        this.alertService.displayMessage('Successfully editted restaurant.', 'success');
       })
 
     this.authenticationService.user$
@@ -94,14 +108,15 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
               })
             ))
       ).subscribe(restaurant => {
-          this.restaurant = restaurant;
-          this.restaurantForm.patchValue(restaurant);
+        this.restaurant = restaurant;
+        this.restaurantForm.patchValue(restaurant);
       })
   }
 
   ngOnDestroy(): void {
     this.editRestaurantClicksSubject.complete();
-    this.notificationsService.disconnect();
+    this.cancel$.next();
+    this.messageService.deactivate();
   }
 
   cancel() {
@@ -193,18 +208,18 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
     this.editRestaurantClicksSubject.next();
   }
 
-  private removeCategory(category: Category) {
-    const index = this.restaurant.categories.findIndex(x => x.id === category.id);
-    if (index !== -1) {
-      this.restaurant.categories.splice(index, 1);
-    }
-  }
-
-  private removeFood(food: Food) {
+  removeFood(food: Food) {
     const index = this.restaurant.foods.findIndex(x => x.id === food.id);
     if (index !== -1) {
       this.restaurant.foods.splice(index, 1);
       this.search.updateValueAndValidity();
+    }
+  }
+
+  private removeCategory(category: Category) {
+    const index = this.restaurant.categories.findIndex(x => x.id === category.id);
+    if (index !== -1) {
+      this.restaurant.categories.splice(index, 1);
     }
   }
 }

@@ -22,6 +22,8 @@ import { SharedModule } from './shared.module';
 import { RegisterComponent } from './home/register/register.component';
 import { RestaurantRegisterComponent } from './home/restaurant-register/restaurant-register.component';
 import { RegisterCustomerComponent } from './home/register-customer/register-customer.component';
+import { RxStomp } from '@stomp/rx-stomp';
+import * as SockJs from 'sockjs-client';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,22 @@ import { RegisterCustomerComponent } from './home/register-customer/register-cus
       provide: SwalToken,
       useFactory: () => Swal,
     },
+    {
+      provide: RxStomp, useFactory: () => {
+        const rxstomp = new RxStomp();
+        rxstomp.configure({
+          webSocketFactory: () => new SockJs('/api/ws'),
+          reconnectDelay: 5000,
+          heartbeatIncoming: 4000,
+          heartbeatOutgoing: 4000,
+          connectHeaders: {
+            Authorization: `Bearer ${localStorage.getItem('jwt-user')}`,
+          },
+        })
+
+        return rxstomp;
+      }
+    }
   ],
   bootstrap: [AppComponent],
 })

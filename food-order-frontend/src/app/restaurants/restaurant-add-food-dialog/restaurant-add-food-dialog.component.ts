@@ -5,7 +5,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { EMPTY, Observable, Subject } from 'rxjs';
-import { catchError, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { catchError, finalize, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { price } from 'src/app/shared/validators/price-validator';
@@ -43,11 +43,11 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
       switchMap(([food, restaurant]) =>
         this.restaurantService.addFood(restaurant.id, food)
           .pipe(
+            finalize(() => this.foodForm.enable()),
             catchError(error => {
               this.alertService.displayMessage(error?.error?.description || 'An error occurred while adding food. Try again later.', 'error');
               return EMPTY;
             }),
-            tap(_ => this.foodForm.enable())
           ))
     ).subscribe(food => {
         this.alertService.displayMessage(`Successfully added food ${food.name}`, 'success');
