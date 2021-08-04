@@ -89,7 +89,6 @@ public class Restaurant extends BaseUser {
 
 	@Override
 	public String toString() {
-		return "Restaurant [getName()=" + getName() + ", getDescription()=" + getDescription() + ", getCategories()="
-				+ getCategories() + ", getOrders()=" + getOrders() + "]";
+		return "Restaurant [getName()=" + getName() + ", getDescription()=" + getDescription() +  "]";
 	}
 }
