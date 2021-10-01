@@ -161,7 +161,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   openCategoryDeleteConfirmation(category: Category) {
     this.alertService.displayRequestQuestion(
       `Are you sure you want to delete category ${category.name}?`,
-      () => this.deleteCategory(category),
+      this.deleteCategory(category),
       `Successfully deleted category ${category.name}`,
       `An error occurred while deleting category ${category.name}. Try again later.`);
   }
@@ -175,7 +175,6 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
           this.restaurantService.deleteCategoryFromRestaurant(user.id, category.id)
             .pipe(
               tap(_ => this.removeCategory(category)),
-              catchError(error => EMPTY)
             ))
       )
   }
@@ -198,7 +197,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
 
     this.alertService.displayRequestQuestion(
       `Are you sure you want to create category ${categoryName}?`,
-      () => this.addCategory(categoryName),
+      this.addCategory(categoryName),
       `Successfully created category ${categoryName}`,
       `An error occurred while creating category ${categoryName}. Try again later.`,
       () => event.input && (event.input.value = ''));

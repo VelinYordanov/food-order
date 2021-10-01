@@ -1,4 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
+import { EMPTY, Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { SwalToken } from '../injection-tokens/swal-injection-token';
 
 @Injectable({
@@ -7,22 +9,24 @@ import { SwalToken } from '../injection-tokens/swal-injection-token';
 export class AlertService {
   constructor(@Inject(SwalToken) private swal) { }
 
-  displayRequestQuestion(questionTitle: string, preConfirm: Function, successTitle: string, errorBackupTitle: string, successFunction?: Function, errorFunction?: Function) {
+  displayRequestQuestion(questionTitle: string, action: Observable<any>, successTitle: string, errorBackupTitle: string, successFunction?: Function, errorFunction?: Function) {
     this.swal.fire({
       title: questionTitle,
       icon: 'question',
       showCancelButton: true,
       allowOutsideClick: () => !this.swal.isLoading(),
       showLoaderOnConfirm: true,
-      preConfirm: preConfirm
+      preConfirm: () => action
+        .pipe(
+          catchError(error => {
+            this.handleError(error?.error?.description, errorBackupTitle, errorFunction);
+            return EMPTY;
+          })
+        )
     }).then(result => {
       if (!result.isDismissed) {
         if (result?.value?.error) {
-          errorFunction && errorFunction();
-          this.swal.fire({
-            title: result?.value?.error?.description || errorBackupTitle,
-            icon: 'error'
-          })
+          this.handleError(result?.value?.error?.description, errorBackupTitle, errorFunction);
         } else {
           successFunction && successFunction();
           this.swal.fire({
@@ -46,6 +50,14 @@ export class AlertService {
     this.swal.fire({
       title: message || 'An error occurred. Try again later.',
       icon: type
+    })
+  }
+
+  private handleError(result: string, errorBackupTitle: string, errorFunction: Function) {
+    errorFunction && errorFunction();
+    this.swal.fire({
+      title: result || errorBackupTitle,
+      icon: 'error'
     })
   }
 }

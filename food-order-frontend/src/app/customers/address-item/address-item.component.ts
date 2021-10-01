@@ -42,7 +42,7 @@ export class AddressItemComponent implements OnInit {
   delete() {
     this.alertService.displayRequestQuestion(
       `Are you sure you want to delete address ${this.address.id}?`,
-      () => this.deleteAddress(),
+      this.deleteAddress(),
       `Successfully deleted address ${this.address.id}`,
       `Error in deleting address ${this.address.id}. Try again later.`,
       () => this.onDelete.next(this.address))

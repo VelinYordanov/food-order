@@ -149,7 +149,7 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
   delete() {
     this.alertService.displayRequestQuestion(
       `Are you sure you want to delete food ${this.food.name}?`,
-      () => this.deleteFood(), `Successfully deleted food ${this.food.name}`,
+      this.deleteFood(), `Successfully deleted food ${this.food.name}`,
       `An error ocurred while deleting food ${this.food.name}. Try again later`,
       () => this.onDelete.emit());
   }
