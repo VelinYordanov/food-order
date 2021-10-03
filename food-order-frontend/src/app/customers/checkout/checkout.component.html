@@ -1,40 +1,42 @@
-<section>
-    <app-cart-items [discountCode]="discountCode"></app-cart-items>
-    <div class="address"
-        *ngIf="selectedAddress$ | async; let address">
-        <h2>Selected address</h2>
-        <p>{{getAddressData(address)}}</p>
-    </div>
-    <div class="checkout">
-        <div>
-            <mat-form-field appearance="outline"
-                class="form-field">
-                <mat-label>Comment</mat-label>
-                <mat-hint>You can put additional information here.</mat-hint>
-                <textarea matInput
-                    cdkTextareaAutosize
-                    [formControl]="comment"></textarea>
-            </mat-form-field>
+<section class="center-child">
+    <div class="form-wrapper">
+        <app-cart-items [discountCode]="discountCode"></app-cart-items>
+        <div class="address"
+             *ngIf="selectedAddress$ | async; let address">
+            <h2>Selected address</h2>
+            <p>{{getAddressData(address)}}</p>
         </div>
-        <div>
-            <mat-form-field appearance="outline"
-                class="form-field">
-                <mat-label>Discount code</mat-label>
-                <mat-hint>If you have a discount code enter it here and click on apply button below.</mat-hint>
-                <textarea matInput
-                    cdkTextareaAutosize
-                    [formControl]="discountCodeFormControl"></textarea>
-            </mat-form-field>
+        <div class="checkout">
+            <div class="mb-20">
+                <mat-form-field appearance="outline"
+                                class="form-field">
+                    <mat-label>Comment</mat-label>
+                    <mat-hint>You can put additional information here.</mat-hint>
+                    <textarea matInput
+                              cdkTextareaAutosize
+                              [formControl]="comment"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="mb-20">
+                <mat-form-field appearance="outline"
+                                class="form-field">
+                    <mat-label>Discount code</mat-label>
+                    <mat-hint>If you have a discount code enter it here and click on apply button below.</mat-hint>
+                    <textarea matInput
+                              cdkTextareaAutosize
+                              [formControl]="discountCodeFormControl"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="mb-20">
+                <button mat-raised-button
+                        (click)="applyDiscountCode()"
+                        [disabled]="!(numberOfFoods$ | async)"
+                        color="primary">Apply discount code!</button>
+            </div>
+            <button mat-stroked-button
+                    (click)="submitOrder()"
+                    [disabled]="!(numberOfFoods$ | async)"
+                    color="primary">Confirm</button>
         </div>
-        <div>
-            <button mat-raised-button
-                (click)="applyDiscountCode()"
-                [disabled]="!(numberOfFoods$ | async)"
-                color="primary">Apply discount code!</button>
-        </div>
-        <button mat-stroked-button
-            (click)="submitOrder()"
-            [disabled]="!(numberOfFoods$ | async)"
-            color="primary">Confirm</button>
     </div>
 </section>

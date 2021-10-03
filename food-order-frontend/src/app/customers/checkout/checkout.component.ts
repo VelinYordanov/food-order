@@ -91,7 +91,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         filter((code) => !!code),
         withLatestFrom(this.cartService.selectedRestaurant$),
         switchMap(([code, restaurant]) =>
-          this.customerService.getDiscountCode(restaurant.id, code).pipe(
+          this.customerService.getDiscountCode(restaurant.id, code)
+          .pipe(
             catchError((error) => {
               this.alertService.displayMessage(
                 error?.error?.description ||

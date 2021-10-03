@@ -20,3 +20,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; padding-top
 .no-click-header button.mat-calendar-period-button {
     pointer-events: none !important;
 }
+
+.center-child {
+    display:flex;
+    justify-content: center;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}

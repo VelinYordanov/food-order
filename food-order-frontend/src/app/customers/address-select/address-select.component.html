@@ -1,21 +1,25 @@
-<section *ngIf="addresses$ | async; let addresses">
-    <form [formGroup]="addressForm">
-        <div>
-            <mat-form-field appearance="outline"
-                class="form-field">
-                <mat-label>Address</mat-label>
-                <mat-select formControlName="address"
-                    [compareWith]="compareAddresses">
-                    <mat-option *ngFor="let address of addresses"
-                        [value]="address">
-                        {{getAddressData(address)}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <button mat-stroked-button
-            [disabled]="!addressForm.valid"
-            (click)="confirmAddress()"
-            color="primary">Confirm</button>
-    </form>
+<section *ngIf="addresses$ | async; let addresses"
+         class="center-child">
+    <div class="form-wrapper">
+        <h1>Select an address</h1>
+        <form [formGroup]="addressForm">
+            <div>
+                <mat-form-field appearance="outline"
+                                class="form-field">
+                    <mat-label>Address</mat-label>
+                    <mat-select formControlName="address"
+                                [compareWith]="compareAddresses">
+                        <mat-option *ngFor="let address of addresses"
+                                    [value]="address">
+                            {{getAddressData(address)}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <button mat-stroked-button
+                    [disabled]="!addressForm.valid"
+                    (click)="confirmAddress()"
+                    color="primary">Confirm</button>
+        </form>
+    </div>
 </section>
