@@ -11,15 +11,27 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.springframework.security.core.GrantedAuthority;
+
+import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
 
 @Entity
 @Table(name = "Customers")
 public class Customer extends BaseUser {
 	private static final long serialVersionUID = 4746831092067539667L;
+	
+	@NotBlank(message = ValidationConstraints.EMPTY_NAME)
+	@Pattern(regexp = ValidationConstraints.NAME_PATTERN, message = ValidationConstraints.NAME_DOES_NOT_MATCH_PATTERN)
+	@Size(min = ValidationConstraints.MIN_LENGTH_NAME, max = ValidationConstraints.MAX_LENGTH_NAME, message = ValidationConstraints.NAME_OUT_OF_BOUNDS)
+	@Column(name = "Name", unique = false, nullable = false, columnDefinition = "nvarchar(100)")
+	private String name;
 
-	@Column(name = "PhoneNumber")
+	@NotBlank(message = ValidationConstraints.EMPTY_NAME)
+	@Column(name = "PhoneNumber", nullable = false, unique = true)
 	private String phoneNumber;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = { CascadeType.DETACH, CascadeType.MERGE,
@@ -38,6 +50,14 @@ public class Customer extends BaseUser {
 		this.setAuthorities(new HashSet<>());
 		this.setOrders(new HashSet<>());
 		this.setAddresses(new HashSet<>());
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void addAddress(Address address) {

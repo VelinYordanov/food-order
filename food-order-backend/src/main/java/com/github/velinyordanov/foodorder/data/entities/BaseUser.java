@@ -21,12 +21,6 @@ public abstract class BaseUser extends BaseEntity implements UserDetails {
 	@Column(name = "Email", unique = true, nullable = false, columnDefinition = "nvarchar(100)")
 	private String email;
 
-	@NotBlank(message = ValidationConstraints.EMPTY_NAME)
-	@Pattern(regexp = ValidationConstraints.NAME_PATTERN, message = ValidationConstraints.NAME_DOES_NOT_MATCH_PATTERN)
-	@Size(min = ValidationConstraints.MIN_LENGTH_NAME, max = ValidationConstraints.MAX_LENGTH_NAME, message = ValidationConstraints.NAME_OUT_OF_BOUNDS)
-	@Column(name = "Name", unique = true, nullable = false, columnDefinition = "nvarchar(100)")
-	private String name;
-
 	@NotBlank(message = ValidationConstraints.EMPTY_PASSWORD)
 	@Column(name = "Password", nullable = false)
 	private String password;
@@ -63,14 +57,6 @@ public abstract class BaseUser extends BaseEntity implements UserDetails {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.data.entities.BaseUser;
+import com.github.velinyordanov.foodorder.data.entities.Customer;
+import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.JwtUserDto;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
 
@@ -30,9 +32,18 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 		Collection<String> authorities = customer.getAuthorities().stream().map(authority -> authority.getAuthority())
 				.collect(Collectors.toList());
 
+		String name = null;
+		if(customer instanceof Customer) {
+			name = ((Customer)customer).getName();
+		}
+		
+		if(customer instanceof Restaurant) {
+			name = ((Restaurant)customer).getName();
+		}
+		
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("username", customer.getUsername());
-		claims.put("name", customer.getName());
+		claims.put("name", name);
 		claims.put("authorities", authorities);
 		claims.put("id", customer.getId());
 
