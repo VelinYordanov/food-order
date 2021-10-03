@@ -29,3 +29,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; padding-top
 .mb-20 {
     margin-bottom: 20px;
 }
+
+.orders {
+    width:100%;
+    display:flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.uneven-row:after {
+    content:'';
+    flex:auto;
+}

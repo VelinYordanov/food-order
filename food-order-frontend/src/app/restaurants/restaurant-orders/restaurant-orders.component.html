@@ -4,14 +4,18 @@
     </div>
     <section *ngIf="pagedOrders.content.length">
         <h2>MY ORDERS</h2>
-        <app-restaurant-order *ngFor="let order of pagedOrders.content"
-            [order]="order"></app-restaurant-order>
+        <div class="orders"
+        [class.uneven-row]="pagedOrders.content.length % 3 !== 0">
+            <app-restaurant-order *ngFor="let order of pagedOrders.content"
+                                  class="order"
+                                  [order]="order"></app-restaurant-order>
+        </div>
         <div>
             <mat-paginator *ngIf="!(pagedOrders.first && pagedOrders.last)"
-                [length]="pagedOrders.totalElements"
-                [pageSize]="pagedOrders.size"
-                [hidePageSize]="true"
-                (page)="onPageChange($event)">
+                           [length]="pagedOrders.totalElements"
+                           [pageSize]="pagedOrders.size"
+                           [hidePageSize]="true"
+                           (page)="onPageChange($event)">
             </mat-paginator>
         </div>
     </section>

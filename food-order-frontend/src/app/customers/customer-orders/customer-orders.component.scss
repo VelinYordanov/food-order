@@ -2,20 +2,8 @@
     margin-left:10px;
 }
 
-.orders {
-    width:100%;
-    display:flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
 .order {
     width:33%;
-}
-
-.uneven-row:after {
-    content:'';
-    flex:auto;
 }
 
 h2 {
