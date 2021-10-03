@@ -7,15 +7,17 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
+
 public class DiscountCodeEditDto {
-	@Range(min = 1, max = 100, message = "Discount percentage must be between 1 and 100")
+	@Range(min = MIN_DISCOUNT_PERCENTAGE, max = MAX_DISCOUNT_PERCENTAGE, message = DISCOUNT_CODE_OUT_OF_BOUNDS)
 	private int discountPercentage;
 
-	@NotNull(message = "Valid from is required")
+	@NotNull(message = EMPTY_VALID_FROM)
 	private LocalDate validFrom;
 
-	@NotNull(message = "Valid to is required")
-	@FutureOrPresent(message = "Valid to date must be in the present or future")
+	@NotNull(message = EMPTY_VALID_TO)
+	@FutureOrPresent(message = PAST_VALID_TO)
 	private LocalDate validTo;
 
 	private boolean isSingleUse;

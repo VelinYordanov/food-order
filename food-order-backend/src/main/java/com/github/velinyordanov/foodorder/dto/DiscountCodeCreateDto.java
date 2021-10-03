@@ -9,20 +9,22 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
+
 public class DiscountCodeCreateDto {
-	@NotBlank(message = "Code is required")
-	@Size(min = 5, max = 10, message = "Discount code must be between 5 and 10 symbols long.")
+	@NotBlank(message = EMPTY_DISCOUNT_CODE)
+	@Size(min = MIN_LENGTH_DISCOUNT_CODE, max = MAX_LENGTH_DISCOUNT_CODE, message = DISCOUNT_CODE_OUT_OF_BOUNDS)
 	private String code;
 
-	@Range(min = 1, max = 100, message = "Discount percentage must be between 1 and 100")
+	@Range(min = MIN_DISCOUNT_PERCENTAGE, max = MAX_DISCOUNT_PERCENTAGE, message = DISCOUNT_PERCENTAGE_OUT_OF_BOUNDS)
 	private int discountPercentage;
 
-	@NotNull(message = "Valid from is required")
-	@FutureOrPresent(message = "Valid from date must be present or future")
+	@NotNull(message = EMPTY_VALID_FROM)
+	@FutureOrPresent(message = PAST_VALID_FROM)
 	private LocalDate validFrom;
 
-	@NotNull(message = "Valid to is required")
-	@FutureOrPresent(message = "Valid to date must be in the present or future")
+	@NotNull(message = EMPTY_VALID_TO)
+	@FutureOrPresent(message = PAST_VALID_TO)
 	private LocalDate validTo;
 
 	private boolean isSingleUse;

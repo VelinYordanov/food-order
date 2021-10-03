@@ -81,8 +81,25 @@ public class ValidationConstraints {
 	public static final String EMPTY_APARTMENT_NUMBER = "Apartment number is required";
 	public static final String APARTMENT_NUMBER_OUT_OF_BOUNDS = "Apartment number must be between "
 			+ MIN_LENGTH_APARTMENT_NUMBER + " and " + MAX_LENGTH_APARTMENT_NUMBER + " symbols.";
-
+	
 	public static final String FLOOR_NEGATIVE = "Floor cannot be negative";
+	
+	public static final String EMPTY_DISCOUNT_CODE = "Code is required";
+	public static final int MIN_LENGTH_DISCOUNT_CODE = 5;
+	public static final int MAX_LENGTH_DISCOUNT_CODE = 10;
+	public static final String DISCOUNT_CODE_OUT_OF_BOUNDS = "Discount code must be between "
+			+ MIN_LENGTH_DISCOUNT_CODE + " and " + MAX_LENGTH_DISCOUNT_CODE + " symbols.";
+	
+	public static final int MIN_DISCOUNT_PERCENTAGE = 1;
+	public static final int MAX_DISCOUNT_PERCENTAGE = 100;
+	public static final String DISCOUNT_PERCENTAGE_OUT_OF_BOUNDS = "Discount percentage must be between "
+			+ MIN_DISCOUNT_PERCENTAGE + " and " + MAX_DISCOUNT_PERCENTAGE + " symbols.";
+	
+	public static final String EMPTY_VALID_FROM = "Valid from is required";
+	public static final String PAST_VALID_FROM = "Valid from date must be present or future";
+	
+	public static final String EMPTY_VALID_TO = "Valid to is required";
+	public static final String PAST_VALID_TO = "Valid to date must be in the present or future";
 
 	public static final String EMPTY_AUTHORITY = "Authority is required";
 
