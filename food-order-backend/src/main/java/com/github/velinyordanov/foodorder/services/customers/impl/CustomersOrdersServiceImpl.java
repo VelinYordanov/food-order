@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.data.FoodOrderData;
 import com.github.velinyordanov.foodorder.data.entities.Address;
+import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.data.entities.DiscountCode;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Order;
+import com.github.velinyordanov.foodorder.data.entities.Status;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
@@ -40,6 +42,18 @@ public class CustomersOrdersServiceImpl implements CustomersOrdersService {
 	public OrderDto addOrderToCustomer(String customerId, OrderCreateDto order) {
 		if (!customerId.equals(order.getCustomerId())) {
 			throw new BadRequestException("Customer is not valid");
+		}
+
+		Customer customer = this.foodOrderData.customers()
+				.findById(customerId)
+				.orElseThrow(() -> new RuntimeException("Customer not found"));
+		
+		if (customer.getOrders()
+				.stream()
+				.anyMatch(customerOrder ->
+						Status.Pending.equals(customerOrder.getStatus()) ||
+						Status.Accepted.equals(customerOrder.getStatus()))) {
+			throw new RuntimeException("You already have a pending order. If you wish to make changes contact us.");
 		}
 
 		Address address = this.foodOrderData.addresses().findById(order.getAddressId())
