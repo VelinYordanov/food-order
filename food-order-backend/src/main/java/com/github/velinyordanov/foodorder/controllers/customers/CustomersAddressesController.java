@@ -2,6 +2,8 @@ package com.github.velinyordanov.foodorder.controllers.customers;
 
 import java.util.Collection;
 
+import javax.validation.Valid;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +30,13 @@ public class CustomersAddressesController {
 	}
 
 	@PostMapping()
-	public AddressDto addAddressToCustomer(@PathVariable String customerId, @RequestBody AddressCreateDto address) {
+	public AddressDto addAddressToCustomer(@PathVariable String customerId, @RequestBody @Valid AddressCreateDto address) {
 		return this.customersAddressesService.addAddressToCustomer(customerId, address);
 	}
 
 	@PutMapping("{addressId}")
 	public AddressDto updateAddress(@PathVariable String customerId, @PathVariable String addressId,
-			@RequestBody AddressDto address) {
+			@RequestBody @Valid AddressDto address) {
 		return this.customersAddressesService.editAddress(customerId, addressId, address);
 	}
 
