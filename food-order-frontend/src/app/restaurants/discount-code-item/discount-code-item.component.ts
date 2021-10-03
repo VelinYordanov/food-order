@@ -81,8 +81,9 @@ export class DiscountCodeItemComponent implements OnInit, OnDestroy {
     this.alertService
       .displayQuestion(
         `Are you sure you want to delete discount code ${this.discountCode.code}?`
-      )
-      .then((result) => result && this.deleteClicks$.next(this.discountCode));
+      ).pipe(
+        filter(x => !!x)
+      ).subscribe(_ => this.deleteClicks$.next(this.discountCode));
   }
 
   ngOnDestroy(): void {

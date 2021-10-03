@@ -159,10 +159,7 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
       .pipe(
         first(user => !!user),
         switchMap(user =>
-          this.restaurantService.deleteFood(user.id, this.food.id)
-            .pipe(
-              catchError(error => EMPTY)
-            ))
+          this.restaurantService.deleteFood(user.id, this.food.id))
       )
   }
 

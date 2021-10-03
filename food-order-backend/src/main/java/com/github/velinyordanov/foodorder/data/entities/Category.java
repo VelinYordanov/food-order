@@ -28,7 +28,8 @@ public class Category extends BaseEntity {
 	@Column(nullable = false, columnDefinition = "nvarchar(100)")
 	private String name;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE,
+			CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinTable(name = "Categories_Foods", joinColumns = @JoinColumn(name = "CategoryId"), inverseJoinColumns = @JoinColumn(name = "FoodId"))
 	private Set<Food> foods;
 

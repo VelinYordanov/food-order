@@ -10,7 +10,6 @@ import com.github.velinyordanov.foodorder.mapping.Mapper;
 public class MapperImpl implements Mapper {
 	private final ModelMapper modelMapper;
 
-	@Autowired
 	public MapperImpl(ModelMapper mapper) {
 		this.modelMapper = mapper;
 	}

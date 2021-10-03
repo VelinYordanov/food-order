@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.data.FoodOrderData;
@@ -31,17 +33,18 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 	}
 
 	@Override
+	@Transactional
 	public FoodDto addFoodToRestaurant(String restaurantId, FoodCreateDto foodCreateDto) {
-		Optional<Restaurant> restaurantOptional = this.foodOrderData.restaurants().findById(restaurantId);
-		if (restaurantOptional.isEmpty()) {
-			throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId));
-		}
-
-		Restaurant restaurant = restaurantOptional.get();
+		Restaurant restaurant = this.foodOrderData.restaurants()
+				.findById(restaurantId)
+				.orElseThrow(() -> new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId)));
 
 		Food food = this.mapper.map(foodCreateDto, Food.class);
 
-		Collection<String> categoryIds = food.getCategories().stream().map(x -> x.getId()).collect(Collectors.toList());
+		Collection<String> categoryIds = food.getCategories()
+				.stream()
+				.map(x -> x.getId())
+				.collect(Collectors.toList());
 
 		Set<Category> existingCategories = new HashSet<>();
 		this.foodOrderData.categories().findAllById(categoryIds).forEach(existingCategories::add);
@@ -55,27 +58,15 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 			category.addFood(food);
 		});
 
-		Collection<Category> newCategories = food.getCategoriesWithDeleted().stream()
-				.filter(category -> !existingCategories.contains(category)).collect(Collectors.toList());
+		String unrecognizedCategories = food.getCategoriesWithDeleted()
+				.stream()
+				.filter(category -> !existingCategories.contains(category))
+				.map(category -> category.getName())
+				.collect(Collectors.joining(", "));
 
-		newCategories.forEach(newCategory -> {
-			restaurant.getCategoriesWithDeleted().stream()
-					.filter(category -> category.getName().equals(newCategory.getName())).findFirst()
-					.ifPresentOrElse(category -> {
-						if (category.getIsDeleted()) {
-							category.setIsDeleted(false);
-							food.removeCategory(newCategory);
-							category.addFood(food);
-						} else {
-							throw new DuplicateCategoryException(
-									MessageFormat.format("Category with name: {0} already exists for this restaurant.",
-											newCategory.getName()));
-						}
-					}, () -> {
-						restaurant.addCategory(newCategory);
-						newCategory.addFood(food);
-					});
-		});
+		if(!unrecognizedCategories.isEmpty()) {
+			throw new RuntimeException(MessageFormat.format("Unrecognized categories detected. You need to create them first. {0}", unrecognizedCategories));
+		}
 
 		return this.mapper.map(this.foodOrderData.foods().save(food), FoodDto.class);
 	}

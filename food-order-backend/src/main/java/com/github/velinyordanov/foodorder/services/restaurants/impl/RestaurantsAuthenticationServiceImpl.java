@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,7 +47,7 @@ public class RestaurantsAuthenticationServiceImpl implements RestaurantsAuthenti
 	}
 
 	@Override
-	public String register(RestaurantRegisterDto user) {
+	public String register(@Valid RestaurantRegisterDto user) {
 		if (this.foodOrderData.restaurants().existsByEmailOrName(user.getEmail(), user.getName())) {
 			throw new DuplicateUserException("Username or restaurant name already exists!");
 		}

@@ -1,5 +1,7 @@
 package com.github.velinyordanov.foodorder.dto;
 
+import java.util.UUID;
+
 import javax.validation.constraints.NotBlank;
 
 public class CategoryDto {
@@ -7,6 +9,10 @@ public class CategoryDto {
 
 	@NotBlank(message = "Category name is required!")
 	private String name;
+	
+	public CategoryDto() {
+		this.setId(UUID.randomUUID().toString());
+	}
 
 	public String getName() {
 		return name;

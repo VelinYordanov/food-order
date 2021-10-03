@@ -187,7 +187,6 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
           this.restaurantService.addCategoryToRestaurant(user.id, categoryName)
             .pipe(
               tap(category => this.restaurant.categories.push(category)),
-              catchError(error => EMPTY)
             ))
       )
   }

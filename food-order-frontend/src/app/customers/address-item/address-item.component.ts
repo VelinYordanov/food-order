@@ -53,13 +53,7 @@ export class AddressItemComponent implements OnInit {
     .pipe(
       first(x => !!x),
       switchMap(user => 
-        this.customerService.deleteCustomerAddress(user.id, this.address.id)
-        .pipe(
-          catchError(error => {
-            this.alertService.displayMessage(error?.error?.description || `An error occurred while deleting address ${this.address.id}. Try again later.`, 'error');
-            return EMPTY;
-          })
-        ))
+        this.customerService.deleteCustomerAddress(user.id, this.address.id))
     )
   }
 }
