@@ -1,17 +1,21 @@
 <section *ngIf="pagedOrders$ | async; let pagedOrders">
-    <div *ngIf="!pagedOrders.content.length">
+    <div *ngIf="!pagedOrders?.content?.length">
         You don't have any orders yet.
     </div>
-    <section *ngIf="pagedOrders.content.length">
+    <section *ngIf="pagedOrders?.content?.length">
         <h2>MY ORDERS</h2>
-        <app-customer-order *ngFor="let order of pagedOrders.content"
-            [order]="order"></app-customer-order>
+        <div class="orders"
+             [class.uneven-row]="pagedOrders.content.length % 3 !== 0">
+            <app-customer-order *ngFor="let order of pagedOrders.content; let i = index"
+                                class="order mb-20"
+                                [order]="order"></app-customer-order>
+        </div>
         <div>
             <mat-paginator *ngIf="!(pagedOrders.first && pagedOrders.last)"
-                [length]="pagedOrders.totalElements"
-                [pageSize]="pagedOrders.size"
-                [hidePageSize]="true"
-                (page)="onPageChange($event)">
+                           [length]="pagedOrders.totalElements"
+                           [pageSize]="pagedOrders.size"
+                           [hidePageSize]="true"
+                           (page)="onPageChange($event)">
             </mat-paginator>
         </div>
     </section>
