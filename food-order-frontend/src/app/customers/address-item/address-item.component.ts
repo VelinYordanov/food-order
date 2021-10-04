@@ -4,8 +4,8 @@ import { EnumsService } from '../../shared/services/enums.service';
 import { EnumData } from 'src/app/shared/models/enum-data';
 import { CustomerService } from '../services/customer.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { catchError, first, switchMap } from 'rxjs/operators';
-import { EMPTY, Observable } from 'rxjs';
+import { first, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 })
 export class AddressItemComponent implements OnInit {
   @Input() address: Address;
-  @Output() onDelete = new EventEmitter<Address>();
+  @Output() onDelete = new EventEmitter<string>();
 
   addressTypes: EnumData[];
   cities: EnumData[];
@@ -45,7 +45,7 @@ export class AddressItemComponent implements OnInit {
       this.deleteAddress(),
       `Successfully deleted address ${this.address.id}`,
       `Error in deleting address ${this.address.id}. Try again later.`)
-      .subscribe(_ => this.onDelete.next(this.address))
+      .subscribe(_ => this.onDelete.next(this.address.id))
   }
 
   private deleteAddress(): Observable<Address> {
