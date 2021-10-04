@@ -33,7 +33,7 @@ export class RestaurantService {
   }
 
   deleteCategoryFromRestaurant(restaurantId: string, categoryId: string) {
-    return this.httpClient.delete(
+    return this.httpClient.delete<void>(
       `${this.BASE_URL}/${restaurantId}/categories/${categoryId}`
     );
   }
@@ -67,7 +67,7 @@ export class RestaurantService {
   }
 
   deleteFood(restaurantId: string, foodId: string) {
-    return this.httpClient.delete(
+    return this.httpClient.delete<void>(
       `${this.BASE_URL}/${restaurantId}/foods/${foodId}`
     );
   }

@@ -159,11 +159,11 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   }
 
   openCategoryDeleteConfirmation(category: Category) {
-    this.alertService.displayRequestQuestion(
+    this.alertService.displayRequestQuestion<void>(
       `Are you sure you want to delete category ${category.name}?`,
       this.deleteCategory(category),
       `Successfully deleted category ${category.name}`,
-      `An error occurred while deleting category ${category.name}. Try again later.`);
+      `An error occurred while deleting category ${category.name}. Try again later.`).subscribe();
   }
 
   deleteCategory(category: Category) {
@@ -194,12 +194,12 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   openCategoryAdditionConfirmation(event: MatChipInputEvent) {
     const categoryName = event.value;
 
-    this.alertService.displayRequestQuestion(
+    this.alertService.displayRequestQuestion<Category>(
       `Are you sure you want to create category ${categoryName}?`,
       this.addCategory(categoryName),
       `Successfully created category ${categoryName}`,
       `An error occurred while creating category ${categoryName}. Try again later.`,
-      () => event.input && (event.input.value = ''));
+      ).subscribe(_ => event.input && (event.input.value = ''))
   }
 
   editRestaurant() {

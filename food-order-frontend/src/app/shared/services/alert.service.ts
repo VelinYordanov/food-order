@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { EMPTY, from, Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { from, Observable, throwError } from 'rxjs';
+import { catchError, filter, map, tap } from 'rxjs/operators';
 import { SwalToken } from '../injection-tokens/swal-injection-token';
+import { AlertResult } from 'src/app/shared/models/alert-result';
 
 @Injectable({
   providedIn: 'root'
@@ -9,33 +10,35 @@ import { SwalToken } from '../injection-tokens/swal-injection-token';
 export class AlertService {
   constructor(@Inject(SwalToken) private swal) { }
 
-  displayRequestQuestion(questionTitle: string, action: Observable<any>, successTitle: string, errorBackupTitle: string, successFunction?: Function, errorFunction?: Function) {
-    this.swal.fire({
+  displayRequestQuestion<T>(questionTitle: string, action: Observable<any>, successTitle: string, errorBackupTitle: string): Observable<T> {
+    return from(this.swal.fire({
       title: questionTitle,
       icon: 'question',
       showCancelButton: true,
       allowOutsideClick: () => !this.swal.isLoading(),
       showLoaderOnConfirm: true,
       preConfirm: () => action
-        .pipe(
-          catchError(error => {
-            this.handleError(error?.error?.description, errorBackupTitle, errorFunction);
-            return EMPTY;
-          })
-        )
-    }).then(result => {
-      if (!result.isDismissed) {
-        if (result?.value?.error) {
-          this.handleError(result?.value?.error?.description, errorBackupTitle, errorFunction);
-        } else {
-          successFunction && successFunction();
+    })).pipe(
+      catchError(error => {
+        this.swal.fire({
+          title: error?.error?.description || errorBackupTitle,
+          icon: 'error'
+        });
+
+        return throwError(error);
+      }),
+      map(x => x as AlertResult<T>),
+      tap(result => {
+        if (result.isConfirmed) {
           this.swal.fire({
             title: successTitle,
             icon: "success"
           })
         }
-      }
-    })
+      }),
+      filter(result => result.isConfirmed),
+      map(result => result.value)
+    );
   }
 
   displayQuestion(question: string): Observable<boolean> {

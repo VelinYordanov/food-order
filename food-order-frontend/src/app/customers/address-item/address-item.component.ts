@@ -40,12 +40,12 @@ export class AddressItemComponent implements OnInit {
   }
 
   delete() {
-    this.alertService.displayRequestQuestion(
+    this.alertService.displayRequestQuestion<Address>(
       `Are you sure you want to delete address ${this.address.id}?`,
       this.deleteAddress(),
       `Successfully deleted address ${this.address.id}`,
-      `Error in deleting address ${this.address.id}. Try again later.`,
-      () => this.onDelete.next(this.address))
+      `Error in deleting address ${this.address.id}. Try again later.`)
+      .subscribe(_ => this.onDelete.next(this.address))
   }
 
   private deleteAddress(): Observable<Address> {
