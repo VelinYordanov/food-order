@@ -1,6 +1,6 @@
 <article>
     <h1 class="title">Addresses</h1>
-    <section class="addresses">
+    <section class="addresses" [class.uneven-row]="(addresses.length + 1) % 5 !== 0">
         <section class="add-address">
             <h3>
                 <a [routerLink]="['..', 'addresses', 'add']">Add an address</a>

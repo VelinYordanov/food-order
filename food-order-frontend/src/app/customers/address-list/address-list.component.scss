@@ -1,42 +1,37 @@
 .addresses {
-    width:70%;
-    margin:0 auto;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .addresses > section {
-    width:15%;
-    margin-right:50px;
-    margin-bottom:30px;
-}
-
-.addresses::after {
-    content:"";
-    flex:auto;
+  width: 15%;
+  margin-right: 85px;
+  margin-bottom: 30px;
 }
 
 .add-address {
-    box-shadow: 0 0 10px 3px #D3D3D3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  box-shadow: 0 0 10px 3px #d3d3d3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .add-address > h3 {
-    margin-bottom:0;
-    color:red;
-    cursor: pointer;
+  margin-bottom: 0;
+  color: red;
+  cursor: pointer;
 }
 
 a {
-    text-decoration: none;
-    color:red;
+  text-decoration: none;
+  color: red;
 }
 
 .title {
-    text-align: center;
-    margin-top:30px;
-    margin-bottom:30px;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }

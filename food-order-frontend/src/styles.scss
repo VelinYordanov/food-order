@@ -1,43 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; padding-top:100px;}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  padding-top: 100px;
+}
 
 .form-field {
-    width:500px;
+  width: 500px;
 }
 
 .buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom:50px;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 50px;
 }
 
 .line-through {
-    text-decoration: line-through;
+  text-decoration: line-through;
 }
 
 .no-click-header button.mat-calendar-period-button {
-    pointer-events: none !important;
+  pointer-events: none !important;
 }
 
 .center-child {
-    display:flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .mb-20 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .orders {
-    width:100%;
-    display:flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .uneven-row:after {
-    content:'';
-    flex:auto;
+  content: "";
+  flex: auto;
 }
