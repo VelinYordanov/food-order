@@ -29,6 +29,9 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
 
   filteredFoods$: Observable<Food[]>;
 
+  private readonly categoryDeletes$ = new Subject<Category>();
+  private readonly categoryAdditions$ = new Subject<MatChipInputEvent>();
+
   private editRestaurantClicksSubject = new Subject();
   private cancel$ = new Subject<void>();
 
@@ -57,19 +60,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
 
     this.restaurantForm.disable();
 
-    this.authenticationService.user$
-      .pipe(
-        map(restaurant => restaurant.id),
-        first(),
-        switchMap(id => this.messageService.watch(`/notifications/restaurants/${id}/orders`)
-          .pipe(
-            map(x => x.body),
-            retry(),
-            catchError(error => EMPTY),
-            takeUntil(this.cancel$)
-          )),
-      )
-      .subscribe(console.log);
+    this.setupOrderNotifications();
 
     this.filteredFoods$ = this.search.valueChanges
       .pipe(
@@ -77,44 +68,16 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
         map(searchValue => this.restaurant.foods.filter(food => food.name.toLowerCase().includes(searchValue.toLowerCase())))
       )
 
-    this.editRestaurantClicksSubject
-      .pipe(
-        switchMapTo(this.authenticationService.user$),
-        switchMap(user =>
-          this.restaurantService.editRestaurant(user.id, this.restaurantForm.value)
-            .pipe(
-              catchError(error => {
-                this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting restaurant. Try again later.', 'error');
-                return EMPTY;
-              })
-            ))
-      ).subscribe(result => {
-        this.restaurant = result;
-        this.search.updateValueAndValidity();
-        this.restaurantForm.disable();
-        this.alertService.displayMessage('Successfully editted restaurant.', 'success');
-      })
-
-    this.authenticationService.user$
-      .pipe(
-        first(user => !!user),
-        map(user => user.id),
-        switchMap(id =>
-          this.restaurantService.getRestaurantData(id)
-            .pipe(
-              catchError(error => {
-                this.alertService.displayMessage(error?.error?.description || 'An error occurred while loading your profile. Try again later.', 'error');
-                return EMPTY;
-              })
-            ))
-      ).subscribe(restaurant => {
-        this.restaurant = restaurant;
-        this.restaurantForm.patchValue(restaurant);
-      })
+    this.setupRestaurantEdits();
+    this.setupRestaurantProfile();
+    this.setupCategoryDeletes();
+    this.setupCategoryAdditions();
   }
 
   ngOnDestroy(): void {
     this.editRestaurantClicksSubject.complete();
+    this.categoryAdditions$.complete();
+    this.categoryDeletes$.complete();
     this.cancel$.next();
     this.messageService.deactivate();
   }
@@ -159,11 +122,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   }
 
   openCategoryDeleteConfirmation(category: Category) {
-    this.alertService.displayRequestQuestion<void>(
-      `Are you sure you want to delete category ${category.name}?`,
-      this.deleteCategory(category),
-      `Successfully deleted category ${category.name}`,
-      `An error occurred while deleting category ${category.name}. Try again later.`).subscribe();
+    this.categoryDeletes$.next(category);
   }
 
   deleteCategory(category: Category) {
@@ -192,14 +151,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   }
 
   openCategoryAdditionConfirmation(event: MatChipInputEvent) {
-    const categoryName = event.value;
-
-    this.alertService.displayRequestQuestion<Category>(
-      `Are you sure you want to create category ${categoryName}?`,
-      this.addCategory(categoryName),
-      `Successfully created category ${categoryName}`,
-      `An error occurred while creating category ${categoryName}. Try again later.`,
-      ).subscribe(_ => event.input && (event.input.value = ''))
+    this.categoryAdditions$.next(event);
   }
 
   editRestaurant() {
@@ -219,5 +171,89 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
     if (index !== -1) {
       this.restaurant.categories.splice(index, 1);
     }
+  }
+
+  private setupOrderNotifications() {
+    this.authenticationService.user$
+      .pipe(
+        map(restaurant => restaurant.id),
+        first(),
+        switchMap(id => this.messageService.watch(`/notifications/restaurants/${id}/orders`)
+          .pipe(
+            map(x => x.body),
+            retry(),
+            catchError(error => EMPTY),
+            takeUntil(this.cancel$)
+          )),
+      )
+      .subscribe(console.log);
+  }
+
+  private setupRestaurantEdits() {
+    this.editRestaurantClicksSubject
+      .pipe(
+        switchMapTo(this.authenticationService.user$),
+        switchMap(user =>
+          this.restaurantService.editRestaurant(user.id, this.restaurantForm.value)
+            .pipe(
+              catchError(error => {
+                this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting restaurant. Try again later.', 'error');
+                return EMPTY;
+              })
+            ))
+      ).subscribe(result => {
+        this.restaurant = result;
+        this.search.updateValueAndValidity();
+        this.restaurantForm.disable();
+        this.alertService.displayMessage('Successfully editted restaurant.', 'success');
+      })
+  }
+
+  private setupRestaurantProfile() {
+    this.authenticationService.user$
+      .pipe(
+        first(user => !!user),
+        map(user => user.id),
+        switchMap(id =>
+          this.restaurantService.getRestaurantData(id)
+            .pipe(
+              catchError(error => {
+                this.alertService.displayMessage(error?.error?.description || 'An error occurred while loading your profile. Try again later.', 'error');
+                return EMPTY;
+              })
+            ))
+      ).subscribe(restaurant => {
+        this.restaurant = restaurant;
+        this.restaurantForm.patchValue(restaurant);
+      })
+  }
+
+  private setupCategoryDeletes() {
+    this.categoryDeletes$
+      .pipe(
+        switchMap(category => this.alertService.displayRequestQuestion<void>(
+          `Are you sure you want to delete category ${category.name}?`,
+          this.deleteCategory(category),
+          `Successfully deleted category ${category.name}`,
+          `An error occurred while deleting category ${category.name}. Try again later.`)
+          .pipe(
+            catchError(error => EMPTY)
+          ))
+      ).subscribe();
+  }
+
+  private setupCategoryAdditions() {
+    this.categoryAdditions$
+      .pipe(
+        switchMap(event => this.alertService.displayRequestQuestion<Category>(
+          `Are you sure you want to create category ${event.value}?`,
+          this.addCategory(event.value),
+          `Successfully created category ${event.value}`,
+          `An error occurred while creating category ${event.value}. Try again later.`,
+        ).pipe(
+          tap(_ => event.input && (event.input.value = '')),
+          catchError(error => EMPTY)
+        ))
+      ).subscribe();
   }
 }

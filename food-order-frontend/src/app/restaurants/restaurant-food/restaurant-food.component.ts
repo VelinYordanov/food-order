@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { AfterViewInit, ChangeDetectorRef, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -18,7 +18,7 @@ import { AuthenticationService } from 'src/app/shared/services/authentication.se
   templateUrl: './restaurant-food.component.html',
   styleUrls: ['./restaurant-food.component.scss']
 })
-export class RestaurantFoodComponent implements OnInit, AfterViewInit {
+export class RestaurantFoodComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() food: Food;
   @Input() categories: Category[];
   @Output('delete') onDelete = new EventEmitter<void>();
@@ -31,7 +31,8 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
 
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  private editClicks = new Subject<void>();
+  private readonly editClicks$ = new Subject<void>();
+  private readonly deleteClicks$ = new Subject<void>();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,24 +51,8 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
 
     this.categoryFormControl = this.formBuilder.control(null);
 
-    this.editClicks
-      .pipe(
-        tap(_ => this.validateForm()),
-        filter(_ => this.foodForm.valid),
-        switchMapTo(this.authenticationService.user$),
-        switchMap(user =>
-          this.restaurantService.editFood(user.id, this.food.id, this.foodForm.value)
-            .pipe(
-              catchError(error => {
-                this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting food. Try again later.', 'error');
-                return EMPTY;
-              })
-            ))
-      ).subscribe(result => {
-          this.alertService.displayMessage('Successfully editted food.', 'success');
-          this.onEdit.emit(result);
-          this.toggleForm();
-      });
+    this.setupEdits();
+    this.setupDeletes();
 
     this.filteredCategories$ = this.categoryFormControl.valueChanges
       .pipe(
@@ -75,6 +60,11 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
           this.categories
             .filter(category => category.name.includes(value)))
       );
+  }
+
+  ngOnDestroy(): void {
+    this.editClicks$.complete();
+    this.deleteClicks$.complete();
   }
 
   ngAfterViewInit(): void {
@@ -143,16 +133,11 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
   }
 
   edit() {
-    this.editClicks.next();
+    this.editClicks$.next();
   }
 
   delete() {
-    this.alertService.displayRequestQuestion<void>(
-      `Are you sure you want to delete food ${this.food.name}?`,
-      this.deleteFood(),
-      `Successfully deleted food ${this.food.name}`,
-      `An error ocurred while deleting food ${this.food.name}. Try again later`
-      ).subscribe(_ => this.onDelete.next())
+    this.deleteClicks$.next();
   }
 
   deleteFood() {
@@ -179,5 +164,41 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit {
     }
 
     categoriesArray.push(this.formBuilder.group(category));
+  }
+
+  private setupEdits() {
+    this.editClicks$
+      .pipe(
+        tap(_ => this.validateForm()),
+        filter(_ => this.foodForm.valid),
+        switchMapTo(this.authenticationService.user$),
+        switchMap(user =>
+          this.restaurantService.editFood(user.id, this.food.id, this.foodForm.value)
+            .pipe(
+              catchError(error => {
+                this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting food. Try again later.', 'error');
+                return EMPTY;
+              })
+            ))
+      ).subscribe(result => {
+        this.alertService.displayMessage('Successfully editted food.', 'success');
+        this.onEdit.emit(result);
+        this.toggleForm();
+      });
+  }
+
+  private setupDeletes() {
+    this.deleteClicks$
+      .pipe(
+        switchMap(_ => this.alertService.displayRequestQuestion<void>(
+          `Are you sure you want to delete food ${this.food.name}?`,
+          this.deleteFood(),
+          `Successfully deleted food ${this.food.name}`,
+          `An error ocurred while deleting food ${this.food.name}. Try again later`
+        )
+        .pipe(
+          catchError(error => EMPTY)
+        ))
+      ).subscribe(_ => this.onDelete.next())
   }
 }
