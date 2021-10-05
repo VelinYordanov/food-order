@@ -4,8 +4,10 @@ import javax.validation.constraints.NotNull;
 
 import com.github.velinyordanov.foodorder.data.entities.Status;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_STATUS;
+
 public class OrderStatusDto {
-	@NotNull(message = "Status is required")
+	@NotNull(message = EMPTY_STATUS)
 	private Status status;
 
 	public OrderStatusDto() {

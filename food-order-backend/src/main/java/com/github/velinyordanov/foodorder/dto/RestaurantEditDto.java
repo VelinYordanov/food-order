@@ -2,8 +2,10 @@ package com.github.velinyordanov.foodorder.dto;
 
 import javax.validation.constraints.NotBlank;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_NAME;
+
 public class RestaurantEditDto {
-	@NotBlank(message = "name is required")
+	@NotBlank(message = EMPTY_NAME)
 	private String name;
 
 	private String description;

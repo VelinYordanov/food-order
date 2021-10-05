@@ -100,7 +100,19 @@ public class ValidationConstraints {
 	
 	public static final String EMPTY_VALID_TO = "Valid to is required";
 	public static final String PAST_VALID_TO = "Valid to date must be in the present or future";
-
+	
+	public static final String EMPTY_FOOD_DESCRIPTION = "Description is required";
+	public static final String EMPTY_FOOD_PRICE = "Price is required";
+	public static final String ZERO_OR_NEGATIVE_FOOD_PRICE = "Price must be positive";
+	public static final String EMPTY_FOOD_CATEGORIES = "At least one cateogry must be present";
+	
+	public static final String EMPTY_ORDER_RESTAURANT = "No restaurant provided";
+	public static final String EMPTY_ORDER_CUSTOMER = "No customer provided";
+	public static final String EMPTY_ORDER_ADDRESS = "No address provided";
+	public static final String EMPTY_ORDER_FOODS = "No foods provided";
+	
+	public static final String EMPTY_STATUS = "Status is required";
+	
 	public static final String EMPTY_AUTHORITY = "Authority is required";
 
 	public static final String ONLY_CURRENT_CUSTOMER_SECURITY_EXPRESSION = "hasAuthority('ROLE_CUSTOMER') and principal.id == #customerId";

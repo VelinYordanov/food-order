@@ -5,19 +5,19 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
 
 public class UserLoginDto {
-	@NotBlank(message = ValidationConstraints.EMPTY_EMAIL)
-	@Email(message = ValidationConstraints.NOT_EMAIL)
-	@Size(min = ValidationConstraints.MIN_LENGTH_EMAIL, max = ValidationConstraints.MAX_LENGTH_EMAIL, message = ValidationConstraints.EMAIL_OUT_OF_BOUNDS)
+	@NotBlank(message = EMPTY_EMAIL)
+	@Email(message = NOT_EMAIL)
+	@Size(min = MIN_LENGTH_EMAIL, max = MAX_LENGTH_EMAIL, message = EMAIL_OUT_OF_BOUNDS)
 	private String email;
 
-	@NotBlank(message = ValidationConstraints.EMPTY_PASSWORD)
-	@Size(min = ValidationConstraints.MIN_LENGTH_PASSWORD, max = ValidationConstraints.MAX_LENGTH_PASSWORD, message = ValidationConstraints.PASSWORD_OUT_OF_BOUNDS)
-	@Pattern(regexp = ValidationConstraints.PASSWORD_PATTERN_LOWERCASE, message = ValidationConstraints.PASSWORD_PATTERN)
-	@Pattern(regexp = ValidationConstraints.PASSWORD_PATTERN_UPPERCASE, message = ValidationConstraints.PASSWORD_PATTERN)
-	@Pattern(regexp = ValidationConstraints.PASSWORD_PATTERN_NUMBER, message = ValidationConstraints.PASSWORD_PATTERN)
+	@NotBlank(message = EMPTY_PASSWORD)
+	@Size(min = MIN_LENGTH_PASSWORD, max = MAX_LENGTH_PASSWORD, message = PASSWORD_OUT_OF_BOUNDS)
+	@Pattern(regexp = PASSWORD_PATTERN_LOWERCASE, message = PASSWORD_PATTERN)
+	@Pattern(regexp = PASSWORD_PATTERN_UPPERCASE, message = PASSWORD_PATTERN)
+	@Pattern(regexp = PASSWORD_PATTERN_NUMBER, message = PASSWORD_PATTERN)
 	private String password;
 
 	public String getEmail() {

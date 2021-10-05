@@ -9,18 +9,20 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
+
 public class FoodCreateDto {
-	@NotBlank(message = "Name is required")
+	@NotBlank(message = EMPTY_FOOD_NAME)
 	private String name;
 
-	@NotBlank(message = "Description is required")
+	@NotBlank(message = EMPTY_FOOD_DESCRIPTION)
 	private String description;
 
-	@NotNull(message = "Price is required")
-	@Positive(message = "Price must be above 0")
+	@NotNull(message = EMPTY_FOOD_PRICE)
+	@Positive(message = ZERO_OR_NEGATIVE_FOOD_PRICE)
 	private BigDecimal price;
 
-	@NotEmpty(message = "At least one cateogry must be present")
+	@NotEmpty(message = EMPTY_FOOD_CATEGORIES)
 	private Set<CategoryDto> categories;
 
 	public FoodCreateDto() {

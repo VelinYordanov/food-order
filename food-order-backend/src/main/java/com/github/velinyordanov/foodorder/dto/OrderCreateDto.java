@@ -5,17 +5,19 @@ import java.util.Collection;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
+
 public class OrderCreateDto {
-	@NotBlank(message = "No restaurant provided")
+	@NotBlank(message = EMPTY_ORDER_RESTAURANT)
 	private String restaurantId;
 
-	@NotBlank(message = "No customer provided")
+	@NotBlank(message = EMPTY_ORDER_CUSTOMER)
 	private String customerId;
 
-	@NotBlank(message = "No address provided")
+	@NotBlank(message = EMPTY_ORDER_ADDRESS)
 	private String addressId;
 
-	@NotEmpty(message = "No foods provided")
+	@NotEmpty(message = EMPTY_ORDER_FOODS)
 	private Collection<OrderFoodDto> foods;
 
 	private String discountCodeId;
