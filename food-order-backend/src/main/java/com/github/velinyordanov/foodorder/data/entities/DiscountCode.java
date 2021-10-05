@@ -30,6 +30,7 @@ public class DiscountCode extends BaseEntity {
 	@OneToMany(mappedBy = "discountCode")
 	private Set<Order> orders;
 
+	@NotNull(message = EMPTY_ORDER_RESTAURANT)
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "RestaurantId")
 	private Restaurant restaurant;

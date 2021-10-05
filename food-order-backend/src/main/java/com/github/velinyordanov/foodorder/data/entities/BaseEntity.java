@@ -20,7 +20,7 @@ public abstract class BaseEntity {
 	@Column(name = "IsDeleted")
 	private boolean isDeleted;
 
-	@Column(name = "CreatedOn")
+	@Column(name = "CreatedOn", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdOn;
 

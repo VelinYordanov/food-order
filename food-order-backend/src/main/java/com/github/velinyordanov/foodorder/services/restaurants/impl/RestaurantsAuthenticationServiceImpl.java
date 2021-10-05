@@ -49,7 +49,7 @@ public class RestaurantsAuthenticationServiceImpl implements RestaurantsAuthenti
 	@Override
 	public String register(@Valid RestaurantRegisterDto user) {
 		if (this.foodOrderData.restaurants().existsByEmailOrName(user.getEmail(), user.getName())) {
-			throw new DuplicateUserException("Username or restaurant name already exists!");
+			throw new DuplicateUserException("Email or restaurant name already exists!");
 		}
 
 		Restaurant restaurant = this.mapper.map(user, Restaurant.class);

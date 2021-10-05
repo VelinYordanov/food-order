@@ -13,4 +13,6 @@ public interface CustomersRepository extends BaseRepository<Customer> {
 	public Optional<Customer> findByEmail(String email);
 
 	boolean existsByEmail(String email);
+	
+	boolean existsByEmailOrPhoneNumber(String email, String phoneNumber);
 }

@@ -17,16 +17,16 @@ import javax.validation.constraints.Size;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
 
 @Entity
 @Table(name = "Restaurants")
 public class Restaurant extends BaseUser {
 	private static final long serialVersionUID = 7321303086507184708L;
 	
-	@NotBlank(message = ValidationConstraints.EMPTY_NAME)
-	@Pattern(regexp = ValidationConstraints.NAME_PATTERN, message = ValidationConstraints.NAME_DOES_NOT_MATCH_PATTERN)
-	@Size(min = ValidationConstraints.MIN_LENGTH_NAME, max = ValidationConstraints.MAX_LENGTH_NAME, message = ValidationConstraints.NAME_OUT_OF_BOUNDS)
+	@NotBlank(message = EMPTY_NAME)
+	@Pattern(regexp = NAME_PATTERN, message = NAME_DOES_NOT_MATCH_PATTERN)
+	@Size(min = MIN_LENGTH_NAME, max = MAX_LENGTH_NAME, message = NAME_OUT_OF_BOUNDS)
 	@Column(name = "Name", unique = true, nullable = false, columnDefinition = "nvarchar(100)")
 	private String name;
 	

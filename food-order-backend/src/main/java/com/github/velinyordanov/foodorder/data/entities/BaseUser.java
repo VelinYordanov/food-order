@@ -8,19 +8,19 @@ import javax.validation.constraints.Size;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.github.velinyordanov.foodorder.validation.ValidationConstraints;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
 
 @MappedSuperclass
 public abstract class BaseUser extends BaseEntity implements UserDetails {
 	private static final long serialVersionUID = -3258223604220059426L;
 
-	@NotBlank(message = ValidationConstraints.EMPTY_EMAIL)
-	@Email(message = ValidationConstraints.NOT_EMAIL)
-	@Size(min = ValidationConstraints.MIN_LENGTH_EMAIL, max = ValidationConstraints.MAX_LENGTH_EMAIL, message = ValidationConstraints.EMAIL_OUT_OF_BOUNDS)
+	@NotBlank(message = EMPTY_EMAIL)
+	@Email(message = NOT_EMAIL)
+	@Size(min = MIN_LENGTH_EMAIL, max = MAX_LENGTH_EMAIL, message = EMAIL_OUT_OF_BOUNDS)
 	@Column(name = "Email", unique = true, nullable = false, columnDefinition = "nvarchar(100)")
 	private String email;
 
-	@NotBlank(message = ValidationConstraints.EMPTY_PASSWORD)
+	@NotBlank(message = EMPTY_PASSWORD)
 	@Column(name = "Password", nullable = false)
 	private String password;
 

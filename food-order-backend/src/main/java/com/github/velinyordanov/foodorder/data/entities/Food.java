@@ -1,5 +1,11 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_FOOD_CATEGORIES;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_FOOD_DESCRIPTION;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_FOOD_NAME;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_FOOD_PRICE;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.ZERO_OR_NEGATIVE_FOOD_PRICE;
+
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,19 +18,28 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Entity
 @Table(name = "Foods")
 public class Food extends BaseEntity {
+	@NotBlank(message = EMPTY_FOOD_NAME)
 	@Column(nullable = false, columnDefinition = "nvarchar(100)")
 	private String name;
 
+	@NotBlank(message = EMPTY_FOOD_DESCRIPTION)
 	@Column(nullable = false, columnDefinition = "nvarchar(max)")
 	private String description;
 
+	@NotNull(message = EMPTY_FOOD_PRICE)
+	@Positive(message = ZERO_OR_NEGATIVE_FOOD_PRICE)
 	@Column(nullable = false)
 	private BigDecimal price;
 
+	@NotEmpty(message = EMPTY_FOOD_CATEGORIES)
 	@ManyToMany(mappedBy = "foods", fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE,
 			CascadeType.PERSIST, CascadeType.REFRESH })
 	private Set<Category> categories;

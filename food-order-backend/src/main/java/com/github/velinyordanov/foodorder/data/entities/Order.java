@@ -1,5 +1,7 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,25 +12,33 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Orders")
 public class Order extends BaseEntity {
+	@NotNull(message = EMPTY_STATUS)
 	@Column(name = "Status", nullable = false)
 	private Status status;
 
+	@NotNull(message = EMPTY_ORDER_ADDRESS)
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "AddressId")
 	private Address address;
 
+	@NotNull(message = EMPTY_ORDER_RESTAURANT)
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "RestaurantId")
 	private Restaurant restaurant;
 
+	@NotNull(message = EMPTY_ORDER_CUSTOMER)
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "CustomerId")
 	private Customer customer;
 
+	@NotEmpty(message = EMPTY_ORDER_FOODS)
 	@OneToMany(mappedBy = "order", cascade = { CascadeType.ALL })
 	private Set<OrderFood> foods;
 

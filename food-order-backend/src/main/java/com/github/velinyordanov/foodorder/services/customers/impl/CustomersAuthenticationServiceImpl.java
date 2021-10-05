@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,9 +44,9 @@ public class CustomersAuthenticationServiceImpl implements CustomersAuthenticati
 
 	@Override
 	@Transactional
-	public String registerCustomer(CustomerRegisterDto user) {
-		if (this.foodOrderData.customers().existsByEmail(user.getEmail())) {
-			throw new DuplicateUserException("Customer with this username already exists");
+	public String registerCustomer(@Valid CustomerRegisterDto user) {
+		if (this.foodOrderData.customers().existsByEmailOrPhoneNumber(user.getEmail(), user.getPhoneNumber())) {
+			throw new DuplicateUserException("Customer with this email or phone number already exists");
 		}
 
 		Customer customer = this.mapper.map(user, Customer.class);
