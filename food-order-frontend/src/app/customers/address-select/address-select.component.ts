@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EMPTY, Observable, Subscription } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
 import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -38,13 +38,11 @@ export class AddressSelectComponent
       address: [null, Validators.required],
     });
 
-    this.addressForm.valueChanges.subscribe(console.log);
-
     this.addresses$ = this.authenticationService.user$.pipe(
       switchMap((user) =>
         this.customerService.getCustomerAddresses(user.id)
         .pipe(
-          tap(addresses => addresses.length && this.addressForm.patchValue(addresses[0])),
+          tap(addresses => addresses.length && this.addressForm.get('address').patchValue(addresses[0])),
           catchError((error) => {
             this.alertService.displayMessage(
               error?.error?.description ||
@@ -59,7 +57,11 @@ export class AddressSelectComponent
   }
 
   ngAfterViewInit(): void {
-    this.selectedAddressSubscription = this.cartService.selectedAddress$.subscribe(
+    this.selectedAddressSubscription = this.cartService.selectedAddress$
+    .pipe(
+      filter(x => !!x),
+    )
+    .subscribe(
       (address) => this.addressForm.get('address').setValue(address)
     );
   }
