@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.services.DateService;
 
-import net.bytebuddy.asm.Advice.This;
-
 @Service
 public class DateServiceImpl implements DateService {
 	@Override
@@ -30,8 +28,6 @@ public class DateServiceImpl implements DateService {
 
 	@Override
 	public boolean isInTheFuture(LocalDate date) {
-		System.out.println(date);
-		System.out.println(this.utcNow());
 		return date.isAfter(this.utcNow());
 	}
 
