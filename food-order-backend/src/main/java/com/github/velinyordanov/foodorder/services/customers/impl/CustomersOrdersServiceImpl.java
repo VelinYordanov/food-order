@@ -18,6 +18,8 @@ import com.github.velinyordanov.foodorder.data.entities.Status;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
+import com.github.velinyordanov.foodorder.exceptions.DuplicateCustomerException;
+import com.github.velinyordanov.foodorder.exceptions.ExistingUnfinishedOrderException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
 import com.github.velinyordanov.foodorder.services.DiscountCodesService;
@@ -46,14 +48,14 @@ public class CustomersOrdersServiceImpl implements CustomersOrdersService {
 
 		Customer customer = this.foodOrderData.customers()
 				.findById(customerId)
-				.orElseThrow(() -> new RuntimeException("Customer not found"));
+				.orElseThrow(() -> new DuplicateCustomerException("Customer not found"));
 		
 		if (customer.getOrders()
 				.stream()
 				.anyMatch(customerOrder ->
 						Status.Pending.equals(customerOrder.getStatus()) ||
 						Status.Accepted.equals(customerOrder.getStatus()))) {
-			throw new RuntimeException("You already have a pending order. If you wish to make changes contact us.");
+			throw new ExistingUnfinishedOrderException("You already have a pending order. If you wish to make changes contact us.");
 		}
 
 		Address address = this.foodOrderData.addresses().findById(order.getAddressId())

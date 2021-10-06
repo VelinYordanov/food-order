@@ -94,16 +94,21 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.buildResponse(ex, "Bad request", HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
+	@ExceptionHandler(Throwable.class)
+	public ResponseEntity<Map<String, String>> handleGenericException(Throwable ex) {
 		LOGGER.error("Internal server error", ex);
+
 		return this.buildResponse(ex, "An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	private ResponseEntity<Map<String, String>> buildResponse(Exception ex, String title, HttpStatus httpStatus) {
+	private ResponseEntity<Map<String, String>> buildResponse(Throwable ex, String title, HttpStatus httpStatus) {
 		Map<String, String> body = new HashMap<String, String>();
 		body.put("title", title);
 		body.put("description", ex.getLocalizedMessage());
+
+		if (httpStatus.is5xxServerError()) {
+			body.put("description", "An error occurred. Try again later.");
+		}
 
 		return ResponseEntity.status(httpStatus).body(body);
 	}

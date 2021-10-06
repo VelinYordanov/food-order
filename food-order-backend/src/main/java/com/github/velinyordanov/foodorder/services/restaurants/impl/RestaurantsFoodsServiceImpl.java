@@ -18,7 +18,9 @@ import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
+import com.github.velinyordanov.foodorder.exceptions.ForeignCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
+import com.github.velinyordanov.foodorder.exceptions.UnrecognizedCategoriesException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
 import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsFoodsService;
 
@@ -51,7 +53,7 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 
 		existingCategories.forEach(category -> {
 			if (!restaurant.getId().equals(category.getRestaurant().getId())) {
-				throw new RuntimeException("Category belongs to another restaurant");
+				throw new ForeignCategoryException("Category belongs to another restaurant");
 			}
 
 			food.removeCategory(category);
@@ -65,7 +67,7 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 				.collect(Collectors.joining(", "));
 
 		if(!unrecognizedCategories.isEmpty()) {
-			throw new RuntimeException(MessageFormat.format("Unrecognized categories detected. You need to create them first. {0}", unrecognizedCategories));
+			throw new UnrecognizedCategoriesException(MessageFormat.format("Unrecognized categories detected. You need to create them first. {0}", unrecognizedCategories));
 		}
 
 		return this.mapper.map(this.foodOrderData.foods().save(food), FoodDto.class);
