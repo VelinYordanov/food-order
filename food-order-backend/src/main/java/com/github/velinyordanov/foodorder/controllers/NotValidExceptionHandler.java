@@ -1,9 +1,7 @@
 package com.github.velinyordanov.foodorder.controllers;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -24,10 +22,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
+import com.github.velinyordanov.foodorder.exceptions.DuplicateCustomerException;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
 import com.github.velinyordanov.foodorder.exceptions.ExistingDiscountCodeException;
+import com.github.velinyordanov.foodorder.exceptions.ExistingUnfinishedOrderException;
+import com.github.velinyordanov.foodorder.exceptions.ForeignCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.NonEmptyCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
+import com.github.velinyordanov.foodorder.exceptions.UnrecognizedCategoriesException;
 
 @ControllerAdvice
 public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
@@ -38,13 +40,12 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
 		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", new Date());
-		body.put("status", status.value());
+		body.put("title", "Validation errors");
 
-		List<String> errors = ex.getBindingResult().getFieldErrors().stream().map(x -> x.getDefaultMessage())
-				.collect(Collectors.toList());
+		String errors = ex.getBindingResult().getFieldErrors().stream().map(x -> x.getDefaultMessage())
+				.collect(Collectors.joining(", "));
 
-		body.put("errors", errors);
+		body.put("description", errors);
 
 		return new ResponseEntity<>(body, headers, status);
 	}
@@ -93,7 +94,27 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Map<String, String>> handleBadRequestException(BadRequestException ex) {
 		return this.buildResponse(ex, "Bad request", HttpStatus.BAD_REQUEST);
 	}
-
+	
+	@ExceptionHandler(UnrecognizedCategoriesException.class)
+	public ResponseEntity<Map<String, String>> handleUnrecognizedCategoriesException(UnrecognizedCategoriesException ex) {
+		return this.buildResponse(ex, "Unrecognized categories were provided", HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(ForeignCategoryException.class)
+	public ResponseEntity<Map<String, String>> handleForeignCategoryException(ForeignCategoryException ex) {
+		return this.buildResponse(ex, "Category not belonging to restuarant was provided", HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(ExistingUnfinishedOrderException.class)
+	public ResponseEntity<Map<String, String>> handleExistingUnfinishedOrderException(ExistingUnfinishedOrderException ex) {
+		return this.buildResponse(ex, "You have a pending or accepted order already.", HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(DuplicateCustomerException.class)
+	public ResponseEntity<Map<String, String>> handleDuplicateCustomerException(DuplicateCustomerException ex) {
+		return this.buildResponse(ex, "Customer already exists.", HttpStatus.BAD_REQUEST);
+	}
+	
 	@ExceptionHandler(Throwable.class)
 	public ResponseEntity<Map<String, String>> handleGenericException(Throwable ex) {
 		LOGGER.error("Internal server error", ex);
