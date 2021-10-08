@@ -1,11 +1,15 @@
 package com.github.velinyordanov.foodorder.services.restaurants.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -18,14 +22,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.github.velinyordanov.foodorder.data.AddressesRepository;
 import com.github.velinyordanov.foodorder.data.AuthoritiesRepository;
-import com.github.velinyordanov.foodorder.data.CategoriesRepository;
-import com.github.velinyordanov.foodorder.data.CustomersRepository;
-import com.github.velinyordanov.foodorder.data.DiscountCodesRepository;
 import com.github.velinyordanov.foodorder.data.FoodOrderData;
-import com.github.velinyordanov.foodorder.data.FoodsRepository;
-import com.github.velinyordanov.foodorder.data.OrdersRepository;
 import com.github.velinyordanov.foodorder.data.RestaurantsRepository;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
@@ -33,7 +31,6 @@ import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
 import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 import com.github.velinyordanov.foodorder.enums.UserType;
 import com.github.velinyordanov.foodorder.exceptions.DuplicateUserException;
-import com.github.velinyordanov.foodorder.mapping.Mapper;
 import com.github.velinyordanov.foodorder.mapping.impl.MapperImpl;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
 
@@ -58,25 +55,7 @@ public class RestaurantsAuthenticationServiceImplTest {
 	private AuthoritiesRepository authoritiesRepository;
 	
 	@Mock
-	private CategoriesRepository categoriesRepository;
-	
-	@Mock
-	private CustomersRepository customersRepository;
-	
-	@Mock
-	private FoodsRepository foodsRepository;
-	
-	@Mock
-	private OrdersRepository ordersRepository;
-	
-	@Mock
 	private RestaurantsRepository restaurantsRepository;
-	
-	@Mock
-	private AddressesRepository addressesRepository;
-	
-	@Mock
-	private DiscountCodesRepository discountCodesRepository;
 	
 	@InjectMocks
 	private RestaurantsAuthenticationServiceImpl restaurantsAuthenticationService;

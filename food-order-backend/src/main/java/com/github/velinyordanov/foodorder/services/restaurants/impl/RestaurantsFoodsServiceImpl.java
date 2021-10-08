@@ -75,12 +75,8 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 
 	@Override
 	public FoodDto editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto) {
-		Optional<Food> foodOptional = this.foodOrderData.foods().findById(foodId);
-		if (foodOptional.isEmpty()) {
-			throw new NotFoundException(MessageFormat.format("Food with id {0} not found", foodId));
-		}
-
-		Food food = foodOptional.get();
+		Food food = this.foodOrderData.foods().findById(foodId)
+				.orElseThrow(() -> new NotFoundException(MessageFormat.format("Food with id {0} not found", foodId)));
 
 		food.setName(foodCreateDto.getName());
 		food.setPrice(foodCreateDto.getPrice());

@@ -30,63 +30,55 @@ public class RestaurantsCategoriesServiceImpl implements RestaurantsCategoriesSe
 
 	@Override
 	public void deleteCategory(String restaurantId, String categoryId) {
-		this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse(restaurant -> {
-			this.foodOrderData.categories().findByRestaurantId(restaurantId).stream()
-					.filter(category -> categoryId.equals(category.getId())).findFirst().ifPresentOrElse(category -> {
-						if (category.getFoods().isEmpty()) {
-							this.foodOrderData.categories().delete(category);
-						} else {
-							throw new NonEmptyCategoryException(MessageFormat
-									.format("Category {0} has foods associated with it!", category.getName()));
-						}
-					}, () -> {
-						throw new NotFoundException(
-								MessageFormat.format("Cateogry with id {0} not found!", categoryId));
-					});
-		}, () -> {
-			throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId));
-		});
+		Category result = this.foodOrderData.categories()
+				.findById(categoryId)
+				.stream()
+				.filter(category -> restaurantId.equals(category.getRestaurant().getId()))
+				.peek(category -> {
+					if (!category.getFoods().isEmpty()) {
+						throw new NonEmptyCategoryException(MessageFormat
+								.format("Category {0} has foods associated with it!", category.getName()));
+					}
+				})
+				.findFirst()
+				.orElseThrow(() -> new NotFoundException(
+						MessageFormat.format("Cateogry with id {0} not found!", categoryId)));
+
+		this.foodOrderData.categories().delete(result);
 	}
 
 	@Override
 	public Optional<CategoryDto> addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto) {
-		Optional<Restaurant> restaurantOptional = this.foodOrderData.restaurants().findById(restaurantId);
+		Restaurant restaurant = this.foodOrderData.restaurants()
+				.findById(restaurantId)
+				.orElseThrow(() -> new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId)));
+				
+		Optional<Category> existingCategoryOptional = this.foodOrderData.categories()
+				.findByRestaurantAndNameIncludingDeleted(restaurantId, categoryCreateDto.getName());
 
-		if (restaurantOptional.isEmpty()) {
-			throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
-		}
-
-		Optional<Category> categoryOptional = restaurantOptional.flatMap(
-				restaurant -> this.foodOrderData.categories().findByNameIncludingDeleted(categoryCreateDto.getName()));
-
-		if (categoryOptional.isEmpty()) {
-			Category category = this.mapper.map(categoryCreateDto, Category.class);
-			category.setRestaurant(restaurantOptional.get());
-			return Optional.of(this.mapper.map(this.foodOrderData.categories().save(category), CategoryDto.class));
-		} else {
-			Category category = categoryOptional.get();
-			if (category.getIsDeleted()) {
-				category.setIsDeleted(false);
-				return Optional.of(this.mapper.map(this.foodOrderData.categories().save(category), CategoryDto.class));
-			} else {
+		if (existingCategoryOptional.isPresent()) {
+			Category existingCategory = existingCategoryOptional.get();
+			if (!existingCategory.getIsDeleted()) {
 				throw new DuplicateCategoryException(
 						MessageFormat.format("Category {0} already exists", categoryCreateDto.getName()));
 			}
+			
+			existingCategory.setIsDeleted(false);
+			return Optional
+					.of(this.mapper.map(this.foodOrderData.categories().save(existingCategory), CategoryDto.class));
 		}
+		
+		Category category = this.mapper.map(categoryCreateDto, Category.class);
+		category.setRestaurant(restaurant);
+		return Optional.of(this.mapper.map(this.foodOrderData.categories().save(category), CategoryDto.class));
 	}
 
 	@Override
 	public Collection<CategoryDto> getCategoriesForRestaurant(String restaurantId) {
-		Optional<Restaurant> restaurantOptional = this.foodOrderData.restaurants().findById(restaurantId);
-
-		if (restaurantOptional.isEmpty()) {
-			throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
-		}
-
-		return restaurantOptional
-				.map(restaurant -> this.foodOrderData.categories().findByRestaurantId(restaurant.getId()).stream()
-						.map(category -> this.mapper.map(category, CategoryDto.class)).collect(Collectors.toList()))
-				.orElseThrow(() -> new IllegalStateException(
-						"An error occurred while loading categories. Try again later."));
+		return this.foodOrderData.categories()
+				.findByRestaurantId(restaurantId)
+				.stream()
+				.map(category -> this.mapper.map(category, CategoryDto.class))
+				.collect(Collectors.toList());
 	}
 }

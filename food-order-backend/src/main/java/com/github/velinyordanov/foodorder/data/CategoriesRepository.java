@@ -16,6 +16,6 @@ public interface CategoriesRepository extends BaseRepository<Category> {
 	Collection<Category> findByRestaurantId(String restaurantId);
 
 	@Transactional(readOnly = true)
-	@Query("select e from #{#entityName} e where e.name = ?1")
-	Optional<Category> findByNameIncludingDeleted(String name);
+	@Query("select e from #{#entityName} e where e.restaurant.id = ?1 and e.name = ?2")
+	Optional<Category> findByRestaurantAndNameIncludingDeleted(String restaurantId, String name);
 }
