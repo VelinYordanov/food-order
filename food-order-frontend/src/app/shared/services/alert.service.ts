@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { from, Observable, throwError } from 'rxjs';
+import { EMPTY, from, Observable, throwError } from 'rxjs';
 import { catchError, filter, map, tap } from 'rxjs/operators';
 import { SwalToken } from '../injection-tokens/swal-injection-token';
 import { AlertResult } from 'src/app/shared/models/alert-result';
@@ -17,16 +17,16 @@ export class AlertService {
       showCancelButton: true,
       allowOutsideClick: () => !this.swal.isLoading(),
       showLoaderOnConfirm: true,
-      preConfirm: () => action
-    })).pipe(
-      catchError(error => {
-        this.swal.fire({
-          title: error?.error?.description || errorBackupTitle,
-          icon: 'error'
-        });
+      preConfirm: () => action.pipe(
+        catchError(error => {
+          this.swal.fire({
+            title: error?.error?.description || errorBackupTitle,
+            icon: 'error'
+          });
 
-        return throwError(error);
-      }),
+          return EMPTY;
+        }))
+    })).pipe(
       map(x => x as AlertResult<T>),
       tap(result => {
         if (result.isConfirmed) {
