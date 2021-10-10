@@ -9,8 +9,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 
+import com.github.velinyordanov.foodorder.validation.annotations.CompareDates;
+
 import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
 
+@CompareDates(before = "validFrom", after = "validTo")
 public class DiscountCodeCreateDto {
 	@NotBlank(message = EMPTY_DISCOUNT_CODE)
 	@Size(min = MIN_LENGTH_DISCOUNT_CODE, max = MAX_LENGTH_DISCOUNT_CODE, message = DISCOUNT_CODE_OUT_OF_BOUNDS)

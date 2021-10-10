@@ -7,8 +7,11 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
 
+import com.github.velinyordanov.foodorder.validation.annotations.CompareDates;
+
 import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
 
+@CompareDates(before = "validFrom", after = "validTo")
 public class DiscountCodeEditDto {
 	@Range(min = MIN_DISCOUNT_PERCENTAGE, max = MAX_DISCOUNT_PERCENTAGE, message = DISCOUNT_CODE_OUT_OF_BOUNDS)
 	private int discountPercentage;
