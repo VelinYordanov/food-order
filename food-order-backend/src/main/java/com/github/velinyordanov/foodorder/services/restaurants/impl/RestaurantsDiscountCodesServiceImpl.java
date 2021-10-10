@@ -2,7 +2,7 @@ package com.github.velinyordanov.foodorder.services.restaurants.impl;
 
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -36,22 +36,18 @@ public class RestaurantsDiscountCodesServiceImpl implements RestaurantsDiscountC
 
 	@Override
 	public DiscountCodeDto addDiscountCodeToRestaurant(String restaurantId, DiscountCodeCreateDto discountCode) {
-		if (discountCode.getValidFrom().isAfter(discountCode.getValidTo())) {
-			throw new BadRequestException("Valid from cannot be later than valid to.");
-		}
-
-		Restaurant restaurant = this.foodOrderData.restaurants().findById(restaurantId)
+		Restaurant restaurant = this.foodOrderData.restaurants()
+				.findById(restaurantId)
 				.orElseThrow(() -> new NotFoundException("Restaurant not found"));
 
 		discountCode.setCode(discountCode.getCode().toUpperCase());
-		Optional<DiscountCode> discountCodeOptional = this.foodOrderData.discountCodes()
-				.findByCodeAndRestaurantIdWithDeleted(restaurantId, discountCode.getCode());
-		if (discountCodeOptional.isPresent()) {
-			DiscountCode code = discountCodeOptional.get();
-			throw new ExistingDiscountCodeException(
-					MessageFormat.format("Discount code {0} already exists for restaurant {1}", code.getCode(),
-							code.getRestaurant().getName()));
-		}
+		this.foodOrderData.discountCodes()
+				.findByCodeAndRestaurantIdWithDeleted(restaurantId, discountCode.getCode())
+				.ifPresent(code -> {
+					throw new ExistingDiscountCodeException(
+							MessageFormat.format("Discount code {0} already exists for restaurant {1}", code.getCode(),
+									code.getRestaurant().getName()));
+				});
 
 		DiscountCode discountCodeToBeAdded = this.mapper.map(discountCode, DiscountCode.class);
 		discountCodeToBeAdded.setRestaurant(restaurant);
@@ -61,7 +57,8 @@ public class RestaurantsDiscountCodesServiceImpl implements RestaurantsDiscountC
 
 	@Override
 	public DiscountCodeDto getDiscountByCode(String restaurantId, String code, String customerId) {
-		DiscountCode discountCode = this.foodOrderData.discountCodes().findByCodeAndRestaurantId(restaurantId, code)
+		DiscountCode discountCode = this.foodOrderData.discountCodes()
+				.findByCodeAndRestaurantId(restaurantId, code)
 				.orElseThrow(() -> new NotFoundException("Discount code not found"));
 
 		this.discountCodesService.validateDiscountCode(discountCode, customerId);
@@ -71,16 +68,20 @@ public class RestaurantsDiscountCodesServiceImpl implements RestaurantsDiscountC
 
 	@Override
 	public Collection<DiscountCodeListDto> getDiscountCodesForRestaurant(String restaurantId) {
-		return this.foodOrderData.discountCodes().findByRestaurant(restaurantId).stream().map(discountCode -> {
-			DiscountCodeListDto discountCodeListDto = this.mapper.map(discountCode, DiscountCodeListDto.class);
-			discountCodeListDto.setTimesUsed(discountCode.getOrders().size());
-			return discountCodeListDto;
-		}).collect(Collectors.toList());
+		return this.foodOrderData.discountCodes()
+				.findByRestaurant(restaurantId)
+				.stream()
+				.map(discountCode -> {
+					DiscountCodeListDto discountCodeListDto = this.mapper.map(discountCode, DiscountCodeListDto.class);
+					discountCodeListDto.setTimesUsed(discountCode.getOrders().size());
+					return discountCodeListDto;
+				}).collect(Collectors.toList());
 	}
 
 	@Override
 	public DiscountCodeDto deleteDiscountCode(String restaurantId, String discountCodeId) {
-		DiscountCode code = this.foodOrderData.discountCodes().findByIdAndRestaurant(discountCodeId, restaurantId)
+		DiscountCode code = this.foodOrderData.discountCodes()
+				.findByIdAndRestaurant(discountCodeId, restaurantId)
 				.orElseThrow(() -> new NotFoundException("Discount code not found"));
 
 		if (!code.getOrders().isEmpty()) {
@@ -95,11 +96,8 @@ public class RestaurantsDiscountCodesServiceImpl implements RestaurantsDiscountC
 	@Override
 	public DiscountCodeListDto editDiscountCode(String restaurantId, String discountCodeId,
 			DiscountCodeEditDto discountCode) {
-		if (discountCode.getValidFrom().isAfter(discountCode.getValidTo())) {
-			throw new BadRequestException("Valid from cannot be later than valid to.");
-		}
-
-		DiscountCode code = this.foodOrderData.discountCodes().findByIdAndRestaurant(discountCodeId, restaurantId)
+		DiscountCode code = this.foodOrderData.discountCodes()
+				.findByIdAndRestaurant(discountCodeId, restaurantId)
 				.orElseThrow(() -> new NotFoundException("Discount code not found"));
 
 		if (!code.getOrders().isEmpty()) {
@@ -107,9 +105,28 @@ public class RestaurantsDiscountCodesServiceImpl implements RestaurantsDiscountC
 				throw new BadRequestException(
 						"Discount percentage can be changed only to discount codes that have not been used yet.");
 			}
-
+			
 			if (!discountCode.getValidFrom().isEqual(code.getValidFrom())) {
-				throw new BadRequestException("Valid from can only be changed for orders that have not been used yet.");
+				throw new BadRequestException(
+						"Valid from can only be changed for orders that have not been used yet.");
+			}
+
+			if (!discountCode.getIsSingleUse() && code.getOrders().size() > 1) {
+				throw new BadRequestException("Cannot disable single use as the discount code has been used.");
+			}
+
+			boolean userHasMoreThan1OrdersWithDiscountCode = code.getOrders()
+					.stream()
+					.collect(Collectors.groupingBy(x -> x.getCustomer().getId(), Collectors.counting()))
+					.values()
+					.stream()
+					.filter(x -> x > 1)
+					.findAny()
+					.isPresent();
+
+			if (discountCode.getIsOncePerUser() && userHasMoreThan1OrdersWithDiscountCode) {
+				throw new BadRequestException(
+						"Cannot enable once per user as users have used the discount code more than once already");
 			}
 		}
 

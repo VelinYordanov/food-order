@@ -34,8 +34,12 @@ public class DiscountCodesServiceImpl implements DiscountCodesService {
 					MessageFormat.format("Discount code {0} was already used.", discountCode.getCode()));
 		}
 
-		boolean hasCustomerUserThisCodeBefore = discountCode.getOrders().stream()
-				.map(order -> order.getCustomer().getId()).filter(id -> id.equals(customerId)).findFirst().isPresent();
+		boolean hasCustomerUserThisCodeBefore = discountCode.getOrders()
+				.stream()
+				.map(order -> order.getCustomer().getId())
+				.filter(id -> id.equals(customerId))
+				.findFirst()
+				.isPresent();
 
 		if (discountCode.getIsOncePerUser() && hasCustomerUserThisCodeBefore) {
 			throw new BadRequestException(
