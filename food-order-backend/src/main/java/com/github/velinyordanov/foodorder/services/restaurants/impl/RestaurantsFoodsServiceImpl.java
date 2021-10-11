@@ -1,13 +1,13 @@
 package com.github.velinyordanov.foodorder.services.restaurants.impl;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
+import java.util.stream.StreamSupport;
 
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.FoodCreateDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
-import com.github.velinyordanov.foodorder.exceptions.DuplicateCategoryException;
+import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.ForeignCategoryException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.exceptions.UnrecognizedCategoriesException;
@@ -35,11 +35,11 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 	}
 
 	@Override
-	@Transactional
 	public FoodDto addFoodToRestaurant(String restaurantId, FoodCreateDto foodCreateDto) {
 		Restaurant restaurant = this.foodOrderData.restaurants()
 				.findById(restaurantId)
-				.orElseThrow(() -> new NotFoundException(MessageFormat.format("Restaurant with id {0} not found!", restaurantId)));
+				.orElseThrow(() -> new NotFoundException(
+						MessageFormat.format("Restaurant with id {0} not found!", restaurantId)));
 
 		Food food = this.mapper.map(foodCreateDto, Food.class);
 
@@ -48,8 +48,18 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 				.map(x -> x.getId())
 				.collect(Collectors.toList());
 
-		Set<Category> existingCategories = new HashSet<>();
-		this.foodOrderData.categories().findAllById(categoryIds).forEach(existingCategories::add);
+		Collection<Category> existingCategories = this.foodOrderData.categories().findAllById(categoryIds);
+
+		if (categoryIds.size() != existingCategories.size()) {
+			String unrecognizedCategories = food.getCategoriesWithDeleted()
+					.stream()
+					.filter(category -> !existingCategories.contains(category))
+					.map(category -> category.getName())
+					.collect(Collectors.joining(", "));
+
+			throw new UnrecognizedCategoriesException(MessageFormat.format(
+					"Unrecognized categories detected. You need to create them first. {0}", unrecognizedCategories));
+		}
 
 		existingCategories.forEach(category -> {
 			if (!restaurant.getId().equals(category.getRestaurant().getId())) {
@@ -60,22 +70,13 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 			category.addFood(food);
 		});
 
-		String unrecognizedCategories = food.getCategoriesWithDeleted()
-				.stream()
-				.filter(category -> !existingCategories.contains(category))
-				.map(category -> category.getName())
-				.collect(Collectors.joining(", "));
-
-		if(!unrecognizedCategories.isEmpty()) {
-			throw new UnrecognizedCategoriesException(MessageFormat.format("Unrecognized categories detected. You need to create them first. {0}", unrecognizedCategories));
-		}
-
 		return this.mapper.map(this.foodOrderData.foods().save(food), FoodDto.class);
 	}
 
 	@Override
 	public FoodDto editFood(String restaurantId, String foodId, FoodCreateDto foodCreateDto) {
-		Food food = this.foodOrderData.foods().findById(foodId)
+		Food food = this.foodOrderData.foods()
+				.findById(foodId)
 				.orElseThrow(() -> new NotFoundException(MessageFormat.format("Food with id {0} not found", foodId)));
 
 		food.setName(foodCreateDto.getName());
@@ -83,8 +84,11 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 		food.setDescription(foodCreateDto.getDescription());
 
 		Collection<Category> categories = this.foodOrderData.categories().findByRestaurantId(restaurantId);
-		Collection<String> selectedCategoryIds = foodCreateDto.getCategories().stream().map(x -> x.getId())
+		Collection<String> selectedCategoryIds = foodCreateDto.getCategories()
+				.stream()
+				.map(x -> x.getId())
 				.collect(Collectors.toList());
+
 		categories.forEach(category -> {
 			if (selectedCategoryIds.contains(category.getId())) {
 				category.addFood(food);
@@ -93,24 +97,31 @@ public class RestaurantsFoodsServiceImpl implements RestaurantsFoodsService {
 			}
 		});
 
+		if (food.getCategories().isEmpty()) {
+			throw new BadRequestException("At least one valid category is required.");
+		}
+
 		return this.mapper.map(this.foodOrderData.foods().save(food), FoodDto.class);
 	}
 
 	@Override
 	public void deleteFood(String restaurantId, String foodId) {
-		this.foodOrderData.restaurants().findById(restaurantId).ifPresentOrElse(restaurant -> {
-			this.foodOrderData.foods().findById(foodId).ifPresentOrElse(food -> {
-				if (food.getCategories().stream()
-						.allMatch(category -> restaurantId.equals(category.getRestaurant().getId()))) {
-					this.foodOrderData.foods().delete(food);
-				} else {
-					throw new NotFoundException("Could not find food for restaurant");
-				}
-			}, () -> {
-				throw new NotFoundException(MessageFormat.format("Could not find food with id {0}", foodId));
-			});
-		}, () -> {
-			throw new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId));
-		});
+		this.foodOrderData.restaurants()
+				.findById(restaurantId)
+				.orElseThrow(() -> new NotFoundException(
+						MessageFormat.format("Restaurant with id {0} not found", restaurantId)));
+
+		Food food = this.foodOrderData.foods()
+				.findById(foodId)
+				.orElseThrow(() -> new NotFoundException(
+						MessageFormat.format("Could not find food with id {0}", foodId)));
+
+		if (!food.getCategories()
+				.stream()
+				.allMatch(category -> restaurantId.equals(category.getRestaurant().getId()))) {
+			throw new NotFoundException("Could not find food for restaurant");
+		}
+
+		this.foodOrderData.foods().delete(food);
 	}
 }

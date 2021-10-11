@@ -1,5 +1,6 @@
 package com.github.velinyordanov.foodorder.data;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public interface BaseRepository<T extends BaseEntity> extends CrudRepository<T, 
 	@Override
 	@Transactional(readOnly = true)
 	@Query("select e from #{#entityName} e where e.id in ?1 and e.isDeleted = false")
-	Iterable<T> findAllById(Iterable<String> ids);
+	Collection<T> findAllById(Iterable<String> ids);
 
 	@Override
 	@Transactional(readOnly = true)
