@@ -16,9 +16,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -128,14 +132,15 @@ public class RestaurantsFoodsServiceImplTest {
 		then(this.foodsRepository).should(times(1)).delete(food);
 		then(this.foodsRepository).shouldHaveNoMoreInteractions();
 	}
-	
+
 	@Test
 	public void addFoodToRestaurantShould_throwNotFoundException_whenRestaurantIsNotFound() {
 		given(this.foodOrderData.restaurants()).willReturn(this.restaurantsRepository);
 		given(this.restaurantsRepository.findById("restaurantId")).willReturn(Optional.empty());
-		
-		NotFoundException exc = assertThrows(NotFoundException.class, () -> this.restaurantsFoodsServiceImpl.addFoodToRestaurant("restaurantId", new FoodCreateDto()));
-		
+
+		NotFoundException exc = assertThrows(NotFoundException.class,
+				() -> this.restaurantsFoodsServiceImpl.addFoodToRestaurant("restaurantId", new FoodCreateDto()));
+
 		assertEquals("Restaurant with id restaurantId not found!", exc.getMessage());
 	}
 
@@ -219,7 +224,7 @@ public class RestaurantsFoodsServiceImplTest {
 				() -> this.restaurantsFoodsServiceImpl.addFoodToRestaurant("restaurantId", foodCreateDto));
 		assertEquals("Category belongs to another restaurant", exc.getMessage());
 	}
-	
+
 	@Test
 	public void addFoodToRestaurantShould_saveTheFoodWithCorrectData_whenValidationsPass() {
 		Restaurant restaurant = new Restaurant();
@@ -241,11 +246,11 @@ public class RestaurantsFoodsServiceImplTest {
 		category3.setId("thirdCategoryId");
 		category3.setName("thirdCategoryName");
 		category3.setRestaurant(restaurant);
-		
+
 		Collection<Category> categories = List.of(category, category2, category3);
 		given(this.categoriesRepository.findAllById(any())).willReturn(categories);
 		given(this.foodOrderData.categories()).willReturn(this.categoriesRepository);
-		
+
 		given(this.foodOrderData.foods()).willReturn(this.foodsRepository);
 		given(this.foodsRepository.save(any())).willAnswer(answer -> answer.getArgument(0));
 
@@ -265,31 +270,32 @@ public class RestaurantsFoodsServiceImplTest {
 		foodCreateDto.setName("foodName");
 		foodCreateDto.setPrice(BigDecimal.valueOf(30));
 		foodCreateDto.setDescription("Some long description");
-		
+
 		foodCreateDto.setCategories(Set.of(firstCategory, secondCategory, thirdCategory));
 
 		this.restaurantsFoodsServiceImpl.addFoodToRestaurant("restaurantId", foodCreateDto);
-		
+
 		ArgumentCaptor<Food> argumentCaptor = ArgumentCaptor.forClass(Food.class);
 		then(this.foodsRepository).should(times(1)).save(argumentCaptor.capture());
 		then(this.foodsRepository).shouldHaveNoMoreInteractions();
-		
+
 		Food result = argumentCaptor.getValue();
 		assertEquals(result.getName(), foodCreateDto.getName());
 		assertEquals(result.getDescription(), foodCreateDto.getDescription());
 		assertEquals(result.getPrice(), foodCreateDto.getPrice());
 		assertThat(result.getCategories()).containsAll(categories);
 	}
-	
+
 	@Test
 	public void editFood_throwNotFoundException_whenFoodIsNotFound() {
 		given(this.foodOrderData.foods()).willReturn(this.foodsRepository);
 		given(this.foodsRepository.findById("foodId")).willReturn(Optional.empty());
-		
-	 	NotFoundException exc = assertThrows(NotFoundException.class, () -> this.restaurantsFoodsServiceImpl.editFood("restaurantId", "foodId", new FoodCreateDto()));
-	 	assertEquals("Food with id foodId not found", exc.getMessage());
+
+		NotFoundException exc = assertThrows(NotFoundException.class,
+				() -> this.restaurantsFoodsServiceImpl.editFood("restaurantId", "foodId", new FoodCreateDto()));
+		assertEquals("Food with id foodId not found", exc.getMessage());
 	}
-	
+
 	@Test
 	public void editFood_throwBadRequestException_whenFoodHasNoValidCategories() {
 		Food food = new Food();
@@ -298,185 +304,52 @@ public class RestaurantsFoodsServiceImplTest {
 		given(this.foodOrderData.foods()).willReturn(this.foodsRepository);
 		given(this.categoriesRepository.findByRestaurantId("restaurantId")).willReturn(List.of());
 		given(this.foodOrderData.categories()).willReturn(this.categoriesRepository);
-		
-		BadRequestException exc = assertThrows(BadRequestException.class, () -> this.restaurantsFoodsServiceImpl.editFood("restaurantId", "foodId", new FoodCreateDto()));
-	 	assertEquals("At least one valid category is required.", exc.getMessage());
+
+		BadRequestException exc = assertThrows(BadRequestException.class,
+				() -> this.restaurantsFoodsServiceImpl.editFood("restaurantId", "foodId", new FoodCreateDto()));
+		assertEquals("At least one valid category is required.", exc.getMessage());
 	}
-	
-	@Test
-	public void editFood_saveTheFoodWithAddedCategory_whenValidationsPass() {
+
+	@ParameterizedTest
+	@MethodSource("categoriesMethodSource")
+	public void editFood_saveTheFoodWithAddedAndRemovedCategory_whenValidationsPass(
+			Set<Category> initialCategories,
+			Set<Category> returnedCategories,
+			Set<CategoryDto> edittedCategories,
+			Set<Category> resultCategories) {
 		Food food = new Food();
 		food.setName("name");
 		food.setDescription("description");
 		food.setPrice(BigDecimal.valueOf(15));
-		
-		Category category = new Category();
-		category.setId("firstCategoryId");
-		category.setName("firstCategory");
 
-		Category category2 = new Category();
-		category2.setId("secondCategoryId");
-		category2.setName("secondCategoryName");
-
-		Category category3 = new Category();
-		category3.setId("thirdCategoryId");
-		category3.setName("thirdCategoryName");
-		
-		food.setCategories(new HashSet<>(Set.of(category, category2)));
+		food.setCategories(new HashSet<>(initialCategories));
 		given(this.foodsRepository.findById("foodId")).willReturn(Optional.of(food));
 		given(this.foodOrderData.foods()).willReturn(this.foodsRepository);
 		given(this.foodsRepository.save(any())).willAnswer(answer -> answer.getArgument(0));
-		given(this.categoriesRepository.findByRestaurantId("restaurantId")).willReturn(List.of(category, category2, category3));
+		given(this.categoriesRepository.findByRestaurantId("restaurantId"))
+				.willReturn(returnedCategories);
 		given(this.foodOrderData.categories()).willReturn(this.categoriesRepository);
-		
+
 		FoodCreateDto foodCreateDto = new FoodCreateDto();
 		foodCreateDto.setName("editName");
 		foodCreateDto.setDescription("editDescription");
 		foodCreateDto.setPrice(BigDecimal.valueOf(30));
-		
-		CategoryDto firstCategory = new CategoryDto();
-		firstCategory.setId("firstCategoryId");
-		firstCategory.setName("firstCategory");
 
-		CategoryDto secondCategory = new CategoryDto();
-		secondCategory.setId("secondCategoryId");
-		secondCategory.setName("secondCategoryName");
+		foodCreateDto.setCategories(new HashSet<>(edittedCategories));
 
-		CategoryDto thirdCategory = new CategoryDto();
-		thirdCategory.setId("thirdCategoryId");
-		thirdCategory.setName("thirdCategoryName");
-		
-		foodCreateDto.setCategories(new HashSet<>(Set.of(firstCategory, secondCategory, thirdCategory)));
-		
 		ArgumentCaptor<Food> argumentCaptor = ArgumentCaptor.forClass(Food.class);
-		
+
 		this.restaurantsFoodsServiceImpl.editFood("restaurantId", "foodId", foodCreateDto);
-		
-	 	then(this.foodsRepository).should(times(1)).save(argumentCaptor.capture());
-	 	Food result = argumentCaptor.getValue();
-	 	
-	 	assertEquals(foodCreateDto.getName(), result.getName());
-	 	assertEquals(foodCreateDto.getDescription(), result.getDescription());
-	 	assertEquals(food.getPrice(), result.getPrice());
-	 	assertThat(result.getCategories()).containsAll(List.of(category, category2, category3));
+
+		then(this.foodsRepository).should(times(1)).save(argumentCaptor.capture());
+		Food result = argumentCaptor.getValue();
+
+		assertEquals(foodCreateDto.getName(), result.getName());
+		assertEquals(foodCreateDto.getDescription(), result.getDescription());
+		assertEquals(food.getPrice(), result.getPrice());
+		assertThat(result.getCategories()).containsAll(resultCategories);
 	}
-	
-	@Test
-	public void editFood_saveTheFoodWithRemovedCategory_whenValidationsPass() {
-		Food food = new Food();
-		food.setName("name");
-		food.setDescription("description");
-		food.setPrice(BigDecimal.valueOf(15));
-		
-		Category category = new Category();
-		category.setId("firstCategoryId");
-		category.setName("firstCategory");
 
-		Category category2 = new Category();
-		category2.setId("secondCategoryId");
-		category2.setName("secondCategoryName");
-
-		Category category3 = new Category();
-		category3.setId("thirdCategoryId");
-		category3.setName("thirdCategoryName");
-		
-		food.setCategories(new HashSet<>(Set.of(category, category2, category3)));
-		given(this.foodsRepository.findById("foodId")).willReturn(Optional.of(food));
-		given(this.foodOrderData.foods()).willReturn(this.foodsRepository);
-		given(this.foodsRepository.save(any())).willAnswer(answer -> answer.getArgument(0));
-		given(this.categoriesRepository.findByRestaurantId("restaurantId")).willReturn(List.of(category, category2, category3));
-		given(this.foodOrderData.categories()).willReturn(this.categoriesRepository);
-		
-		FoodCreateDto foodCreateDto = new FoodCreateDto();
-		foodCreateDto.setName("editName");
-		foodCreateDto.setDescription("editDescription");
-		foodCreateDto.setPrice(BigDecimal.valueOf(30));
-		
-		CategoryDto firstCategory = new CategoryDto();
-		firstCategory.setId("firstCategoryId");
-		firstCategory.setName("firstCategory");
-
-		CategoryDto secondCategory = new CategoryDto();
-		secondCategory.setId("secondCategoryId");
-		secondCategory.setName("secondCategoryName");
-
-		CategoryDto thirdCategory = new CategoryDto();
-		thirdCategory.setId("thirdCategoryId");
-		thirdCategory.setName("thirdCategoryName");
-		
-		foodCreateDto.setCategories(new HashSet<>(Set.of(firstCategory, secondCategory)));
-		
-		ArgumentCaptor<Food> argumentCaptor = ArgumentCaptor.forClass(Food.class);
-		
-		this.restaurantsFoodsServiceImpl.editFood("restaurantId", "foodId", foodCreateDto);
-		
-	 	then(this.foodsRepository).should(times(1)).save(argumentCaptor.capture());
-	 	Food result = argumentCaptor.getValue();
-	 	
-	 	assertEquals(foodCreateDto.getName(), result.getName());
-	 	assertEquals(foodCreateDto.getDescription(), result.getDescription());
-	 	assertEquals(food.getPrice(), result.getPrice());
-	 	assertThat(result.getCategories()).containsAll(List.of(category, category2));
-	}
-	
-	@Test
-	public void editFood_saveTheFoodWithAddedAndRemovedCategory_whenValidationsPass() {
-		Food food = new Food();
-		food.setName("name");
-		food.setDescription("description");
-		food.setPrice(BigDecimal.valueOf(15));
-		
-		Category category = new Category();
-		category.setId("firstCategoryId");
-		category.setName("firstCategory");
-
-		Category category2 = new Category();
-		category2.setId("secondCategoryId");
-		category2.setName("secondCategoryName");
-
-		Category category3 = new Category();
-		category3.setId("thirdCategoryId");
-		category3.setName("thirdCategoryName");
-		
-		food.setCategories(new HashSet<>(Set.of(category)));
-		given(this.foodsRepository.findById("foodId")).willReturn(Optional.of(food));
-		given(this.foodOrderData.foods()).willReturn(this.foodsRepository);
-		given(this.foodsRepository.save(any())).willAnswer(answer -> answer.getArgument(0));
-		given(this.categoriesRepository.findByRestaurantId("restaurantId")).willReturn(List.of(category, category2, category3));
-		given(this.foodOrderData.categories()).willReturn(this.categoriesRepository);
-		
-		FoodCreateDto foodCreateDto = new FoodCreateDto();
-		foodCreateDto.setName("editName");
-		foodCreateDto.setDescription("editDescription");
-		foodCreateDto.setPrice(BigDecimal.valueOf(30));
-		
-		CategoryDto firstCategory = new CategoryDto();
-		firstCategory.setId("firstCategoryId");
-		firstCategory.setName("firstCategory");
-
-		CategoryDto secondCategory = new CategoryDto();
-		secondCategory.setId("secondCategoryId");
-		secondCategory.setName("secondCategoryName");
-
-		CategoryDto thirdCategory = new CategoryDto();
-		thirdCategory.setId("thirdCategoryId");
-		thirdCategory.setName("thirdCategoryName");
-		
-		foodCreateDto.setCategories(new HashSet<>(Set.of(secondCategory)));
-		
-		ArgumentCaptor<Food> argumentCaptor = ArgumentCaptor.forClass(Food.class);
-		
-		this.restaurantsFoodsServiceImpl.editFood("restaurantId", "foodId", foodCreateDto);
-		
-	 	then(this.foodsRepository).should(times(1)).save(argumentCaptor.capture());
-	 	Food result = argumentCaptor.getValue();
-	 	
-	 	assertEquals(foodCreateDto.getName(), result.getName());
-	 	assertEquals(foodCreateDto.getDescription(), result.getDescription());
-	 	assertEquals(food.getPrice(), result.getPrice());
-	 	assertThat(result.getCategories()).containsAll(List.of(category2));
-	}
-	
 	@Test
 	public void editFood_returnCorrectData_whenValidationsPass() {
 		Food food = new Food();
@@ -484,7 +357,7 @@ public class RestaurantsFoodsServiceImplTest {
 		food.setName("name");
 		food.setDescription("description");
 		food.setPrice(BigDecimal.valueOf(15));
-		
+
 		Category category = new Category();
 		category.setId("firstCategoryId");
 		category.setName("firstCategory");
@@ -496,19 +369,20 @@ public class RestaurantsFoodsServiceImplTest {
 		Category category3 = new Category();
 		category3.setId("thirdCategoryId");
 		category3.setName("thirdCategoryName");
-		
+
 		food.setCategories(new HashSet<>(Set.of(category)));
 		given(this.foodsRepository.findById("foodId")).willReturn(Optional.of(food));
 		given(this.foodOrderData.foods()).willReturn(this.foodsRepository);
 		given(this.foodsRepository.save(any())).willAnswer(answer -> answer.getArgument(0));
-		given(this.categoriesRepository.findByRestaurantId("restaurantId")).willReturn(List.of(category, category2, category3));
+		given(this.categoriesRepository.findByRestaurantId("restaurantId"))
+				.willReturn(List.of(category, category2, category3));
 		given(this.foodOrderData.categories()).willReturn(this.categoriesRepository);
-		
+
 		FoodCreateDto foodCreateDto = new FoodCreateDto();
 		foodCreateDto.setName("editName");
 		foodCreateDto.setDescription("editDescription");
 		foodCreateDto.setPrice(BigDecimal.valueOf(30));
-		
+
 		CategoryDto firstCategory = new CategoryDto();
 		firstCategory.setId("firstCategoryId");
 		firstCategory.setName("firstCategory");
@@ -520,16 +394,79 @@ public class RestaurantsFoodsServiceImplTest {
 		CategoryDto thirdCategory = new CategoryDto();
 		thirdCategory.setId("thirdCategoryId");
 		thirdCategory.setName("thirdCategoryName");
-		
+
 		foodCreateDto.setCategories(new HashSet<>(Set.of(secondCategory)));
-		
-		
+
 		FoodDto result = this.restaurantsFoodsServiceImpl.editFood("restaurantId", "foodId", foodCreateDto);
-		
+
 		assertEquals(result.getId(), food.getId());
 		assertEquals(result.getName(), food.getName());
 		assertEquals(result.getDescription(), food.getDescription());
 		assertEquals(result.getPrice(), food.getPrice().doubleValue());
-		assertTrue(food.getCategories().stream().allMatch(c -> result.getCategories().stream().anyMatch(rc -> rc.getId().equals(c.getId()))));
+		assertTrue(food.getCategories().stream()
+				.allMatch(c -> result.getCategories().stream().anyMatch(rc -> rc.getId().equals(c.getId()))));
+	}
+
+	private static Stream<Arguments> categoriesMethodSource() {
+		Category category = new Category();
+		category.setId("firstCategoryId");
+		category.setName("firstCategory");
+
+		Category category2 = new Category();
+		category2.setId("secondCategoryId");
+		category2.setName("secondCategoryName");
+
+		Category category3 = new Category();
+		category3.setId("thirdCategoryId");
+		category3.setName("thirdCategoryName");
+
+		FoodCreateDto foodCreateDto = new FoodCreateDto();
+		foodCreateDto.setName("editName");
+		foodCreateDto.setDescription("editDescription");
+		foodCreateDto.setPrice(BigDecimal.valueOf(30));
+
+		CategoryDto firstCategory = new CategoryDto();
+		firstCategory.setId("firstCategoryId");
+		firstCategory.setName("firstCategory");
+
+		CategoryDto secondCategory = new CategoryDto();
+		secondCategory.setId("secondCategoryId");
+		secondCategory.setName("secondCategoryName");
+
+		CategoryDto thirdCategory = new CategoryDto();
+		thirdCategory.setId("thirdCategoryId");
+		thirdCategory.setName("thirdCategoryName");
+
+		final Set<Category> firstCaseInitialCategories = Set.of(category, category2);
+		final Set<Category> secondCaseInitialCategories = Set.of(category, category2, category3);
+		final Set<Category> thirdCaseInitialCategories = Set.of(category);
+		final Set<Category> fourthCaseInitialCategories = Set.of(category, category3);
+		final Set<Category> fifthCaseInitialCategories = Set.of(category2);
+
+		final Set<Category> returnedFromRepositoryCategories = Set.of(category, category2, category3);
+
+		final Set<CategoryDto> firstCaseEdittedCategories = Set.of(firstCategory, secondCategory, thirdCategory);
+		final Set<CategoryDto> secondCaseEdittedCategories = Set.of(firstCategory, secondCategory);
+		final Set<CategoryDto> thirdCaseEdittedCategories = Set.of(secondCategory);
+		final Set<CategoryDto> fourthCaseEdittedCategories = Set.of(secondCategory, firstCategory);
+		final Set<CategoryDto> fifthCaseEdittedCategories = Set.of(secondCategory, firstCategory, thirdCategory);
+
+		final Set<Category> firstCaseResultCategories = Set.of(category, category2, category3);
+		final Set<Category> secondCaseResultCategories = Set.of(category, category2);
+		final Set<Category> thirdCaseResultCategories = Set.of(category2);
+		final Set<Category> fourthCaseResultCategories = Set.of(category2, category);
+		final Set<Category> fifthCaseResultCategories = Set.of(category2, category, category3);
+
+		return Stream.of(
+				Arguments.of(firstCaseInitialCategories, returnedFromRepositoryCategories, firstCaseEdittedCategories,
+						firstCaseResultCategories),
+				Arguments.of(secondCaseInitialCategories, returnedFromRepositoryCategories,
+						secondCaseEdittedCategories, secondCaseResultCategories),
+				Arguments.of(thirdCaseInitialCategories, returnedFromRepositoryCategories, thirdCaseEdittedCategories,
+						thirdCaseResultCategories),
+				Arguments.of(fourthCaseInitialCategories, returnedFromRepositoryCategories, fourthCaseEdittedCategories,
+						fourthCaseResultCategories),
+				Arguments.of(fifthCaseInitialCategories, returnedFromRepositoryCategories, fifthCaseEdittedCategories,
+						fifthCaseResultCategories));
 	}
 }
