@@ -39,35 +39,41 @@ public class RestaurantsOrdersServiceImpl implements RestaurantsOrdersService {
 
 	@Override
 	public Page<OrderDto> getRestaurantOrders(String restaurantId, Pageable pageable) {
-		return this.foodOrderData.orders().findByRestaurantId(restaurantId, pageable)
+		return this.foodOrderData.orders()
+				.findByRestaurantId(restaurantId, pageable)
 				.map(order -> this.mapper.map(order, OrderDto.class));
 	}
 
 	@Override
 	public OrderDto getRestaurantOrder(String restaurantId, String orderId) {
-		Order order = this.foodOrderData.orders().findById(orderId)
+		return this.foodOrderData.orders()
+				.findById(orderId)
+				.stream()
+				.peek(order -> {
+					if (!restaurantId.equals(order.getRestaurant().getId())) {
+						throw new NotFoundException("No such order found for restaurant.");
+					}
+				})
+				.map(order -> this.mapper.map(order, OrderDto.class))
+				.findFirst()
 				.orElseThrow(() -> new NotFoundException("Order not found!"));
-
-		if (!restaurantId.equals(order.getRestaurant().getId())) {
-			throw new NotFoundException("No such order found for restaurant.");
-		}
-
-		return this.mapper.map(order, OrderDto.class);
 	}
 
 	@Override
 	public OrderStatusDto updateRestaurantOrderStatus(String restaurantId, String orderId,
 			OrderStatusDto orderStatusDto) {
-		Order order = this.foodOrderData.orders().findById(orderId)
+		Order order = this.foodOrderData.orders()
+				.findById(orderId)
 				.filter(restaurantOrder -> restaurantId.equals(restaurantOrder.getRestaurant().getId()))
-				.orElseThrow(() -> new BadRequestException("No such order found for restaurant!"));
+				.orElseThrow(() -> new NotFoundException("No such order found for restaurant!"));
 
 		order.setStatus(orderStatusDto.getStatus());
 
 		OrderStatusDto result = new OrderStatusDto(this.foodOrderData.orders().save(order).getStatus());
 
-		this.messagingTemplate.convertAndSend(MessageFormat.format("/notifications/customers/{0}/orders/{1}",
-				order.getCustomer().getId(), order.getId()), result);
+		String destination = MessageFormat.format("/notifications/customers/{0}/orders/{1}",
+				order.getCustomer().getId(), order.getId());
+		this.messagingTemplate.convertAndSend(destination, result);
 
 		return result;
 	}
@@ -75,7 +81,8 @@ public class RestaurantsOrdersServiceImpl implements RestaurantsOrdersService {
 	@Override
 	public Collection<GraphData<LocalDate, Long>> getOrderMonthlyGraphData(String restaurantId, int year, int month) {
 		Collection<GraphData<LocalDate, Long>> result = this.foodOrderData.orders()
-				.getOrderMonthlyGraphData(restaurantId, month, year).stream()
+				.getOrderMonthlyGraphData(restaurantId, month, year)
+				.stream()
 				.map(graphData -> new GraphData<LocalDate, Long>(graphData.getX().toLocalDate(), graphData.getY()))
 				.collect(Collectors.toList());
 
@@ -93,8 +100,8 @@ public class RestaurantsOrdersServiceImpl implements RestaurantsOrdersService {
 
 	@Override
 	public Collection<GraphData<String, Long>> getYearlyGraphData(String restaurantId, int year) {
-		Collection<GraphData<Integer, Long>> result = this.foodOrderData.orders().getYearlyGraphData(restaurantId,
-				year);
+		Collection<GraphData<Integer, Long>> result = this.foodOrderData.orders()
+				.getYearlyGraphData(restaurantId, year);
 
 		for (int i = 1; i <= 12; i++) {
 			int current = i;
@@ -103,8 +110,11 @@ public class RestaurantsOrdersServiceImpl implements RestaurantsOrdersService {
 			}
 		}
 
-		return result.stream().sorted(Comparator.comparing(GraphData::getX))
-				.map(graphData -> new GraphData<String, Long>(this.dateService.getMonthName(graphData.getX()),
+		return result
+				.stream()
+				.sorted(Comparator.comparing(GraphData::getX))
+				.map(graphData -> new GraphData<String, Long>(
+						this.dateService.getMonthName(graphData.getX()),
 						graphData.getY()))
 				.collect(Collectors.toList());
 	}

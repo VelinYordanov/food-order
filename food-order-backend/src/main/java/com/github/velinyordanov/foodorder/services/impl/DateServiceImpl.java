@@ -4,6 +4,7 @@ import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
+import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class DateServiceImpl implements DateService {
 
 	@Override
 	public String getMonthName(int month) {
-		return new DateFormatSymbols().getMonths()[month - 1];
+		return new DateFormatSymbols(Locale.ENGLISH).getMonths()[month - 1];
 	}
 
 	@Override
