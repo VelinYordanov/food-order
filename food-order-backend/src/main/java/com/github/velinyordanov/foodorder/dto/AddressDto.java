@@ -1,41 +1,18 @@
 package com.github.velinyordanov.foodorder.dto;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import com.github.velinyordanov.foodorder.enums.AddressType;
 import com.github.velinyordanov.foodorder.enums.City;
-import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
 
 public class AddressDto {
 	private String id;
-
-	@NotNull(message = EMPTY_CITY)
 	private City city;
-
-	@NotNull(message = EMPTY_ADDRESS_TYPE)
 	private AddressType addressType;
-
-	@Size(min = MIN_LENGTH_NEIGHBORHOOD, max = MAX_LENGTH_NEIGHBORHOOD, message = NEIGHBORHOOD_OUT_OF_BOUNDS)
 	private String neighborhood;
-
-	@Size(min = MIN_LENGTH_STREET, max = MAX_LENGTH_STREET, message = STREET_OUT_OF_BOUNDS)
 	private String street;
-
-	@Size(min = MIN_LENGTH_STREET_NUMBER, max = MAX_LENGTH_STREET_NUMBER, message = STREET_NUMBER_OUT_OF_BOUNDS)
 	private String streetNumber;
-
-	@Size(min = MIN_LENGTH_APARTMENT_BUILDING_NUMBER, max = MAX_LENGTH_APARTMENT_BUILDING_NUMBER, message = APARTMENT_BUILDING_NUMBER_OUT_OF_BOUNDS)
 	private String apartmentBuildingNumber;
-
-	@Size(min = MIN_LENGTH_ENTRANCE, max = MAX_LENGTH_ENTRANCE, message = ENTRANCE_OUT_OF_BOUNDS)
 	private String entrance;
-
-	@Min(value = 0, message = FLOOR_NEGATIVE)
 	private Byte floor;
-
-	@Size(min = MIN_LENGTH_APARTMENT_NUMBER, max = MAX_LENGTH_APARTMENT_NUMBER, message = APARTMENT_NUMBER_OUT_OF_BOUNDS)
 	private String apartmentNumber;
 
 	public City getCity() {

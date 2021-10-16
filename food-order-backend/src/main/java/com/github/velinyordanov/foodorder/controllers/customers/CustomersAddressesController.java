@@ -36,7 +36,7 @@ public class CustomersAddressesController {
 
 	@PutMapping("{addressId}")
 	public AddressDto updateAddress(@PathVariable String customerId, @PathVariable String addressId,
-			@RequestBody @Valid AddressDto address) {
+			@RequestBody @Valid AddressCreateDto address) {
 		return this.customersAddressesService.editAddress(customerId, addressId, address);
 	}
 

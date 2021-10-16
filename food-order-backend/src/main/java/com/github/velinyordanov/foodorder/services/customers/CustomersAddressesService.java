@@ -8,7 +8,7 @@ import com.github.velinyordanov.foodorder.dto.AddressDto;
 public interface CustomersAddressesService {
 	AddressDto addAddressToCustomer(String customerId, AddressCreateDto address);
 
-	AddressDto editAddress(String customerId, String addressId, AddressDto address);
+	AddressDto editAddress(String customerId, String addressId, AddressCreateDto address);
 
 	Collection<AddressDto> getAddressesForCustomer(String customerId);
 
