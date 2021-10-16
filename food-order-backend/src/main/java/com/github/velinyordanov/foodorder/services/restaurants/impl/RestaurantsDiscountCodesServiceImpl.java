@@ -115,7 +115,7 @@ public class RestaurantsDiscountCodesServiceImpl implements RestaurantsDiscountC
 				throw new BadRequestException("Cannot disable single use as the discount code has been used.");
 			}
 
-			boolean userHasMoreThan1OrdersWithDiscountCode = code.getOrders()
+			boolean userHasMoreThanOneOrderWithDiscountCode = code.getOrders()
 					.stream()
 					.collect(Collectors.groupingBy(x -> x.getCustomer().getId(), Collectors.counting()))
 					.values()
@@ -124,7 +124,7 @@ public class RestaurantsDiscountCodesServiceImpl implements RestaurantsDiscountC
 					.findAny()
 					.isPresent();
 
-			if (discountCode.getIsOncePerUser() && userHasMoreThan1OrdersWithDiscountCode) {
+			if (discountCode.getIsOncePerUser() && userHasMoreThanOneOrderWithDiscountCode) {
 				throw new BadRequestException(
 						"Cannot enable once per user as users have used the discount code more than once already");
 			}
