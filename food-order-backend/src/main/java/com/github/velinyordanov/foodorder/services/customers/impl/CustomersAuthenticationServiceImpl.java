@@ -45,28 +45,23 @@ public class CustomersAuthenticationServiceImpl implements CustomersAuthenticati
 	@Override
 	@Transactional
 	public String registerCustomer(@Valid CustomerRegisterDto user) {
-		if (this.foodOrderData.customers().existsByEmailOrPhoneNumber(user.getEmail(), user.getPhoneNumber())) {
+		if (this.foodOrderData.customers()
+				.existsByEmailOrPhoneNumber(user.getEmail(), user.getPhoneNumber())) {
 			throw new DuplicateUserException("Customer with this email or phone number already exists");
 		}
 
 		Customer customer = this.mapper.map(user, Customer.class);
 		customer.setPassword(this.encoder.encode(user.getPassword()));
-		Optional<Authority> authorityOptional = this.foodOrderData.authorities().findFirstByAuthority("ROLE_CUSTOMER");
-		Authority authority = null;
-		if (authorityOptional.isPresent()) {
-			authority = authorityOptional.get();
-		} else {
-			authority = new Authority();
-			authority.setAuthority("ROLE_CUSTOMER");
-		}
+		Authority authority = this.foodOrderData.authorities()
+				.findFirstByAuthority("ROLE_CUSTOMER")
+				.orElseGet(() -> {
+					Authority roleCustomer = new Authority();
+					roleCustomer.setAuthority("ROLE_CUSTOMER");
+					return roleCustomer;
+				});
 
-		Set<Authority> authorities = new HashSet<>();
-		authorities.add(authority);
-		authority.getCustomers().add(customer);
-		customer.setAuthorities(authorities);
-
-		Customer savedRestaurant = this.foodOrderData.customers().save(customer);
-		return this.jwtTokenService.generateToken(savedRestaurant);
+		customer.addAuthority(authority);
+		return this.jwtTokenService.generateToken(this.foodOrderData.customers().save(customer));
 	}
 
 	@Override

@@ -51,6 +51,11 @@ public class Customer extends BaseUser {
 		this.setOrders(new HashSet<>());
 		this.setAddresses(new HashSet<>());
 	}
+	
+	public void addAuthority(Authority authority) {
+		this.authorities.add(authority);
+		authority.getCustomers().add(this);
+	}
 
 	public String getName() {
 		return name;
