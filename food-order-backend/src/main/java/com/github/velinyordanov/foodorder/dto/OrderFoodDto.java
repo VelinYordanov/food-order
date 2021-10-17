@@ -8,7 +8,7 @@ public class OrderFoodDto {
 		return id;
 	}
 
-	public void seId(String foodId) {
+	public void setId(String foodId) {
 		this.id = foodId;
 	}
 

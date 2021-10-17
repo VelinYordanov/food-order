@@ -48,29 +48,28 @@ public class CustomersOrdersServiceImpl implements CustomersOrdersService {
 
 		Customer customer = this.foodOrderData.customers()
 				.findById(customerId)
-				.orElseThrow(() -> new DuplicateCustomerException("Customer not found"));
-		
+				.orElseThrow(() -> new NotFoundException("Customer not found"));
+
 		if (customer.getOrders()
 				.stream()
-				.anyMatch(customerOrder ->
-						Status.Pending.equals(customerOrder.getStatus()) ||
+				.anyMatch(customerOrder -> Status.Pending.equals(customerOrder.getStatus()) ||
 						Status.Accepted.equals(customerOrder.getStatus()))) {
-			throw new ExistingUnfinishedOrderException("You already have a pending order. If you wish to make changes contact us.");
+			throw new ExistingUnfinishedOrderException(
+					"You already have a pending order. If you wish to make changes contact us.");
 		}
 
-		Address address = this.foodOrderData.addresses().findById(order.getAddressId())
+		this.foodOrderData.addresses()
+				.findByIdAndCustomerId(order.getAddressId(), customerId)
 				.orElseThrow(() -> new NotFoundException("No such address found"));
 
-		if (!order.getCustomerId().equals(address.getCustomer().getId())) {
-			throw new NotFoundException("No such address found");
-		}
-
-		this.foodOrderData.restaurants().findById(order.getRestaurantId())
+		this.foodOrderData.restaurants()
+				.findById(order.getRestaurantId())
 				.orElseThrow(() -> new NotFoundException("No such restaurant found"));
 
 		Collection<Food> restaurantFoods = this.foodOrderData.foods().findByRestaurantId(order.getRestaurantId());
 
-		if (!order.getFoods().stream()
+		if (!order.getFoods()
+				.stream()
 				.allMatch(food -> restaurantFoods.stream().anyMatch(f -> f.getId().equals(food.getId())))) {
 			throw new NotFoundException("No such food found");
 		}
@@ -78,7 +77,8 @@ public class CustomersOrdersServiceImpl implements CustomersOrdersService {
 		Order orderToAdd = this.mapper.map(order, Order.class);
 
 		if (order.getDiscountCodeId() != null) {
-			DiscountCode discountCode = this.foodOrderData.discountCodes().findById(order.getDiscountCodeId())
+			DiscountCode discountCode = this.foodOrderData.discountCodes()
+					.findById(order.getDiscountCodeId())
 					.orElseThrow(() -> new NotFoundException("Discount code not found"));
 
 			this.discountCodesService.validateDiscountCode(discountCode, customerId);
@@ -88,25 +88,24 @@ public class CustomersOrdersServiceImpl implements CustomersOrdersService {
 
 		OrderDto result = this.mapper.map(this.foodOrderData.orders().save(orderToAdd), OrderDto.class);
 		this.messagingTemplate.convertAndSend(
-				MessageFormat.format("/notifications/restaurants/{0}/orders", result.getRestaurant().getId()), result);
+				MessageFormat.format("/notifications/restaurants/{0}/orders", result.getRestaurant().getId()),
+				result);
+		
 		return result;
 	}
 
 	@Override
 	public Page<OrderDto> getCustomerOrders(String customerId, Pageable pageable) {
-		return this.foodOrderData.orders().findByCustomerId(customerId, pageable)
+		return this.foodOrderData.orders()
+				.findByCustomerId(customerId, pageable)
 				.map(order -> this.mapper.map(order, OrderDto.class));
 	}
 
 	@Override
 	public OrderDto getCustomerOrder(String customerId, String orderId) {
-		Order order = this.foodOrderData.orders().findById(orderId)
+		return this.foodOrderData.orders()
+				.findByIdAndCustomerId(orderId, customerId)
+				.map(order -> this.mapper.map(order, OrderDto.class))
 				.orElseThrow(() -> new NotFoundException("Order not found"));
-
-		if (!customerId.equals(order.getCustomer().getId())) {
-			throw new NotFoundException("Order not found for customer");
-		}
-
-		return this.mapper.map(order, OrderDto.class);
 	}
 }

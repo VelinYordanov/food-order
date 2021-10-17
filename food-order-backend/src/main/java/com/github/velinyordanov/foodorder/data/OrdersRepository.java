@@ -2,6 +2,7 @@ package com.github.velinyordanov.foodorder.data;
 
 import java.sql.Date;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,10 @@ public interface OrdersRepository extends BaseRepository<Order> {
 	@Transactional(readOnly = true)
 	@Query("select e from #{#entityName} e where e.customer.id = ?1 and e.isDeleted = false")
 	Page<Order> findByCustomerId(String customerId, Pageable pageable);
+	
+	@Transactional(readOnly = true)
+	@Query("select e from #{#entityName} e where e.id = ?1 e.customer.id = ?2 and e.isDeleted = false")
+	Optional<Order> findByIdAndCustomerId(String id, String customerId);
 
 	@Transactional(readOnly = true)
 	@Query("select e from #{#entityName} e where e.restaurant.id = ?1 and e.isDeleted = false")
