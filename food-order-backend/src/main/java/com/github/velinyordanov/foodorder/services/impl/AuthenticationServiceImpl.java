@@ -46,11 +46,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return Optional.empty();
 		}
 
-		if (user.getAuthorities().stream().filter(authority -> "ROLE_RESTAURANT".equals(authority)).findAny()
+		if (user.getAuthorities()
+				.stream()
+				.filter(authority -> "ROLE_RESTAURANT".equals(authority))
+				.findAny()
 				.isPresent()) {
 			Optional<UsernamePasswordAuthenticationToken> tokenOptional = this.restaurantsAuthenticationService
-					.findById(user.getId()).map(restaurant -> new UsernamePasswordAuthenticationToken(restaurant,
-							restaurant.getPassword(), restaurant.getAuthorities()));
+					.findById(user.getId())
+					.map(restaurant -> new UsernamePasswordAuthenticationToken(
+							restaurant,
+							restaurant.getPassword(),
+							restaurant.getAuthorities()));
 			;
 
 			if (tokenOptional.isEmpty()) {
@@ -60,11 +66,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return tokenOptional;
 		}
 
-		if (user.getAuthorities().stream().filter(authority -> "ROLE_CUSTOMER".equals(authority)).findAny()
+		if (user.getAuthorities()
+				.stream()
+				.filter(authority -> "ROLE_CUSTOMER".equals(authority))
+				.findAny()
 				.isPresent()) {
 			Optional<UsernamePasswordAuthenticationToken> tokenOptional = this.customersAuthenticationService
-					.findById(user.getId()).map(customer -> new UsernamePasswordAuthenticationToken(customer,
-							customer.getPassword(), customer.getAuthorities()));
+					.findById(user.getId())
+					.map(customer -> new UsernamePasswordAuthenticationToken(
+							customer,
+							customer.getPassword(),
+							customer.getAuthorities()));
 
 			if (tokenOptional.isEmpty()) {
 				logger.error("Authentication failed! Customer with id " + user.getId() + " not found!");
