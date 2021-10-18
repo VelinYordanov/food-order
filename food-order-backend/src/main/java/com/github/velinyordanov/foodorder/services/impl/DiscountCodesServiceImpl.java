@@ -34,14 +34,14 @@ public class DiscountCodesServiceImpl implements DiscountCodesService {
 					MessageFormat.format("Discount code {0} was already used.", discountCode.getCode()));
 		}
 
-		boolean hasCustomerUserThisCodeBefore = discountCode.getOrders()
+		boolean hasCustomerUsedThisCodeBefore = discountCode.getOrders()
 				.stream()
 				.map(order -> order.getCustomer().getId())
 				.filter(id -> id.equals(customerId))
 				.findFirst()
 				.isPresent();
 
-		if (discountCode.getIsOncePerUser() && hasCustomerUserThisCodeBefore) {
+		if (discountCode.getIsOncePerUser() && hasCustomerUsedThisCodeBefore) {
 			throw new BadRequestException(
 					MessageFormat.format("You have already used code {0}.", discountCode.getCode()));
 		}
