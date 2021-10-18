@@ -17,7 +17,10 @@ public class RestaurantsUserDetailsServiceImpl implements RestaurantsUserDetails
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		return this.restaurantsRepository.findByEmail(email).orElseThrow(
-				() -> new UsernameNotFoundException("Could not find restaurant with this username and password"));
+		return this.restaurantsRepository
+				.findByEmail(email)
+				.orElseThrow(
+						() -> new UsernameNotFoundException(
+								"Could not find restaurant with this username and password"));
 	}
 }
