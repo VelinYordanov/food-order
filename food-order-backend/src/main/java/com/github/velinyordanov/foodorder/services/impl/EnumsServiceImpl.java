@@ -13,7 +13,9 @@ import com.github.velinyordanov.foodorder.services.EnumsService;
 public class EnumsServiceImpl implements EnumsService {
 	@Override
 	public <T extends Enum<T>> Collection<EnumDto> getEnumOptions(Class<T> valueClass) {
-		return EnumSet.allOf(valueClass).stream().map(x -> new EnumDto(x.ordinal(), x.name()))
+		return EnumSet.allOf(valueClass)
+				.stream()
+				.map(x -> new EnumDto(x.ordinal(), x.name()))
 				.collect(Collectors.toList());
 	}
 }
