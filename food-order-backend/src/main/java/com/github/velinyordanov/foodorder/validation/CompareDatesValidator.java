@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import com.github.velinyordanov.foodorder.validation.annotations.CompareDates;
 
 public class CompareDatesValidator implements ConstraintValidator<CompareDates, Object> {
-	private static final Log LOGGER = LogFactory.getLog(NotDisposableEmailValidator.class);
+	private static final Log LOGGER = LogFactory.getLog(CompareDatesValidator.class);
 
 	private String beforeFieldName;
 	private String afterFieldName;
@@ -35,8 +35,7 @@ public class CompareDatesValidator implements ConstraintValidator<CompareDates, 
 			final LocalDate beforeDate = (LocalDate) beforeDateField.get(value);
 			final LocalDate afterDate = (LocalDate) afterDateField.get(value);
 
-			return beforeDate == null && afterDate == null ||
-					beforeDate != null && afterDate.isAfter(beforeDate);
+			return (beforeDate != null && afterDate != null) && afterDate.isAfter(beforeDate);
 		} catch (final Exception e) {
 			LOGGER.error("An error occurred while validating dates.", e);
 
