@@ -39,6 +39,7 @@ public class NotDisposableEmailValidator implements ConstraintValidator<NotDispo
 
 			return "false".equals(response.getDisposable());
 		} catch (RestClientException e) {
+			LOGGER.warn("An error occurred with the request for disposable email validation for email " + value);
 			// Do not want to stop registration if api is offline
 			return true;
 		}
