@@ -44,6 +44,10 @@ public abstract class BaseUser extends BaseEntity implements UserDetails {
 		this.setCredentialsNonExpired(true);
 		this.setEnabled(true);
 	}
+	
+	public abstract String getName();
+	
+	public abstract void setName(String name);
 
 	@Override
 	public String getUsername() {
