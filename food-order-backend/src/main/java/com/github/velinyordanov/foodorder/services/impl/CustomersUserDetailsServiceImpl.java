@@ -17,7 +17,8 @@ public class CustomersUserDetailsServiceImpl implements CustomersUserDetailsServ
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		return this.customersRepository.findByEmail(email)
+		return this.customersRepository
+				.findByEmail(email)
 				.orElseThrow(
 						() -> new UsernameNotFoundException("Could not find user with this username and password"));
 	}
