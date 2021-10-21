@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.github.velinyordanov.foodorder.data.entities.Address;
 import com.github.velinyordanov.foodorder.data.entities.Customer;
+import com.github.velinyordanov.foodorder.data.entities.DiscountCode;
 import com.github.velinyordanov.foodorder.data.entities.Food;
 import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.data.entities.OrderFood;
@@ -31,6 +32,12 @@ public class OrderCreateDtoToOrderConverter extends AbstractConverter<OrderCreat
 		restaurant.setId(source.getRestaurantId());
 		result.setRestaurant(restaurant);
 		result.setComment(source.getComment());
+
+		if (source.getDiscountCodeId() != null) {
+			DiscountCode discountCode = new DiscountCode();
+			discountCode.setId(source.getDiscountCodeId());
+			result.setDiscountCode(discountCode);
+		}
 
 		result.setFoods(source.getFoods().stream().map(foodDto -> {
 			OrderFood orderFood = new OrderFood();
