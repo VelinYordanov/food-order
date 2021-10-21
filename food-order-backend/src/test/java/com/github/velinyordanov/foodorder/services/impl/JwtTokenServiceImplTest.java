@@ -96,7 +96,7 @@ public class JwtTokenServiceImplTest {
 				.setClaims(claims)
 				.setSubject("customerId")
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000))
+				.setExpiration(new Date(System.currentTimeMillis() + 10000))
 				.signWith(SignatureAlgorithm.HS512, "secret")
 				.compact();
 
