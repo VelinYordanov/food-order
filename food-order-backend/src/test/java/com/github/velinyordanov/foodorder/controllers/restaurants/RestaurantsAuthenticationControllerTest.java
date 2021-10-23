@@ -44,6 +44,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.velinyordanov.foodorder.dto.DisposableEmailValidationApiResponse;
 import com.github.velinyordanov.foodorder.dto.RestaurantRegisterDto;
+import com.github.velinyordanov.foodorder.dto.UserLoginDto;
 import com.github.velinyordanov.foodorder.security.CustomerAuthenticationProvider;
 import com.github.velinyordanov.foodorder.security.RestaurantAuthenticationProvider;
 import com.github.velinyordanov.foodorder.services.AuthenticationService;
@@ -74,7 +75,7 @@ public class RestaurantsAuthenticationControllerTest {
 	private RestTemplate restTemplate;
 
 	@ParameterizedTest
-	@MethodSource("getValidationArguments")
+	@MethodSource
 	public void registerShould_returnBadRequestWithCorrectData_whenRestaurantRegisterDtoHasValidationErrors(
 			String fieldName, String value, Collection<String> expectedErrors) throws Exception {
 		RestaurantRegisterDto restaurantRegisterDto = new RestaurantRegisterDto();
@@ -107,7 +108,36 @@ public class RestaurantsAuthenticationControllerTest {
 
 		then(this.restaurantsAuthenticationService).shouldHaveNoInteractions();
 	}
-	
+
+	@Test
+	public void registerShould_returnBadRequestWithCorrectData_whenRestaurantRegisterDtoHasDisposableEmail()
+			throws Exception {
+		RestaurantRegisterDto restaurantRegisterDto = new RestaurantRegisterDto();
+		restaurantRegisterDto.setPassword("validPassword123");
+		restaurantRegisterDto.setName("validName");
+		restaurantRegisterDto.setEmail("disposableEmail@asd.com");
+
+		DisposableEmailValidationApiResponse response = new DisposableEmailValidationApiResponse();
+		response.setDisposable("true");
+		given(this.restTemplate.getForObject(
+				any(),
+				eq(DisposableEmailValidationApiResponse.class),
+				eq(Collections.singletonMap("email", restaurantRegisterDto.getEmail()))))
+						.willReturn(response);
+
+		MvcResult mvcResult = mockMvc.perform(post("/restaurants")
+				.contentType("application/json")
+				.content(this.objectMapper.writeValueAsString(restaurantRegisterDto)))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.title", is("Validation errors")))
+				.andExpect(jsonPath("$.description", is("Disposable emails are not allowed.")))
+				.andReturn();
+
+		assertEquals(MethodArgumentNotValidException.class, mvcResult.getResolvedException().getClass());
+
+		then(this.restaurantsAuthenticationService).shouldHaveNoInteractions();
+	}
+
 	@Test
 	public void registerShould_returnOk_whenRestaurantRegisterDtoIsValid() throws JsonProcessingException, Exception {
 		RestaurantRegisterDto restaurantRegisterDto = new RestaurantRegisterDto();
@@ -115,7 +145,7 @@ public class RestaurantsAuthenticationControllerTest {
 		restaurantRegisterDto.setName("validName");
 		restaurantRegisterDto.setEmail("validEmail@asd.com");
 		restaurantRegisterDto.setDescription("description");
-		
+
 		DisposableEmailValidationApiResponse response = new DisposableEmailValidationApiResponse();
 		response.setDisposable("false");
 		given(this.restTemplate.getForObject(
@@ -123,17 +153,61 @@ public class RestaurantsAuthenticationControllerTest {
 				eq(DisposableEmailValidationApiResponse.class),
 				eq(Collections.singletonMap("email", restaurantRegisterDto.getEmail()))))
 						.willReturn(response);
-		
+
 		mockMvc.perform(post("/restaurants")
 				.contentType("application/json")
 				.content(this.objectMapper.writeValueAsString(restaurantRegisterDto)))
 				.andExpect(status().isOk());
-		
+
 		then(this.restaurantsAuthenticationService).should(times(1)).register(restaurantRegisterDto);
 		then(this.restaurantsAuthenticationService).shouldHaveNoMoreInteractions();
 	}
 
-	private static Stream<Arguments> getValidationArguments() {
+	@ParameterizedTest
+	@MethodSource
+	public void loginShould_returnBadRequestWithCorrectData_whenUserLoginDtoHasValidationErrors(
+			String fieldName, String value, Collection<String> expectedErrors) throws Exception {
+		UserLoginDto userLoginDto = new UserLoginDto();
+		userLoginDto.setPassword("validPassword123");
+		userLoginDto.setEmail("validEmail@asd.com");
+
+		Field field = userLoginDto.getClass().getDeclaredField(fieldName);
+		field.setAccessible(true);
+		field.set(userLoginDto, value);
+
+		MvcResult mvcResult = mockMvc.perform(post("/restaurants/tokens")
+				.contentType("application/json")
+				.content(this.objectMapper.writeValueAsString(userLoginDto)))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.title", is("Validation errors")))
+				.andReturn();
+
+		assertEquals(MethodArgumentNotValidException.class, mvcResult.getResolvedException().getClass());
+		String responseAsString = mvcResult.getResponse().getContentAsString();
+		assertThat(expectedErrors).allMatch(error -> responseAsString.contains(error));
+
+		then(this.restaurantsAuthenticationService).shouldHaveNoInteractions();
+	}
+	
+	@Test
+	public void loginShould_returnOkLoginRestaurantAndReturnTheAccessToken_whenUserLoginDtoIsValid() throws Exception {
+		UserLoginDto userLoginDto = new UserLoginDto();
+		userLoginDto.setPassword("validPassword123");
+		userLoginDto.setEmail("validEmail@asd.com");
+		
+		given(this.restaurantsAuthenticationService.login(userLoginDto)).willReturn("accessToken");
+
+		mockMvc.perform(post("/restaurants/tokens")
+				.contentType("application/json")
+				.content(this.objectMapper.writeValueAsString(userLoginDto)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.token", is("accessToken")));
+		
+		then(this.restaurantsAuthenticationService).should(times(1)).login(userLoginDto);
+		then(this.restaurantsAuthenticationService).shouldHaveNoMoreInteractions();
+	}
+
+	private static Stream<Arguments> loginShould_returnBadRequestWithCorrectData_whenUserLoginDtoHasValidationErrors() {
 		return Stream.of(
 				// email
 				Arguments.of("email", null, List.of(EMPTY_EMAIL)),
@@ -150,14 +224,19 @@ public class RestaurantsAuthenticationControllerTest {
 				Arguments.of("password", "", List.of(EMPTY_PASSWORD)),
 				Arguments.of("password", "     ", List.of(EMPTY_PASSWORD)),
 				Arguments.of("password", "a", List.of(PASSWORD_OUT_OF_BOUNDS)),
-				Arguments.of("password", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", List.of(PASSWORD_OUT_OF_BOUNDS)),
+				Arguments.of("password", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+						List.of(PASSWORD_OUT_OF_BOUNDS)),
 				Arguments.of("password", "aaaaaaaaaa", List.of(PASSWORD_PATTERN)),
 				Arguments.of("password", "AAAAAAAAAA", List.of(PASSWORD_PATTERN)),
 				Arguments.of("password", "0123456789", List.of(PASSWORD_PATTERN)),
 				Arguments.of("password", "aaaaaAAAAA", List.of(PASSWORD_PATTERN)),
 				Arguments.of("password", "aaaaa12345", List.of(PASSWORD_PATTERN)),
-				Arguments.of("password", "AAAAA55555", List.of(PASSWORD_PATTERN)),
-				
+				Arguments.of("password", "AAAAA55555", List.of(PASSWORD_PATTERN)));
+	}
+
+	private static Stream<Arguments> registerShould_returnBadRequestWithCorrectData_whenRestaurantRegisterDtoHasValidationErrors() {
+		Stream<Arguments> emailAndPasswordArguments = loginShould_returnBadRequestWithCorrectData_whenUserLoginDtoHasValidationErrors();
+		Stream<Arguments> nameArguments = Stream.of(
 				// name
 				Arguments.of("name", null, List.of(EMPTY_NAME)),
 				Arguments.of("name", "", List.of(EMPTY_NAME, NAME_OUT_OF_BOUNDS)),
@@ -169,5 +248,7 @@ public class RestaurantsAuthenticationControllerTest {
 				Arguments.of("name",
 						"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 						List.of(NAME_OUT_OF_BOUNDS)));
+
+		return Stream.concat(emailAndPasswordArguments, nameArguments);
 	}
 }
