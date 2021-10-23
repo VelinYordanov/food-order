@@ -62,7 +62,7 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<Map<String, String>> handleAccessDenied(AccessDeniedException ex) {
-		return this.buildResponse(ex, "Acces is denied", HttpStatus.FORBIDDEN);
+		return this.buildResponse(ex, "Acces is denied", HttpStatus.UNAUTHORIZED);
 	}
 
 	@ExceptionHandler(DuplicateUserException.class)
