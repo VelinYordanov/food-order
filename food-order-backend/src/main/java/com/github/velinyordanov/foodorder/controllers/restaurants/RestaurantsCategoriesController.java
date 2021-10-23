@@ -41,7 +41,6 @@ public class RestaurantsCategoriesController {
 	@PostMapping()
 	public CategoryDto addCategoryToRestaurant(@PathVariable String restaurantId,
 			@RequestBody @Valid CategoryCreateDto categoryCreateDto) {
-		return this.restaurantsCategoriesService.addCategoryForRestaurant(restaurantId, categoryCreateDto)
-				.orElseThrow(() -> new IllegalStateException("An error occurred while creating category"));
+		return this.restaurantsCategoriesService.addCategoryForRestaurant(restaurantId, categoryCreateDto);
 	}
 }

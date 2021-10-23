@@ -48,7 +48,7 @@ public class RestaurantsCategoriesServiceImpl implements RestaurantsCategoriesSe
 	}
 
 	@Override
-	public Optional<CategoryDto> addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto) {
+	public CategoryDto addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto) {
 		Restaurant restaurant = this.foodOrderData.restaurants()
 				.findById(restaurantId)
 				.orElseThrow(() -> new NotFoundException(MessageFormat.format("Restaurant with id {0} not found", restaurantId)));
@@ -64,13 +64,12 @@ public class RestaurantsCategoriesServiceImpl implements RestaurantsCategoriesSe
 			}
 			
 			existingCategory.setIsDeleted(false);
-			return Optional
-					.of(this.mapper.map(this.foodOrderData.categories().save(existingCategory), CategoryDto.class));
+			return this.mapper.map(this.foodOrderData.categories().save(existingCategory), CategoryDto.class);
 		}
 		
 		Category category = this.mapper.map(categoryCreateDto, Category.class);
 		category.setRestaurant(restaurant);
-		return Optional.of(this.mapper.map(this.foodOrderData.categories().save(category), CategoryDto.class));
+		return this.mapper.map(this.foodOrderData.categories().save(category), CategoryDto.class);
 	}
 
 	@Override

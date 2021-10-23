@@ -229,7 +229,7 @@ public class RestaurantsCategoriesServiceImplTest {
 
 		CategoryCreateDto categoryDto = new CategoryCreateDto();
 		categoryDto.setName("categoryName");
-		CategoryDto result = this.restaurantCategoriesService.addCategoryForRestaurant("restaurantId", categoryDto).get();
+		CategoryDto result = this.restaurantCategoriesService.addCategoryForRestaurant("restaurantId", categoryDto);
 
 		assertFalse(category.getIsDeleted());
 		then(this.categoriesRepository).should(times(1)).save(category);
@@ -251,7 +251,7 @@ public class RestaurantsCategoriesServiceImplTest {
 
 		CategoryCreateDto categoryDto = new CategoryCreateDto();
 		categoryDto.setName("categoryName");
-		CategoryDto result = this.restaurantCategoriesService.addCategoryForRestaurant("restaurantId", categoryDto).get();
+		CategoryDto result = this.restaurantCategoriesService.addCategoryForRestaurant("restaurantId", categoryDto);
 
 		ArgumentCaptor<Category> categoryCaptor = ArgumentCaptor.forClass(Category.class);
 		then(this.categoriesRepository).should(times(1)).save(categoryCaptor.capture());

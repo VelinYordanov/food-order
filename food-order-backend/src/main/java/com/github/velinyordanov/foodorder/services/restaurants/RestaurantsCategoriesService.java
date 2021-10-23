@@ -7,7 +7,7 @@ import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 
 public interface RestaurantsCategoriesService {
-	Optional<CategoryDto> addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto);
+	CategoryDto addCategoryForRestaurant(String restaurantId, CategoryCreateDto categoryCreateDto);
 
 	Collection<CategoryDto> getCategoriesForRestaurant(String restaurantId);
 

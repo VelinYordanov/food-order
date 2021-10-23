@@ -153,11 +153,14 @@ public class RestaurantsAuthenticationControllerTest {
 				eq(DisposableEmailValidationApiResponse.class),
 				eq(Collections.singletonMap("email", restaurantRegisterDto.getEmail()))))
 						.willReturn(response);
+		
+		given(this.restaurantsAuthenticationService.register(restaurantRegisterDto)).willReturn("accessToken");
 
 		mockMvc.perform(post("/restaurants")
 				.contentType("application/json")
 				.content(this.objectMapper.writeValueAsString(restaurantRegisterDto)))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.token", is("accessToken")));
 
 		then(this.restaurantsAuthenticationService).should(times(1)).register(restaurantRegisterDto);
 		then(this.restaurantsAuthenticationService).shouldHaveNoMoreInteractions();
