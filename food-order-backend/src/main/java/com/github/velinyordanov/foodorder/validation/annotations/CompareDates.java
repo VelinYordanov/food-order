@@ -16,7 +16,7 @@ import com.github.velinyordanov.foodorder.validation.CompareDatesValidator;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface CompareDates {
-  String message() default "{com.tericcabrel.hotel.constraints.CompareDate.message}";
+  String message() default "After date must be after before date";
   Class <?> [] groups() default {};
   Class <? extends Payload> [] payload() default {};
   

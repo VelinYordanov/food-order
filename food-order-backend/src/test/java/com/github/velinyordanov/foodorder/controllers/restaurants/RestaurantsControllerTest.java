@@ -34,7 +34,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.velinyordanov.foodorder.controllers.test.NotValidRestaurantArgumentsProvider;
-import com.github.velinyordanov.foodorder.controllers.test.ValidRestaurantProvider;
+import com.github.velinyordanov.foodorder.controllers.test.ValidUserProvider;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;
 import com.github.velinyordanov.foodorder.dto.FoodDto;
@@ -66,7 +66,7 @@ public class RestaurantsControllerTest {
 	@MockBean
 	private CustomerAuthenticationProvider customerAuthenticationProvider;
 	
-	ValidRestaurantProvider validRestaurantProvider = new ValidRestaurantProvider();
+	ValidUserProvider validRestaurantProvider = new ValidUserProvider();
 
 	@Test
 	public void getAllShould_returnTheRestaurants_whenRestaurantsAreFound() throws Exception {

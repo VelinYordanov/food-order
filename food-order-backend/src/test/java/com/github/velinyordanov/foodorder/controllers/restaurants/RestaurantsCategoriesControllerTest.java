@@ -34,7 +34,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.velinyordanov.foodorder.controllers.test.NotValidRestaurantArgumentsProvider;
-import com.github.velinyordanov.foodorder.controllers.test.ValidRestaurantProvider;
+import com.github.velinyordanov.foodorder.controllers.test.ValidUserProvider;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
@@ -64,7 +64,7 @@ public class RestaurantsCategoriesControllerTest {
 	@MockBean
 	private CustomerAuthenticationProvider customerAuthenticationProvider;
 	
-	ValidRestaurantProvider validRestaurantProvider = new ValidRestaurantProvider();
+	ValidUserProvider validRestaurantProvider = new ValidUserProvider();
 
 	@Test
 	public void getCategoriesShould_returnEmptyCollection_whenNoCategoriesAreFound() throws Exception {

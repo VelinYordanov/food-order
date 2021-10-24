@@ -42,7 +42,10 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("title", "Validation errors");
 
-		String errors = ex.getBindingResult().getFieldErrors().stream().map(x -> x.getDefaultMessage())
+		String errors = ex.getBindingResult()
+				.getAllErrors()
+				.stream()
+				.map(x -> x.getDefaultMessage())
 				.collect(Collectors.joining(", "));
 
 		body.put("description", errors);
@@ -94,27 +97,29 @@ public class NotValidExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Map<String, String>> handleBadRequestException(BadRequestException ex) {
 		return this.buildResponse(ex, "Bad request", HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(UnrecognizedCategoriesException.class)
-	public ResponseEntity<Map<String, String>> handleUnrecognizedCategoriesException(UnrecognizedCategoriesException ex) {
+	public ResponseEntity<Map<String, String>> handleUnrecognizedCategoriesException(
+			UnrecognizedCategoriesException ex) {
 		return this.buildResponse(ex, "Unrecognized categories were provided", HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(ForeignCategoryException.class)
 	public ResponseEntity<Map<String, String>> handleForeignCategoryException(ForeignCategoryException ex) {
 		return this.buildResponse(ex, "Category not belonging to restuarant was provided", HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(ExistingUnfinishedOrderException.class)
-	public ResponseEntity<Map<String, String>> handleExistingUnfinishedOrderException(ExistingUnfinishedOrderException ex) {
+	public ResponseEntity<Map<String, String>> handleExistingUnfinishedOrderException(
+			ExistingUnfinishedOrderException ex) {
 		return this.buildResponse(ex, "You have a pending or accepted order already.", HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(DuplicateCustomerException.class)
 	public ResponseEntity<Map<String, String>> handleDuplicateCustomerException(DuplicateCustomerException ex) {
 		return this.buildResponse(ex, "Customer already exists.", HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(Throwable.class)
 	public ResponseEntity<Map<String, String>> handleGenericException(Throwable ex) {
 		LOGGER.error("Internal server error", ex);

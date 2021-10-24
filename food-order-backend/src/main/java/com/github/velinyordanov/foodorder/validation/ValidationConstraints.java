@@ -101,6 +101,8 @@ public class ValidationConstraints {
 	public static final String EMPTY_VALID_TO = "Valid to is required";
 	public static final String PAST_VALID_TO = "Valid to date must be in the present or future";
 	
+	public static final String VALID_FROM_AFTER_VALID_TO = "Valid to must be after valid from";
+	
 	public static final String EMPTY_FOOD_DESCRIPTION = "Description is required";
 	public static final String EMPTY_FOOD_PRICE = "Price is required";
 	public static final String ZERO_OR_NEGATIVE_FOOD_PRICE = "Price must be positive";
