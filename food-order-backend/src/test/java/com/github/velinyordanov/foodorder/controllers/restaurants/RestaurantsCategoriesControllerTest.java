@@ -34,6 +34,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.velinyordanov.foodorder.controllers.test.NotValidRestaurantArgumentsProvider;
+import com.github.velinyordanov.foodorder.controllers.test.ValidRestaurantProvider;
 import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
@@ -62,11 +63,13 @@ public class RestaurantsCategoriesControllerTest {
 
 	@MockBean
 	private CustomerAuthenticationProvider customerAuthenticationProvider;
+	
+	ValidRestaurantProvider validRestaurantProvider = new ValidRestaurantProvider();
 
 	@Test
 	public void getCategoriesShould_returnEmptyCollection_whenNoCategoriesAreFound() throws Exception {
 		given(this.restaurantsCategoriesService.getCategoriesForRestaurant("restaurantId")).willReturn(List.of());
-		Restaurant restaurant = this.getValidRestaurant();
+		Restaurant restaurant = this.validRestaurantProvider.getValidRestaurant();
 
 		this.mockMvc.perform(get("/restaurants/restaurantId/categories")
 				.with(user(restaurant)))
@@ -101,7 +104,7 @@ public class RestaurantsCategoriesControllerTest {
 
 		given(this.restaurantsCategoriesService.getCategoriesForRestaurant("restaurantId"))
 				.willReturn(returnedCategories);
-		Restaurant restaurant = this.getValidRestaurant();
+		Restaurant restaurant = this.validRestaurantProvider.getValidRestaurant();
 
 		MvcResult result = this.mockMvc.perform(get("/restaurants/restaurantId/categories")
 				.with(user(restaurant)))
@@ -124,7 +127,7 @@ public class RestaurantsCategoriesControllerTest {
 
 	@Test
 	public void deleteCategoryFromRestaurantShould_deleteTheCategory_whenAuthorized() throws Exception {
-		Restaurant restaurant = this.getValidRestaurant();
+		Restaurant restaurant = this.validRestaurantProvider.getValidRestaurant();
 		this.mockMvc.perform(delete("/restaurants/restaurantId/categories/categoryId")
 				.with(user(restaurant)))
 				.andExpect(status().isOk())
@@ -152,7 +155,7 @@ public class RestaurantsCategoriesControllerTest {
 		CategoryCreateDto categoryCreateDto = new CategoryCreateDto();
 		categoryCreateDto.setName("categoryName");
 
-		Restaurant restaurant = this.getValidRestaurant();
+		Restaurant restaurant = this.validRestaurantProvider.getValidRestaurant();
 
 		CategoryDto categoryDto = new CategoryDto();
 		categoryDto.setId("categoryId");
@@ -197,7 +200,7 @@ public class RestaurantsCategoriesControllerTest {
 		CategoryCreateDto categoryCreateDto = new CategoryCreateDto();
 		categoryCreateDto.setName(name);
 
-		Restaurant restaurant = this.getValidRestaurant();
+		Restaurant restaurant = this.validRestaurantProvider.getValidRestaurant();
 
 		this.mockMvc.perform(post("/restaurants/restaurantId/categories")
 				.content(this.objectMapper.writeValueAsString(categoryCreateDto))
@@ -221,22 +224,5 @@ public class RestaurantsCategoriesControllerTest {
 				Arguments.of(
 						"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 						CATEGORY_NAME_OUT_OF_BOUNDS));
-	}
-
-	private Restaurant getValidRestaurant() {
-		Restaurant restaurant = new Restaurant();
-		restaurant.setId("restaurantId");
-		restaurant.setEmail("restaurantEmail");
-		restaurant.setName("restaurantName");
-		restaurant.setPassword("restaurantPassword");
-		restaurant.setDescription("restaurantDescription");
-
-		Authority authority = new Authority();
-		authority.setId("authorityId");
-		authority.setAuthority("ROLE_RESTAURANT");
-		authority.setRestaurants(Set.of(restaurant));
-		restaurant.setAuthorities(Set.of(authority));
-
-		return restaurant;
 	}
 }

@@ -49,7 +49,7 @@ import com.github.velinyordanov.foodorder.security.RestaurantAuthenticationProvi
 import com.github.velinyordanov.foodorder.services.AuthenticationService;
 import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsAuthenticationService;
 
-@WebMvcTest(controllers = RestaurantsAuthenticationController.class)
+@WebMvcTest(RestaurantsAuthenticationController.class)
 public class RestaurantsAuthenticationControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
