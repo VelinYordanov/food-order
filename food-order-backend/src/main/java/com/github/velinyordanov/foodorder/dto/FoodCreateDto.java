@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class FoodCreateDto {
 	@Positive(message = ZERO_OR_NEGATIVE_FOOD_PRICE)
 	private BigDecimal price;
 
+	@Valid
 	@NotEmpty(message = EMPTY_FOOD_CATEGORIES)
 	private Set<CategoryDto> categories;
 
