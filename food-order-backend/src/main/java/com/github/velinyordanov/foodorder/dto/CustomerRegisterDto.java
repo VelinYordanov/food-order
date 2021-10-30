@@ -1,14 +1,32 @@
 package com.github.velinyordanov.foodorder.dto;
 
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMAIL_OUT_OF_BOUNDS;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_EMAIL;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_NAME;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_PASSWORD;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_PHONE;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MAX_LENGTH_EMAIL;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MAX_LENGTH_NAME;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MAX_LENGTH_PASSWORD;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MIN_LENGTH_EMAIL;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MIN_LENGTH_NAME;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MIN_LENGTH_PASSWORD;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.NAME_DOES_NOT_MATCH_PATTERN;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.NAME_OUT_OF_BOUNDS;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.NAME_PATTERN;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.NOT_EMAIL;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.PASSWORD_OUT_OF_BOUNDS;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.PASSWORD_PATTERN;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.PASSWORD_PATTERN_LOWERCASE;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.PASSWORD_PATTERN_NUMBER;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.PASSWORD_PATTERN_UPPERCASE;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.github.velinyordanov.foodorder.validation.annotations.NotDisposableEmail;
-
-import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
 
 public class CustomerRegisterDto {
 	@NotBlank(message = EMPTY_EMAIL)

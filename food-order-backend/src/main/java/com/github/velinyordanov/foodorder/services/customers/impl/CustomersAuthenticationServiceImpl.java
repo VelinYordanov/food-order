@@ -1,8 +1,6 @@
 package com.github.velinyordanov.foodorder.services.customers.impl;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;

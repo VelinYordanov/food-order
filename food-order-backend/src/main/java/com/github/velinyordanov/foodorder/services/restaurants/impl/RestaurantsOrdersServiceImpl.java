@@ -16,7 +16,6 @@ import com.github.velinyordanov.foodorder.data.entities.Order;
 import com.github.velinyordanov.foodorder.dto.GraphData;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.dto.OrderStatusDto;
-import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;
 import com.github.velinyordanov.foodorder.services.DateService;

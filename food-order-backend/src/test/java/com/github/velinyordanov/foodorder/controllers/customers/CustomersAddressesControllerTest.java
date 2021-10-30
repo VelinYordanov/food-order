@@ -4,7 +4,6 @@ import static com.github.velinyordanov.foodorder.validation.ValidationConstraint
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.mockito.BDDMockito.given;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertTrue;
@@ -383,7 +382,7 @@ public class CustomersAddressesControllerTest {
 				.andExpect(result -> assertEquals(expectedResponse, result.getResponse().getContentAsString()));
 	}
 
-	public static Stream<Arguments> getNotValidAddressCreateDtoArguments() {
+	private static Stream<Arguments> getNotValidAddressCreateDtoArguments() {
 		return Stream.of(
 				Arguments.of("city", null, EMPTY_CITY),
 				Arguments.of("addressType", null, EMPTY_ADDRESS_TYPE),

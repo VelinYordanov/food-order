@@ -59,7 +59,6 @@ import com.github.velinyordanov.foodorder.security.RestaurantAuthenticationProvi
 import com.github.velinyordanov.foodorder.services.AuthenticationService;
 import com.github.velinyordanov.foodorder.services.DateService;
 import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsOrdersService;
-import com.nimbusds.oauth2.sdk.Response;
 
 @WebMvcTest(RestaurantsOrdersController.class)
 public class RestaurantsOrdersControllerTest {

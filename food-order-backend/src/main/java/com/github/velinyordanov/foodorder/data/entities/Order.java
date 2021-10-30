@@ -1,6 +1,10 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
-import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_ORDER_ADDRESS;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_ORDER_CUSTOMER;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_ORDER_FOODS;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_ORDER_RESTAURANT;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_STATUS;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 

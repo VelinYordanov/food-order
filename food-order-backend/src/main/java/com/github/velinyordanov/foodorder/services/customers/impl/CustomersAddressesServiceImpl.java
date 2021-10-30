@@ -2,7 +2,6 @@ package com.github.velinyordanov.foodorder.services.customers.impl;
 
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.data.FoodOrderData;
 import com.github.velinyordanov.foodorder.data.entities.Address;
-import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.dto.AddressCreateDto;
 import com.github.velinyordanov.foodorder.dto.AddressDto;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;

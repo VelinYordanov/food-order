@@ -1,6 +1,14 @@
 package com.github.velinyordanov.foodorder.data.entities;
 
-import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.DISCOUNT_CODE_OUT_OF_BOUNDS;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_DISCOUNT_CODE;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_ORDER_RESTAURANT;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_VALID_FROM;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_VALID_TO;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MAX_DISCOUNT_PERCENTAGE;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MAX_LENGTH_DISCOUNT_CODE;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MIN_DISCOUNT_PERCENTAGE;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.MIN_LENGTH_DISCOUNT_CODE;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -12,7 +20,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

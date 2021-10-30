@@ -18,10 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.github.velinyordanov.foodorder.data.entities.Authority;
-import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.enums.UserType;
-import com.github.velinyordanov.foodorder.services.CustomersUserDetailsService;
 import com.github.velinyordanov.foodorder.services.RestaurantsUserDetailsService;
 
 @ExtendWith(MockitoExtension.class)

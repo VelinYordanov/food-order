@@ -1,6 +1,7 @@
 package com.github.velinyordanov.foodorder.controllers.restaurants;
 
-import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.*;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.CATEGORY_NAME_OUT_OF_BOUNDS;
+import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.EMPTY_CATEGORY_NAME;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertTrue;
@@ -17,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -35,7 +36,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.velinyordanov.foodorder.controllers.test.NotValidRestaurantArgumentsProvider;
 import com.github.velinyordanov.foodorder.controllers.test.ValidUserProvider;
-import com.github.velinyordanov.foodorder.data.entities.Authority;
 import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;

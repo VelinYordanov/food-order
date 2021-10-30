@@ -9,7 +9,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.data.FoodOrderData;
-import com.github.velinyordanov.foodorder.data.entities.Address;
 import com.github.velinyordanov.foodorder.data.entities.Customer;
 import com.github.velinyordanov.foodorder.data.entities.DiscountCode;
 import com.github.velinyordanov.foodorder.data.entities.Food;
@@ -18,7 +17,6 @@ import com.github.velinyordanov.foodorder.data.entities.Status;
 import com.github.velinyordanov.foodorder.dto.OrderCreateDto;
 import com.github.velinyordanov.foodorder.dto.OrderDto;
 import com.github.velinyordanov.foodorder.exceptions.BadRequestException;
-import com.github.velinyordanov.foodorder.exceptions.DuplicateCustomerException;
 import com.github.velinyordanov.foodorder.exceptions.ExistingUnfinishedOrderException;
 import com.github.velinyordanov.foodorder.exceptions.NotFoundException;
 import com.github.velinyordanov.foodorder.mapping.Mapper;

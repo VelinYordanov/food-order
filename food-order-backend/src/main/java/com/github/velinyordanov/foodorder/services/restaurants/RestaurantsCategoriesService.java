@@ -1,7 +1,6 @@
 package com.github.velinyordanov.foodorder.services.restaurants;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import com.github.velinyordanov.foodorder.dto.CategoryCreateDto;
 import com.github.velinyordanov.foodorder.dto.CategoryDto;

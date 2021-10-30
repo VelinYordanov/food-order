@@ -7,13 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.config.FoodOrderConfigurationProperties;
 import com.github.velinyordanov.foodorder.data.entities.BaseUser;
-import com.github.velinyordanov.foodorder.data.entities.Customer;
-import com.github.velinyordanov.foodorder.data.entities.Restaurant;
 import com.github.velinyordanov.foodorder.dto.JwtUserDto;
 import com.github.velinyordanov.foodorder.services.JwtTokenService;
 
