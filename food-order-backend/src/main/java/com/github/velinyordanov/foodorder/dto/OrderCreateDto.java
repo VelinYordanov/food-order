@@ -71,4 +71,53 @@ public class OrderCreateDto {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((addressId == null) ? 0 : addressId.hashCode());
+		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
+		result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
+		result = prime * result + ((discountCodeId == null) ? 0 : discountCodeId.hashCode());
+		result = prime * result + ((restaurantId == null) ? 0 : restaurantId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrderCreateDto other = (OrderCreateDto) obj;
+		if (addressId == null) {
+			if (other.addressId != null)
+				return false;
+		} else if (!addressId.equals(other.addressId))
+			return false;
+		if (comment == null) {
+			if (other.comment != null)
+				return false;
+		} else if (!comment.equals(other.comment))
+			return false;
+		if (customerId == null) {
+			if (other.customerId != null)
+				return false;
+		} else if (!customerId.equals(other.customerId))
+			return false;
+		if (discountCodeId == null) {
+			if (other.discountCodeId != null)
+				return false;
+		} else if (!discountCodeId.equals(other.discountCodeId))
+			return false;
+		if (restaurantId == null) {
+			if (other.restaurantId != null)
+				return false;
+		} else if (!restaurantId.equals(other.restaurantId))
+			return false;
+		return true;
+	}
 }

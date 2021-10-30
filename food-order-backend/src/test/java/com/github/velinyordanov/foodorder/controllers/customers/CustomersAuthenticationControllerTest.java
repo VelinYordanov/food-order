@@ -10,11 +10,9 @@ import static com.github.velinyordanov.foodorder.validation.ValidationConstraint
 import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.NOT_EMAIL;
 import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.PASSWORD_OUT_OF_BOUNDS;
 import static com.github.velinyordanov.foodorder.validation.ValidationConstraints.PASSWORD_PATTERN;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -36,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.client.RestTemplate;
 
