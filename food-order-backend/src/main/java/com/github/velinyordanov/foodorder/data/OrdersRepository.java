@@ -20,7 +20,7 @@ public interface OrdersRepository extends BaseRepository<Order> {
 	Page<Order> findByCustomerId(String customerId, Pageable pageable);
 	
 	@Transactional(readOnly = true)
-	@Query("select e from #{#entityName} e where e.id = ?1 e.customer.id = ?2 and e.isDeleted = false")
+	@Query("select e from #{#entityName} e where e.id = ?1 and e.customer.id = ?2 and e.isDeleted = false")
 	Optional<Order> findByIdAndCustomerId(String id, String customerId);
 
 	@Transactional(readOnly = true)
