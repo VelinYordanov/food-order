@@ -41,7 +41,7 @@ public interface BaseRepository<T extends BaseEntity> extends CrudRepository<T, 
 	@Override
 	@Transactional(readOnly = true)
 	default boolean existsById(String id) {
-		return findById(id) != null;
+		return findById(id).isPresent();
 	}
 
 	@Override
