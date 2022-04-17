@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +25,7 @@ import com.github.velinyordanov.foodorder.services.JwtTokenService;
 import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsAuthenticationService;
 
 @Service
+@Transactional
 public class RestaurantsAuthenticationServiceImpl implements RestaurantsAuthenticationService {
 	private final FoodOrderData foodOrderData;
 	private final AuthenticationManager authenticationManager;

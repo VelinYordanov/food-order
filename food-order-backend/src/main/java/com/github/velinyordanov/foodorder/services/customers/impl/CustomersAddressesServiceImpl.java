@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import com.github.velinyordanov.foodorder.services.DiscountCodesService;
 import com.github.velinyordanov.foodorder.services.customers.CustomersAddressesService;
 
 @Service
+@Transactional
 public class CustomersAddressesServiceImpl implements CustomersAddressesService {
 	private final Mapper mapper;
 	private final FoodOrderData foodOrderData;

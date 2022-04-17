@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -22,6 +24,7 @@ import com.github.velinyordanov.foodorder.services.DateService;
 import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsOrdersService;
 
 @Service
+@Transactional
 public class RestaurantsOrdersServiceImpl implements RestaurantsOrdersService {
 	private final FoodOrderData foodOrderData;
 	private final Mapper mapper;

@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.data.FoodOrderData;
@@ -16,6 +18,7 @@ import com.github.velinyordanov.foodorder.mapping.Mapper;
 import com.github.velinyordanov.foodorder.services.restaurants.RestaurantsService;
 
 @Service
+@Transactional
 public class RestaurantsServiceImpl implements RestaurantsService {
 	private final FoodOrderData foodOrderData;
 	private final Mapper mapper;

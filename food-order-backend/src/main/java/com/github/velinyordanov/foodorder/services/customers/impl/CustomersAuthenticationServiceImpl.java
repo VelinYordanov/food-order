@@ -24,6 +24,7 @@ import com.github.velinyordanov.foodorder.services.JwtTokenService;
 import com.github.velinyordanov.foodorder.services.customers.CustomersAuthenticationService;
 
 @Service
+@Transactional
 public class CustomersAuthenticationServiceImpl implements CustomersAuthenticationService {
 	private final Mapper mapper;
 	private final PasswordEncoder encoder;
@@ -41,7 +42,6 @@ public class CustomersAuthenticationServiceImpl implements CustomersAuthenticati
 	}
 
 	@Override
-	@Transactional
 	public String registerCustomer(@Valid CustomerRegisterDto user) {
 		if (this.foodOrderData.customers()
 				.existsByEmailOrPhoneNumber(user.getEmail(), user.getPhoneNumber())) {

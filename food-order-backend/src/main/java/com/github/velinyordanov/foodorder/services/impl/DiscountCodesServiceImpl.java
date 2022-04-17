@@ -2,6 +2,8 @@ package com.github.velinyordanov.foodorder.services.impl;
 
 import java.text.MessageFormat;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.github.velinyordanov.foodorder.data.entities.DiscountCode;
@@ -10,6 +12,7 @@ import com.github.velinyordanov.foodorder.services.DateService;
 import com.github.velinyordanov.foodorder.services.DiscountCodesService;
 
 @Service
+@Transactional
 public class DiscountCodesServiceImpl implements DiscountCodesService {
 	private final DateService dateService;
 

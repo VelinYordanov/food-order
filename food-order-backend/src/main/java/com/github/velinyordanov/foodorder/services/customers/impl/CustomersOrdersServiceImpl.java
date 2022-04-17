@@ -3,6 +3,8 @@ package com.github.velinyordanov.foodorder.services.customers.impl;
 import java.text.MessageFormat;
 import java.util.Collection;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -24,6 +26,7 @@ import com.github.velinyordanov.foodorder.services.DiscountCodesService;
 import com.github.velinyordanov.foodorder.services.customers.CustomersOrdersService;
 
 @Service
+@Transactional
 public class CustomersOrdersServiceImpl implements CustomersOrdersService {
 	private final Mapper mapper;
 	private final FoodOrderData foodOrderData;

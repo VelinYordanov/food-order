@@ -3,6 +3,8 @@ package com.github.velinyordanov.foodorder.services.impl;
 import java.text.MessageFormat;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,7 @@ import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
 @Service
+@Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
 	private final CustomersAuthenticationService customersAuthenticationService;
 	private final RestaurantsAuthenticationService restaurantsAuthenticationService;
