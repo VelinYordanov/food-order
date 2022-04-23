@@ -25,6 +25,7 @@
     "@angular/router": "~13.3.4",
     "@auth0/angular-jwt": "^4.2.0",
     "@ngrx/store": "^13.1.0",
+    "@ngrx/store-devtools": "^13.1.0",
     "@stomp/rx-stomp": "^1.1.2",
     "chart.js": "^2.9.4",
     "moment": "^2.29.1",
