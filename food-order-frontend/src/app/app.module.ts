@@ -24,6 +24,7 @@ import { RestaurantRegisterComponent } from './home/restaurant-register/restaura
 import { RegisterCustomerComponent } from './home/register-customer/register-customer.component';
 import { RxStomp } from '@stomp/rx-stomp';
 import * as SockJs from 'sockjs-client';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import * as SockJs from 'sockjs-client';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
+    StoreModule.forRoot({}, {}),
   ],
   providers: [
     {
