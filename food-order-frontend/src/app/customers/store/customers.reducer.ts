@@ -1,9 +1,7 @@
-import { createReducer, on } from "@ngrx/store";
-import { loadAddressesSuccess } from "./customers.actions";
+import { addressesReducer } from "./addresses/addresses.reducer";
 
-export const initialState = []
+export const customersReducers = {
+    addresses: addressesReducer
+}
 
-export const addressesReducer = createReducer(
-    initialState,
-    on(loadAddressesSuccess, (state, { addresses }) => addresses),
-);
+export const customersStateKey = 'customers';

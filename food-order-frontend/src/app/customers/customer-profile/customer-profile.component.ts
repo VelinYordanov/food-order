@@ -6,7 +6,8 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { Address } from '../models/address';
 import { CustomerService } from '../services/customer.service';
-import { loadAddressesAction } from '../store/customers.actions';
+import { loadAddressesAction } from '../store/addresses/addresses.actions';
+import { selectAddresses } from '../store/addresses/addresses.selectors';
 
 @Component({
   selector: 'app-customer-profile',
@@ -22,19 +23,11 @@ export class CustomerProfileComponent implements OnInit {
     private customerService: CustomerService) { }
 
   ngOnInit(): void {
-    this.store.pipe(tap(something => console.log(something))).subscribe();
-    this.addresses$ = this.store.select(state => state['addresses']);
+    this.addresses$ = this.store.select(selectAddresses);
     this.authenticationService.user$
       .pipe(
         first(x => !!x),
         tap(user => this.store.dispatch(loadAddressesAction({customerId: user.id})))
-        // switchMap(user => this.customerService.getCustomerAddresses(user.id)
-        //   .pipe(
-        //     catchError(error => {
-        //       this.alertService.displayMessage(error?.error?.description || 'An error occurred while loading addresses. Try again later.', 'error');
-        //       return EMPTY;
-        //     })
-        //   ))
       ).subscribe();
   }
 }

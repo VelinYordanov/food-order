@@ -17,9 +17,10 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { SuccessfulOrderComponent } from './successful-order/successful-order.component';
 import { SharedModule } from '../shared.module';
 import { StoreModule } from '@ngrx/store';
-import { addressesReducer } from './store/customers.reducer';
 import { EffectsModule } from '@ngrx/effects';
-import { AddressesEffects } from './store/addresses.effects';
+import { AddressesEffects } from './store/addresses/addresses.effects';
+import { addressesReducer } from './store/addresses/addresses.reducer';
+import { customersReducers, customersStateKey } from './store/customers.reducer';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { AddressesEffects } from './store/addresses.effects';
     ReactiveFormsModule,
     AngularMaterialModule,
     SharedModule,
-    StoreModule.forFeature('addresses', addressesReducer),
+    StoreModule.forFeature(customersStateKey, customersReducers),
     EffectsModule.forFeature([AddressesEffects])
   ],
 })
