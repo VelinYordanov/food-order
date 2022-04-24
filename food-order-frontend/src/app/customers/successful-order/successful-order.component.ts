@@ -6,10 +6,10 @@ import { Order } from 'src/app/customers/models/order';
 import { CustomerService } from 'src/app/customers/services/customer.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { EnumsService } from 'src/app/shared/services/enums.service';
-import { EnumData } from 'src/app/shared/models/enum-data';
+import { EnumData } from 'src/app/customers/models/enum-data';
 import { OrderStatus } from '../models/order-status';
 import { RxStomp, RxStompState } from '@stomp/rx-stomp';
+import { EnumsService } from '../services/enums.service';
 
 @Component({
   selector: 'app-successful-order',
