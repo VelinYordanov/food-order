@@ -25,6 +25,7 @@ import { RegisterCustomerComponent } from './home/register-customer/register-cus
 import { RxStomp } from '@stomp/rx-stomp';
 import * as SockJs from 'sockjs-client';
 import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { StoreModule } from '@ngrx/store';
     ReactiveFormsModule,
     FormsModule,
     StoreModule.forRoot({}, {}),
+    EffectsModule.forRoot([]),
   ],
   providers: [
     {
