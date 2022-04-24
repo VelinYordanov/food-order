@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { EnumData } from 'src/app/customers/models/enum-data';
+import { EnumsService } from 'src/app/shared/services/enums.service';
+import { EnumData } from 'src/app/shared/models/enum-data';
 import { Address } from '../models/address';
-import { EnumsService } from '../services/enums.service';
 
 @Component({
   selector: 'app-address',
