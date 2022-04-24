@@ -26,6 +26,7 @@ import { RxStomp } from '@stomp/rx-stomp';
 import * as SockJs from 'sockjs-client';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { EffectsModule } from '@ngrx/effects';
     FormsModule,
     StoreModule.forRoot({}, {}),
     EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({ maxAge: 25}),
   ],
   providers: [
     {
