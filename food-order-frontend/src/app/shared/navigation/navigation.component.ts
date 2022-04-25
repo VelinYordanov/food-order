@@ -1,35 +1,49 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, map, scan, tap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { filter, map, scan, takeUntil, tap } from 'rxjs/operators';
 import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 import { User } from '../models/user';
-import { AuthenticationService } from '../services/authentication.service';
 import { CartService } from '../services/cart.service';
+import { updateUserAction } from '../store/authentication/authentication.actions';
+import { loggedInUserSelector } from '../store/authentication/authentication.selectors';
 
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss']
 })
-export class NavigationComponent implements OnInit {
+export class NavigationComponent implements OnInit, OnDestroy {
   user: User;
-  numberOfItems:number;
+  numberOfItems: number;
   selectedRestaurant: OrderRestaurant;
 
+  private onDestroy$ = new Subject<void>();
+
   constructor(
-    private authenticationService: AuthenticationService,
     private cartService: CartService,
-    private router: Router) { }
+    private router: Router,
+    private store: Store) { }
 
   ngOnInit(): void {
     this.cartService.selectedRestaurant$.subscribe(restaurant => this.selectedRestaurant = restaurant);
 
     this.cartService.selectedItems$
-    .pipe(
-      map(items => items.map(x => x.quantity).reduce((acc, current) => acc + current, 0)),
-    ).subscribe(numberOfItems => this.numberOfItems = numberOfItems);
+      .pipe(
+        map(items => items.map(x => x.quantity).reduce((acc, current) => acc + current, 0)),
+      ).subscribe(numberOfItems => this.numberOfItems = numberOfItems);
 
-    this.authenticationService.user$.subscribe(user => this.user = user);
+    this.store.select(loggedInUserSelector)
+      .pipe(
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe(user => this.user = user);
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   isLoggedIn() {
@@ -45,7 +59,7 @@ export class NavigationComponent implements OnInit {
   }
 
   logOut() {
-    this.authenticationService.logout();
+    this.store.dispatch(updateUserAction({ user: null }));
     this.router.navigate(['restaurants']);
   }
 }
