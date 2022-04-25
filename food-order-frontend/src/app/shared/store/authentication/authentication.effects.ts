@@ -22,10 +22,10 @@ export class AuthenticationEffects {
         this.actions$.pipe(
             ofType(loginCustomerAction),
             switchMap(action =>
-                this.loginService.loginCustomer(action.loginData)
+                this.loginService.loginCustomer(action.payload)
                     .pipe(
-                        map(response => loginCustomerSuccessAction({ jwtToken: response })),
-                        catchError(error => of(loginCustomerErrorAction({ error })))
+                        map(response => loginCustomerSuccessAction({ payload: response })),
+                        catchError(error => of(loginCustomerErrorAction({ payload: error })))
                     ))
         ))
 
@@ -33,28 +33,28 @@ export class AuthenticationEffects {
         this.actions$.pipe(
             ofType(loginRestaurantAction),
             switchMap(action =>
-                this.loginService.loginRestaurant(action.loginData)
+                this.loginService.loginRestaurant(action.payload)
                     .pipe(
-                        map(response => loginRestaurantSuccessAction({ jwtToken: response })),
-                        catchError(error => of(loginCustomerErrorAction({ error })))
+                        map(response => loginRestaurantSuccessAction({ payload: response })),
+                        catchError(error => of(loginCustomerErrorAction({ payload: error })))
                     ))
         ))
 
     successfulLogins$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loginCustomerSuccessAction, loginRestaurantSuccessAction),
-            map(jwtToken => this.login(jwtToken?.jwtToken?.token))
+            map(action => this.login(action?.payload?.token))
         ))
 
     loginErrors$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loginCustomerErrorAction, loginRestaurantErrorAction),
-            tap(({ error }) => this.alertService.displayMessage(error?.error?.description || 'An error occurred while logging in. Try again later.', 'error'))
+            tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while logging in. Try again later.', 'error'))
         ), { dispatch: false })
 
     private login(token: string) {
         const user = this.jwtService.decodeToken(token);
         this.storageService.setItem('jwt-user', token);
-        return updateUserAction({ user });
+        return updateUserAction({ payload: user });
     }
 }

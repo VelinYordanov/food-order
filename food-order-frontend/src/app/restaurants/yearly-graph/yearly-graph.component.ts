@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { Store } from '@ngrx/store';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 import { EMPTY } from 'rxjs';
@@ -12,7 +13,7 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
 import { RestaurantService } from '../services/restaurant.service';
 
 const MY_FORMATS = {
@@ -50,7 +51,7 @@ export class YearlyGraphComponent implements OnInit {
   public lineChartPlugins = [];
 
   constructor(
-    private authenticationService: AuthenticationService,
+    private store: Store,
     private restaurantService: RestaurantService,
     private alertService: AlertService
   ) {}
@@ -59,7 +60,7 @@ export class YearlyGraphComponent implements OnInit {
     this.date.valueChanges
       .pipe(
         map((date) => date.year()),
-        withLatestFrom(this.authenticationService.user$),
+        withLatestFrom(this.store.select(loggedInUserSelector)),
         switchMap(([year, restaurant]) =>
           this.restaurantService.getYearlyGraph(restaurant.id, year).pipe(
             catchError((error) => {

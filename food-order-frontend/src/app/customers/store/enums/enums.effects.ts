@@ -19,7 +19,7 @@ export class EnumEffects {
                 switchMap(action =>
                     this.enumsService.getCities()
                         .pipe(
-                            map(cities => loadCitiesSuccessAction({ enumData: cities })),
+                            map(cities => loadCitiesSuccessAction({ payload: cities })),
                             catchError(error => of(loadCitiesErrorAction(error)))
                         ))
             ));
@@ -31,7 +31,7 @@ export class EnumEffects {
                 switchMap(action =>
                     this.enumsService.getAddressTypes()
                         .pipe(
-                            map(addressTypes => loadAddressTypesSuccessAction({ enumData: addressTypes })),
+                            map(addressTypes => loadAddressTypesSuccessAction({ payload: addressTypes })),
                             catchError(error => of(loadAddressTypesErrorAction(error)))
                         ))
             ));
@@ -43,7 +43,7 @@ export class EnumEffects {
                 switchMap(action =>
                     this.enumsService.getOrderStatuses()
                         .pipe(
-                            map(orderStatuses => loadOrderStatusesSuccessAction({ enumData: orderStatuses })),
+                            map(orderStatuses => loadOrderStatusesSuccessAction({ payload: orderStatuses })),
                             catchError(error => of(loadOrderStatusesErrorAction(error)))
                         ))
             ));

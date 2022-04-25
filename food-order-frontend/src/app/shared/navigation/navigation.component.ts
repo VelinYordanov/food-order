@@ -59,7 +59,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
 
   logOut() {
-    this.store.dispatch(updateUserAction({ user: null }));
+    this.store.dispatch(updateUserAction({ payload: null }));
     this.router.navigate(['restaurants']);
   }
 }

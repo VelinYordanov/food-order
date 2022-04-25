@@ -9,7 +9,7 @@ const initialState = {
 
 export const enumsReducer = createReducer(
     initialState,
-    on(loadCitiesSuccessAction, (state, enumData) => ({ ...state, ...{ cities: enumData.enumData } })),
-    on(loadAddressTypesSuccessAction, (state, enumData) => ({ ...state, ...{ addressTypes: enumData.enumData } })),
-    on(loadOrderStatusesSuccessAction, (state, enumData) => ({ ...state, ...{ orderTypes: enumData.enumData } }))
+    on(loadCitiesSuccessAction, (state, action) => ({ ...state, ...{ cities: action.payload } })),
+    on(loadAddressTypesSuccessAction, (state, action) => ({ ...state, ...{ addressTypes: action.payload } })),
+    on(loadOrderStatusesSuccessAction, (state, action) => ({ ...state, ...{ orderTypes: action.payload } }))
 )

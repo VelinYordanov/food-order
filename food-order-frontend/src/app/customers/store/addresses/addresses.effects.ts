@@ -18,10 +18,10 @@ export class AddressesEffects {
         this.actions$.pipe(
             ofType(loadAddressesAction),
             switchMap(action =>
-                this.customerService.getCustomerAddresses(action.customerId)
+                this.customerService.getCustomerAddresses(action.payload)
                     .pipe(
-                        map(addresses => loadAddressesSuccessAction({ addresses })),
-                        catchError(error => of(loadAddressesErrorAction({ error })))
+                        map(addresses => loadAddressesSuccessAction({ payload: addresses })),
+                        catchError(error => of(loadAddressesErrorAction({ payload: error })))
                     )
             ))
     );
@@ -29,7 +29,7 @@ export class AddressesEffects {
     loadAddressesErrors$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadAddressesErrorAction),
-            map(action => action.error),
+            map(action => action.payload),
             tap(error => this.alertService.displayMessage(error?.error?.description || 'An error occurred while loading addresses. Try again later.', 'error')),
         ), { dispatch: false });
 }

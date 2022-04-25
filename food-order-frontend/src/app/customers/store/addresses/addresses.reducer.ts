@@ -5,5 +5,5 @@ export const initialState = []
 
 export const addressesReducer = createReducer(
     initialState,
-    on(loadAddressesSuccessAction, (state, { addresses }) => addresses),
+    on(loadAddressesSuccessAction, (state, { payload }) => payload),
 );

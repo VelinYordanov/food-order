@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { EMPTY, Observable } from 'rxjs';
-import { catchError, first, switchMap, tap } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { Observable } from 'rxjs';
+import { first, tap } from 'rxjs/operators';
+import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
 import { Address } from '../models/address';
-import { CustomerService } from '../services/customer.service';
 import { loadAddressesAction } from '../store/addresses/addresses.actions';
 import { selectAddresses } from '../store/addresses/addresses.selectors';
 
@@ -17,15 +15,14 @@ import { selectAddresses } from '../store/addresses/addresses.selectors';
 export class CustomerProfileComponent implements OnInit {
   addresses$: Observable<Address[]>;
   constructor(
-    private store: Store,
-    private authenticationService: AuthenticationService) { }
+    private store: Store) { }
 
   ngOnInit(): void {
     this.addresses$ = this.store.select(selectAddresses);
-    this.authenticationService.user$
+    this.store.select(loggedInUserSelector)
       .pipe(
         first(x => !!x),
-        tap(user => this.store.dispatch(loadAddressesAction({customerId: user.id})))
+        tap(user => this.store.dispatch(loadAddressesAction({ payload: user.id })))
       ).subscribe();
   }
 }

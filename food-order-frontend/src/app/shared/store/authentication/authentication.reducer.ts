@@ -8,5 +8,5 @@ export const userStateKey = 'user';
 
 export const authenticationReducer = createReducer(
     initialState,
-    on(updateUserAction, (state, user) => user.user)
+    on(updateUserAction, (state, action) => action.payload)
 )

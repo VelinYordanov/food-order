@@ -1,11 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subject, EMPTY } from 'rxjs';
-import { LoginService } from '../services/login-service.service';
-import { exhaustMap, catchError, tap, switchMap, takeUntil } from 'rxjs/operators';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { tap, switchMap, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/services/alert.service';
 import { Store } from '@ngrx/store';
 import { loginCustomerAction, loginCustomerErrorAction, loginCustomerSuccessAction, loginRestaurantAction, loginRestaurantErrorAction, loginRestaurantSuccessAction } from 'src/app/shared/store/authentication/authentication.actions';
 import { Actions, ofType } from '@ngrx/effects';
@@ -38,8 +35,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         tap(_ => this.loginForm.disable()),
       ).subscribe(data => {
         data.isRestaurant ?
-          this.store.dispatch(loginRestaurantAction({ loginData: data })) :
-          this.store.dispatch(loginCustomerAction({ loginData: data }));
+          this.store.dispatch(loginRestaurantAction({ payload: data })) :
+          this.store.dispatch(loginCustomerAction({ payload: data }));
       });
 
     this.loginForm = this.formBuilder.group({

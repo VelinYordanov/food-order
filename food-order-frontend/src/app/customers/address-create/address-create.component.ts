@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { EMPTY } from 'rxjs';
 import { catchError, first, switchMap } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
 import { Address } from '../models/address';
 import { CustomerService } from '../services/customer.service';
 
@@ -16,14 +17,14 @@ export class AddressCreateComponent implements OnInit {
   constructor(
     private router: Router,
     private alertService: AlertService,
-    private authenticationService: AuthenticationService,
+    private store: Store,
     private customerService: CustomerService) { }
 
   ngOnInit(): void {
   }
 
   saveAddress(address: Address) {
-    this.authenticationService.user$
+    this.store.select(loggedInUserSelector)
       .pipe(
         first(x => !!x),
         switchMap(user =>
