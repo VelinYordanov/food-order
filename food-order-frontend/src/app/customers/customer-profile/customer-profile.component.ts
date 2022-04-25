@@ -18,9 +18,7 @@ export class CustomerProfileComponent implements OnInit {
   addresses$: Observable<Address[]>;
   constructor(
     private store: Store,
-    private alertService: AlertService,
-    private authenticationService: AuthenticationService,
-    private customerService: CustomerService) { }
+    private authenticationService: AuthenticationService) { }
 
   ngOnInit(): void {
     this.addresses$ = this.store.select(selectAddresses);

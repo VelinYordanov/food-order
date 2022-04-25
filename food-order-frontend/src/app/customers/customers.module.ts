@@ -21,6 +21,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AddressesEffects } from './store/addresses/addresses.effects';
 import { addressesReducer } from './store/addresses/addresses.reducer';
 import { customersReducers, customersStateKey } from './store/customers.reducer';
+import { EnumEffects } from './store/enums/enums.effects';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,7 @@ import { customersReducers, customersStateKey } from './store/customers.reducer'
     AngularMaterialModule,
     SharedModule,
     StoreModule.forFeature(customersStateKey, customersReducers),
-    EffectsModule.forFeature([AddressesEffects])
+    EffectsModule.forFeature([AddressesEffects, EnumEffects])
   ],
 })
 export class CustomersModule {}

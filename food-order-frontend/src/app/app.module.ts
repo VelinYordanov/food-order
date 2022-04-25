@@ -27,6 +27,7 @@ import * as SockJs from 'sockjs-client';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { authenticationReducer } from './shared/store/authentication/authentication.reducer';
 
 @NgModule({
   declarations: [
@@ -55,9 +56,9 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
-    StoreModule.forRoot({}, {}),
+    StoreModule.forRoot({ user: authenticationReducer }),
     EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument({ maxAge: 25}),
+    StoreDevtoolsModule.instrument({ maxAge: 25 }),
   ],
   providers: [
     {
@@ -83,4 +84,4 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

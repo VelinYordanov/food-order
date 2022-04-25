@@ -4,6 +4,9 @@ import { Observable } from 'rxjs';
 import { EnumsService } from 'src/app/shared/services/enums.service';
 import { EnumData } from 'src/app/shared/models/enum-data';
 import { Address } from '../models/address';
+import { Store } from '@ngrx/store';
+import { addressTypesSelector, citiesSelector } from '../store/enums/enums.selectors';
+import { loadAddressTypesAction, loadCitiesAction } from '../store/enums/enums.actions';
 
 @Component({
   selector: 'app-address',
@@ -20,11 +23,14 @@ export class AddressComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private enumService: EnumsService) { }
+    private store: Store) { }
 
   ngOnInit(): void {
-    this.cities$ = this.enumService.getCities();
-    this.addressTypes$ = this.enumService.getAddressTypes();
+    this.store.dispatch(loadCitiesAction());
+    this.store.dispatch(loadAddressTypesAction());
+
+    this.cities$ = this.store.select(citiesSelector);
+    this.addressTypes$ = this.store.select(addressTypesSelector);
 
     this.addressForm = this.formBuilder.group({
       city: [0],

@@ -4,7 +4,7 @@ import { EMPTY, of } from 'rxjs';
 import { switchMap, map, catchError, tap } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { CustomerService } from '../../services/customer.service';
-import { loadAddressesAction, loadAddressesError, loadAddressesSuccess } from './addresses.actions';
+import { loadAddressesAction, loadAddressesErrorAction, loadAddressesSuccessAction } from './addresses.actions';
 
 @Injectable()
 export class AddressesEffects {
@@ -20,15 +20,15 @@ export class AddressesEffects {
             switchMap(action =>
                 this.customerService.getCustomerAddresses(action.customerId)
                     .pipe(
-                        map(addresses => loadAddressesSuccess({ addresses })),
-                        catchError(error => of(loadAddressesError({ error })))
+                        map(addresses => loadAddressesSuccessAction({ addresses })),
+                        catchError(error => of(loadAddressesErrorAction({ error })))
                     )
             ))
     );
 
     loadAddressesErrors$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(loadAddressesError),
+            ofType(loadAddressesErrorAction),
             map(action => action.error),
             tap(error => this.alertService.displayMessage(error?.error?.description || 'An error occurred while loading addresses. Try again later.', 'error')),
         ), { dispatch: false });
