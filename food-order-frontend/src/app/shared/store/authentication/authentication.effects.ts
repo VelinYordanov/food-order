@@ -49,7 +49,8 @@ export class AuthenticationEffects {
     loginErrors$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loginCustomerErrorAction, loginRestaurantErrorAction),
-            tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while logging in. Try again later.', 'error'))
+            map(action => action.payload),
+            tap(error => this.alertService.displayMessage(error?.error?.description || 'An error occurred while logging in. Try again later.', 'error'))
         ), { dispatch: false })
 
     private login(token: string) {
