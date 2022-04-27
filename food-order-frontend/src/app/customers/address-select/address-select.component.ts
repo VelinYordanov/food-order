@@ -1,14 +1,16 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EMPTY, Observable, Subscription } from 'rxjs';
-import { catchError, filter, switchMap, tap } from 'rxjs/operators';
+import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { filter, first, takeUntil, tap } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
-import { CustomerService } from 'src/app/customers/services/customer.service';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { CartService } from 'src/app/shared/services/cart.service';
 import { UtilService } from 'src/app/shared/services/util.service';
+import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
+import { loadAddressesAction, loadAddressesSuccessAction } from '../store/addresses/addresses.actions';
+import { selectAddresses } from '../store/addresses/addresses.selectors';
 
 @Component({
   selector: 'app-address-select',
@@ -20,50 +22,48 @@ export class AddressSelectComponent
   addressForm: FormGroup;
   addresses$: Observable<Address[]>;
 
-  private selectedAddressSubscription: Subscription;
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private formBuilder: FormBuilder,
     private cartService: CartService,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-    private customerService: CustomerService,
-    private utilService: UtilService
-  ) {}
+    private utilService: UtilService,
+    private store: Store,
+    private actions: Actions
+  ) { }
 
   ngOnInit(): void {
     this.addressForm = this.formBuilder.group({
       address: [null, Validators.required],
     });
 
-    this.addresses$ = this.authenticationService.user$.pipe(
-      switchMap((user) =>
-        this.customerService.getCustomerAddresses(user.id)
-        .pipe(
-          tap(addresses => addresses.length && this.addressForm.get('address').patchValue(addresses[0])),
-          catchError((error) => {
-            this.alertService.displayMessage(
-              error?.error?.description ||
-                'An error occurred while loading addresses. Try again later.',
-              'error'
-            );
-            return EMPTY;
-          })
-        )
-      )
-    );
+    this.store.select(loggedInUserSelector)
+      .pipe(
+        first(),
+        tap(user => this.store.dispatch(loadAddressesAction({ payload: user.id })))
+      );
+
+    this.addresses$ = this.store.select(selectAddresses);
+
+    this.actions
+      .pipe(
+        takeUntil(this.onDestroy$),
+        ofType(loadAddressesSuccessAction),
+        tap(({ payload }) => payload.length && this.addressForm.get('address').patchValue(payload[0]))
+      );
   }
 
   ngAfterViewInit(): void {
-    this.selectedAddressSubscription = this.cartService.selectedAddress$
-    .pipe(
-      filter(x => !!x),
-    )
-    .subscribe(
-      (address) => this.addressForm.get('address').setValue(address)
-    );
+    this.cartService.selectedAddress$
+      .pipe(
+        takeUntil(this.onDestroy$),
+        filter(x => !!x),
+      )
+      .subscribe(
+        (address) => this.addressForm.get('address').setValue(address)
+      );
   }
 
   getAddressData(address: Address) {
@@ -84,6 +84,7 @@ export class AddressSelectComponent
   }
 
   ngOnDestroy(): void {
-    this.selectedAddressSubscription.unsubscribe();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }
