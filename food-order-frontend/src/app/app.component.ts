@@ -3,6 +3,7 @@ import { StorageService } from './shared/services/storage.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
 import { updateUserAction } from './shared/store/authentication/authentication.actions';
+import { AuthenticationService } from './shared/services/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ export class AppComponent implements OnInit {
   constructor(
     private jwtService: JwtHelperService,
     private storageService: StorageService,
+    private authenticationService: AuthenticationService,
     private store: Store) { }
 
   ngOnInit(): void {
@@ -21,7 +23,9 @@ export class AppComponent implements OnInit {
       const user = this.jwtService.decodeToken(token);
 
       if (user) {
-        this.store.dispatch(updateUserAction(user));
+        console.log(user);
+        this.store.dispatch(updateUserAction({ payload: user }));
+        this.authenticationService.updateUser(user);
       }
     }
   }

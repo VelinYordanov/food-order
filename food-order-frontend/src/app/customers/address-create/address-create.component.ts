@@ -16,8 +16,7 @@ import { createAddressAction } from '../store/addresses/addresses.actions';
   styleUrls: ['./address-create.component.scss']
 })
 export class AddressCreateComponent implements OnInit {
-  constructor(
-    private store: Store) { }
+  constructor(private store: Store) { }
 
   ngOnInit(): void {
   }

@@ -7,8 +7,7 @@
             </h3>
         </section>
         <section *ngFor="let address of addresses">
-            <app-address-item [address]="address"
-                (onDelete)="removeAddressFromList($event)"></app-address-item>
+            <app-address-item [address]="address"></app-address-item>
         </section>
     </section>
 </article>

@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { EMPTY, of } from 'rxjs';
-import { switchMap, map, catchError, tap } from 'rxjs/operators';
+import { switchMap, map, catchError, tap, withLatestFrom } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
 import { CustomerService } from '../../services/customer.service';
-import { createAddressAction, createAddressErrorAction, createAddressSuccessAction, loadAddressesAction, loadAddressesErrorAction, loadAddressesSuccessAction } from './addresses.actions';
+import { createAddressAction, createAddressErrorAction, createAddressSuccessAction, deleteAddressAction, deleteAddressErrorAction, deleteAddressPromptAction, deleteAddressSuccessAction, loadAddressesAction, loadAddressesErrorAction, loadAddressesSuccessAction } from './addresses.actions';
 
 @Injectable()
 export class AddressesEffects {
@@ -13,7 +15,8 @@ export class AddressesEffects {
         private actions$: Actions,
         private customerService: CustomerService,
         private alertService: AlertService,
-        private router: Router
+        private router: Router,
+        private store: Store
     ) { }
 
     loadAddresses$ = createEffect(() =>
@@ -61,4 +64,35 @@ export class AddressesEffects {
                 this.router.navigate(['customer', 'profile']);
             })
         ), { dispatch: false });
+
+    deleteAddressPrompts$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(deleteAddressPromptAction),
+            tap(action => this.alertService.displayQuestionWithLoader(
+                "Are you sure you want to delete this address?",
+                () => this.store.dispatch(deleteAddressAction({ payload: action.payload }))))
+        ), { dispatch: false })
+
+    deleteAddresses$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(deleteAddressAction),
+            withLatestFrom(this.store.select(loggedInUserSelector)),
+            switchMap(([action, user]) => this.customerService.deleteCustomerAddress(user.id, action.payload.id)
+                .pipe(
+                    map(result => deleteAddressSuccessAction({ payload: result })),
+                    catchError(error => of(deleteAddressErrorAction({ payload: error }))),
+                ))
+        ))
+
+    deleteAddressesSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(deleteAddressSuccessAction),
+            tap(({ payload }) => this.alertService.displayMessage(`Successfully deleted address ${payload.id}`, 'success'))
+        ), { dispatch: false });
+
+    deleteAddressesError$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(deleteAddressErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || `Error in deleting address. Try again later.`, 'error'))
+        ), { dispatch: false })
 }

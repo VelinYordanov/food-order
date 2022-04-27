@@ -1,12 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Address } from '../models/address';
-import { EnumsService } from '../../shared/services/enums.service';
+import { Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { loadAddressTypesAction, loadCitiesAction } from '../store/enums/enums.actions';
+import { deleteAddressPromptAction } from '../store/addresses/addresses.actions';
+import { addressTypesSelector, citiesSelector } from '../store/enums/enums.selectors';
 import { EnumData } from 'src/app/shared/models/enum-data';
-import { CustomerService } from '../services/customer.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { catchError, first, switchMap } from 'rxjs/operators';
-import { EMPTY, Observable, Subject } from 'rxjs';
-import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
   selector: 'app-address-item',
@@ -15,35 +14,23 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 })
 export class AddressItemComponent implements OnInit, OnDestroy {
   @Input() address: Address;
-  @Output() onDelete = new EventEmitter<string>();
-
-  private readonly deleteClicks$ = new Subject<void>();
 
   addressTypes: EnumData[];
   cities: EnumData[];
 
+  private readonly deleteClicks$ = new Subject<void>();
+
   constructor(
-    private alertService: AlertService,
-    private authenticationService: AuthenticationService,
-    private enumsService: EnumsService,
-    private customerService: CustomerService) { }
+    private store: Store) { }
 
   ngOnInit(): void {
-    this.enumsService.getCities().subscribe(cities => this.cities = cities);
-    this.enumsService.getAddressTypes().subscribe(addressTypes => this.addressTypes = addressTypes);
+    this.store.dispatch(loadCitiesAction());
+    this.store.dispatch(loadAddressTypesAction());
 
-    this.deleteClicks$
-      .pipe(
-        switchMap(_ => this.alertService.displayRequestQuestion<Address>(
-          `Are you sure you want to delete this address?`,
-          this.deleteAddress(),
-          `Successfully deleted address ${this.address.id}`,
-          `Error in deleting address ${this.address.id}. Try again later.`)
-          .pipe(
-            catchError(error => EMPTY)
-          ))
-      )
-      .subscribe(_ => this.onDelete.next(this.address.id))
+    this.store.select(citiesSelector).subscribe(cities => this.cities = cities);
+    this.store.select(addressTypesSelector).subscribe(addressTypes => this.addressTypes = addressTypes);
+
+    this.deleteClicks$.subscribe(_ => this.store.dispatch(deleteAddressPromptAction({ payload: this.address })))
   }
 
   ngOnDestroy(): void {
@@ -60,14 +47,5 @@ export class AddressItemComponent implements OnInit, OnDestroy {
 
   delete() {
     this.deleteClicks$.next();
-  }
-
-  private deleteAddress(): Observable<Address> {
-    return this.authenticationService.user$
-      .pipe(
-        first(x => !!x),
-        switchMap(user =>
-          this.customerService.deleteCustomerAddress(user.id, this.address.id))
-      )
   }
 }

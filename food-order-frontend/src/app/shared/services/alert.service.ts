@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
-import { EMPTY, from, Observable, throwError } from 'rxjs';
-import { catchError, filter, map, tap } from 'rxjs/operators';
+import { EMPTY, from, NEVER, Observable, throwError } from 'rxjs';
+import { catchError, filter, map, switchMap, switchMapTo, tap } from 'rxjs/operators';
 import { SwalToken } from '../injection-tokens/swal-injection-token';
 import { AlertResult } from 'src/app/shared/models/alert-result';
 
@@ -9,6 +9,23 @@ import { AlertResult } from 'src/app/shared/models/alert-result';
 })
 export class AlertService {
   constructor(@Inject(SwalToken) private swal) { }
+
+  displayQuestionWithLoader(question: string, action: Function) {
+    return from(this.swal.fire({
+      title: question,
+      icon: 'question',
+      showCancelButton: true,
+      showLoaderOnConfirm: true,
+      allowOutsideClick: () => !this.swal.isLoading(),
+      preConfirm: () => {
+        action();
+
+        // We are using a promise that remains pending to keep the loader open.
+        // It should be turned off manually.
+        return new Promise((_, __) => { });
+      }
+    }))
+  }
 
   displayRequestQuestion<T>(questionTitle: string, action: Observable<any>, successTitle: string, errorBackupTitle: string): Observable<T> {
     return from(this.swal.fire({

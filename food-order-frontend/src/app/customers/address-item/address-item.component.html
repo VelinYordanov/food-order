@@ -1,18 +1,21 @@
-<section *ngIf="address && cities && addressTypes"
-         class="address">
-    <p>{{getCityValue(address.city)}}</p>
-    <p>{{getAddressTypeValue(address.addressType)}}</p>
-    <p *ngIf="address.street">Street {{address.street}} {{address.streetNumber}}</p>
-    <p *ngIf="address.neighborhood">{{address.neighborhood}}</p>
-    <p *ngIf="address.apartmentBuildingNumber">Building number: {{address.apartmentBuildingNumber}}</p>
-    <p *ngIf="address.entrance">Entrance {{address.entrance}}</p>
-    <p *ngIf="address.floor">Floor: {{address.floor}}</p>
-    <p *ngIf="address.apartmentNumber">Apartment number: {{address.apartmentNumber}}</p>
-    <p class="actions">
-        <a [routerLink]="['..', 'addresses', address.id]"
-           class="action">Edit</a>
-        <span>|</span>
-        <span (click)="delete()"
-              class="action last-action">Delete</span>
-    </p>
+<section *ngIf="address && cities && addressTypes" class="address">
+  <p>{{ getCityValue(address.city) }}</p>
+  <p>{{ getAddressTypeValue(address.addressType) }}</p>
+  <p *ngIf="address.street">
+    Street {{ address.street }} {{ address.streetNumber }}
+  </p>
+  <p *ngIf="address.neighborhood">{{ address.neighborhood }}</p>
+  <p *ngIf="address.apartmentBuildingNumber">
+    Building number: {{ address.apartmentBuildingNumber }}
+  </p>
+  <p *ngIf="address.entrance">Entrance {{ address.entrance }}</p>
+  <p *ngIf="address.floor">Floor: {{ address.floor }}</p>
+  <p *ngIf="address.apartmentNumber">
+    Apartment number: {{ address.apartmentNumber }}
+  </p>
+  <p class="actions">
+    <a [routerLink]="['..', 'addresses', address.id]" class="action">Edit</a>
+    <span>|</span>
+    <span (click)="delete()" class="action last-action">Delete</span>
+  </p>
 </section>

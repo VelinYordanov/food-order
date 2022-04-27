@@ -18,7 +18,7 @@ export class CustomerProfileComponent implements OnInit {
     private store: Store) { }
 
   ngOnInit(): void {
-    this.addresses$ = this.store.select(selectAddresses);
+    this.addresses$ = this.store.select(selectAddresses).pipe(tap(console.log));
     this.store.select(loggedInUserSelector)
       .pipe(
         first(x => !!x),
