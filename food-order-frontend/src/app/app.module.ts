@@ -29,6 +29,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { authenticationReducer } from './shared/store/authentication/authentication.reducer';
 import { AuthenticationEffects } from './shared/store/authentication/authentication.effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { AuthenticationEffects } from './shared/store/authentication/authenticat
     StoreModule.forRoot({ user: authenticationReducer }),
     EffectsModule.forRoot([AuthenticationEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
+    StoreRouterConnectingModule.forRoot(),
   ],
   providers: [
     {
