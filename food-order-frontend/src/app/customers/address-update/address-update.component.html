@@ -1,5 +1,7 @@
 <article>
-    <app-address *ngIf="address"
-        [address]="address"
-        (onSubmit)="updateAddress($event)"></app-address>
+  <app-address
+    *ngIf="address$ | async; let address"
+    [address]="address"
+    (onSubmit)="updateAddress($event)"
+  ></app-address>
 </article>

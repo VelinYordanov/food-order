@@ -29,7 +29,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { authenticationReducer } from './shared/store/authentication/authentication.reducer';
 import { AuthenticationEffects } from './shared/store/authentication/authentication.effects';
-import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import { NavigationActionTiming, routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 
 @NgModule({
   declarations: [
@@ -61,7 +61,7 @@ import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
     StoreModule.forRoot({ user: authenticationReducer, router: routerReducer }),
     EffectsModule.forRoot([AuthenticationEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
-    StoreRouterConnectingModule.forRoot(),
+    StoreRouterConnectingModule.forRoot({ navigationActionTiming: NavigationActionTiming.PostActivation, }),
   ],
   providers: [
     {

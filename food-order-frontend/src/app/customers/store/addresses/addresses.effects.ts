@@ -7,7 +7,7 @@ import { switchMap, map, catchError, tap, withLatestFrom } from 'rxjs/operators'
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
 import { CustomerService } from '../../services/customer.service';
-import { createAddressAction, createAddressErrorAction, createAddressSuccessAction, deleteAddressAction, deleteAddressErrorAction, deleteAddressPromptAction, deleteAddressSuccessAction, loadAddressesAction, loadAddressesErrorAction, loadAddressesSuccessAction } from './addresses.actions';
+import { createAddressAction, createAddressErrorAction, createAddressSuccessAction, deleteAddressAction, deleteAddressErrorAction, deleteAddressPromptAction, deleteAddressSuccessAction, loadAddressesAction, loadAddressesErrorAction, loadAddressesSuccessAction, loadCustomerAddressAction, loadCustomerAddressErrorAction, loadCustomerAddressSuccessAction, updateAddressAction, updateAddressErrorAction, updateAddressSuccessAction } from './addresses.actions';
 
 @Injectable()
 export class AddressesEffects {
@@ -95,4 +95,47 @@ export class AddressesEffects {
             ofType(deleteAddressErrorAction),
             tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || `Error in deleting address. Try again later.`, 'error'))
         ), { dispatch: false })
+
+    loadCustomerAddress$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadCustomerAddressAction),
+            switchMap(({ payload }) =>
+                this.customerService.getCustomerAddress(payload.userId, payload.addressId)
+                    .pipe(
+                        map(result => loadCustomerAddressSuccessAction({ payload: result })),
+                        catchError(error => of(loadCustomerAddressErrorAction({ payload: error })))
+                    ))
+        ));
+
+    loadCustomerAddressErrors$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadCustomerAddressErrorAction),
+            tap(action => this.alertService.displayMessage('An error occurred while loading address. Try again later.', 'error'))
+        ), { dispatch: false });
+
+    updateAddress$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateAddressAction),
+            switchMap(({ payload }) =>
+                this.customerService.editCustomerAddress(payload.userId, payload.addressId, payload.address)
+                    .pipe(
+                        map(response => updateAddressSuccessAction({ payload: response })),
+                        catchError(error => of(updateAddressErrorAction({ payload: error })))
+                    ))
+        ));
+
+    updateAddressSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateAddressSuccessAction),
+            tap(_ => {
+                this.alertService.displayMessage('Successfully editted address.', 'success');
+                this.router.navigate(['customer', 'profile']);
+            })
+        ), { dispatch: false });
+
+    updateAddressError$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateAddressErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while editting address. Try again later.', 'error'))
+        ), { dispatch: false });
 }

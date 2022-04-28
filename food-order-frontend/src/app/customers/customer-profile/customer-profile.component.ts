@@ -18,11 +18,10 @@ export class CustomerProfileComponent implements OnInit {
     private store: Store) { }
 
   ngOnInit(): void {
-    this.addresses$ = this.store.select(selectAddresses).pipe(tap(console.log));
+    this.addresses$ = this.store.select(selectAddresses);
     this.store.select(loggedInUserSelector)
       .pipe(
         first(x => !!x),
-        tap(user => this.store.dispatch(loadAddressesAction({ payload: user.id })))
-      ).subscribe();
+      ).subscribe(user => this.store.dispatch(loadAddressesAction({ payload: user.id })));
   }
 }

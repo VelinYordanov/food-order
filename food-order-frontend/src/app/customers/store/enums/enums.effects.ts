@@ -1,13 +1,16 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
+import { Store } from "@ngrx/store";
 import { of } from "rxjs";
-import { catchError, map, switchMap, tap } from "rxjs/operators";
+import { catchError, filter, map, switchMap, tap, withLatestFrom } from "rxjs/operators";
 import { EnumsService } from "src/app/shared/services/enums.service";
 import { loadAddressTypesAction, loadAddressTypesErrorAction, loadAddressTypesSuccessAction, loadCitiesAction, loadCitiesErrorAction, loadCitiesSuccessAction, loadOrderStatusesAction, loadOrderStatusesErrorAction, loadOrderStatusesSuccessAction } from "./enums.actions";
+import { addressTypesSelector, citiesSelector, orderTypesSelector } from "./enums.selectors";
 
 @Injectable()
 export class EnumEffects {
     constructor(
+        private store: Store,
         private actions$: Actions,
         private enumsService: EnumsService
     ) { }
@@ -16,6 +19,8 @@ export class EnumEffects {
         this.actions$
             .pipe(
                 ofType(loadCitiesAction),
+                withLatestFrom(this.store.select(citiesSelector)),
+                filter(([_, cities]) => !cities.length),
                 switchMap(action =>
                     this.enumsService.getCities()
                         .pipe(
@@ -28,6 +33,8 @@ export class EnumEffects {
         this.actions$
             .pipe(
                 ofType(loadAddressTypesAction),
+                withLatestFrom(this.store.select(addressTypesSelector)),
+                filter(([_, addressTypes]) => !addressTypes.length),
                 switchMap(action =>
                     this.enumsService.getAddressTypes()
                         .pipe(
@@ -40,6 +47,8 @@ export class EnumEffects {
         this.actions$
             .pipe(
                 ofType(loadOrderStatusesAction),
+                withLatestFrom(this.store.select(orderTypesSelector)),
+                filter(([_, orderStatuses]) => !orderStatuses.length),
                 switchMap(action =>
                     this.enumsService.getOrderStatuses()
                         .pipe(

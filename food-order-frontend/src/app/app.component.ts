@@ -23,7 +23,6 @@ export class AppComponent implements OnInit {
       const user = this.jwtService.decodeToken(token);
 
       if (user) {
-        console.log(user);
         this.store.dispatch(updateUserAction({ payload: user }));
         this.authenticationService.updateUser(user);
       }
