@@ -1,7 +1,7 @@
-import { EnumData } from "src/app/shared/models/enum-data";
+import { EnumStoreData } from "./enum-store-data";
 
 export interface EnumState {
-    cities: EnumData[];
-    addressTypes: EnumData[];
-    orderTypes: EnumData[];
+    cities: EnumStoreData;
+    addressTypes: EnumStoreData;
+    orderTypes: EnumStoreData;
 }
