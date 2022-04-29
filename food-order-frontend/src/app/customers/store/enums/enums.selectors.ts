@@ -66,3 +66,8 @@ export const addressTypesLoadingSelector = createSelector(
     citiesEnumStoreDataSelector,
     isLoading
 )
+
+export const orderStatusesLoadingSelector = createSelector(
+    orderTypesEnumStoreDataSelector,
+    isLoading
+)

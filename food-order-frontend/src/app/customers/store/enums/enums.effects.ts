@@ -4,8 +4,8 @@ import { Store } from "@ngrx/store";
 import { of } from "rxjs";
 import { catchError, filter, map, switchMap, tap, withLatestFrom } from "rxjs/operators";
 import { EnumsService } from "src/app/shared/services/enums.service";
-import { loadAddressTypesAction, loadAddressTypesErrorAction, loadAddressTypesRequestAction, loadAddressTypesSuccessAction, loadCitiesAction, loadCitiesErrorAction, loadCitiesRequestAction, loadCitiesSuccessAction, loadOrderStatusesAction, loadOrderStatusesErrorAction, loadOrderStatusesSuccessAction } from "./enums.actions";
-import { addressTypesEnumStoreDataSelector, addressTypesSelector, citiesEnumStoreDataSelector, citiesSelector, orderTypesEnumStoreDataSelector, orderTypesSelector } from "./enums.selectors";
+import { loadAddressTypesAction, loadAddressTypesErrorAction, loadAddressTypesRequestAction, loadAddressTypesSuccessAction, loadCitiesAction, loadCitiesErrorAction, loadCitiesRequestAction, loadCitiesSuccessAction, loadOrderStatusesAction, loadOrderStatusesErrorAction, loadOrderStatusesRequestAction, loadOrderStatusesSuccessAction } from "./enums.actions";
+import { addressTypesEnumStoreDataSelector, addressTypesSelector, citiesEnumStoreDataSelector, citiesSelector, orderStatusesLoadingSelector, orderTypesEnumStoreDataSelector, orderTypesSelector } from "./enums.selectors";
 
 @Injectable()
 export class EnumEffects {
@@ -38,7 +38,7 @@ export class EnumEffects {
 
     loadAddressTypesRequests$ = createEffect(() =>
         this.actions$.pipe(
-            ofType(loadAddressTypesRequestAction),
+            ofType(loadAddressTypesAction),
             withLatestFrom(this.store.select(addressTypesEnumStoreDataSelector)),
             filter(([_, addressTypes]) => !addressTypes.entities.length && !addressTypes.isLoading),
             map(x => loadAddressTypesRequestAction())
@@ -59,12 +59,18 @@ export class EnumEffects {
                         ))
             ));
 
+    loadOrderStatusesRequests$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadOrderStatusesAction),
+            withLatestFrom(this.store.select(orderTypesEnumStoreDataSelector)),
+            filter(([_, orderStatuses]) => !orderStatuses.entities.length && !orderStatuses.isLoading),
+            map(action => loadOrderStatusesRequestAction())
+        ))
+
     loadOrderStatuses$ = createEffect(() =>
         this.actions$
             .pipe(
-                ofType(loadOrderStatusesAction),
-                withLatestFrom(this.store.select(orderTypesEnumStoreDataSelector)),
-                filter(([_, orderStatuses]) => !orderStatuses.entities.length && !orderStatuses.isLoading),
+                ofType(loadOrderStatusesRequestAction),
                 switchMap(action =>
                     this.enumsService.getOrderStatuses()
                         .pipe(
