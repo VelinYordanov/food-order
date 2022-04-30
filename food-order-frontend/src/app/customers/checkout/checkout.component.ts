@@ -1,25 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
+import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { EMPTY, Observable, Subject } from 'rxjs';
 import {
   catchError,
   filter,
-  finalize,
-  first,
   map,
-  switchMap,
   switchMapTo,
-  tap,
+  takeUntil,
   withLatestFrom,
 } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
-import { CustomerService } from 'src/app/customers/services/customer.service';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { CartService } from 'src/app/shared/services/cart.service';
 import { UtilService } from 'src/app/shared/services/util.service';
+import { loadDiscountCodeAction, loadDiscountCodeSuccessAction, submitOrderAction } from '../store/cart/cart.actions';
+import { cartItemsSumSelector, orderItemsSelector, selectedAddressSelector, selectedRestaurantIdSelector } from '../store/cart/cart.selectors';
 
 @Component({
   selector: 'app-checkout',
@@ -31,43 +27,34 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   discountCodeFormControl: FormControl;
 
   selectedAddress$: Observable<Address>;
-
   numberOfFoods$: Observable<number>;
 
   discountCode: DiscountCode = null;
 
-  private submitButtonClicks: Subject<void> = new Subject<void>();
-  private applyDiscountCodeClicks: Subject<void> = new Subject<void>();
+  private readonly submitButtonClicks: Subject<void> = new Subject<void>();
+  private readonly applyDiscountCodeClicks: Subject<void> = new Subject<void>();
+  private readonly onDestroy$ = new Subject<void>();
 
   constructor(
-    private alertService: AlertService,
-    private authenticationService: AuthenticationService,
-    private customerService: CustomerService,
-    private cartService: CartService,
     private utilService: UtilService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    private store: Store,
+    private actions$: Actions
+  ) { }
 
   ngOnInit(): void {
     this.setUpSubmitOrder();
     this.setUpDiscountCodeLookup();
 
-    this.numberOfFoods$ = this.cartService.selectedItems$.pipe(
-      map((items) =>
-        items
-          .map((item) => item.quantity)
-          .reduce((total, current) => total + current, 0),
-      )
-    );
-
-    this.selectedAddress$ = this.cartService.selectedAddress$;
+    this.numberOfFoods$ = this.store.select(cartItemsSumSelector)
+    this.selectedAddress$ = this.store.select(selectedAddressSelector);
 
     this.discountCodeFormControl = new FormControl(null);
     this.comment = new FormControl(null);
   }
 
   ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     this.submitButtonClicks.complete();
     this.applyDiscountCodeClicks.complete();
   }
@@ -89,79 +76,22 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       .pipe(
         map((_) => this.discountCodeFormControl.value),
         filter((code) => !!code),
-        withLatestFrom(this.cartService.selectedRestaurant$),
-        switchMap(([code, restaurant]) =>
-          this.customerService.getDiscountCode(restaurant.id, code)
-          .pipe(
-            catchError((error) => {
-              this.alertService.displayMessage(
-                error?.error?.description ||
-                  'An error occurred while looking up discount code. Try again later.',
-                'error'
-              );
-              return EMPTY;
-            })
-          )
-        )
-      )
-      .subscribe((discountCode) => (this.discountCode = discountCode));
+        withLatestFrom(this.store.select(selectedRestaurantIdSelector)),
+      ).subscribe(([code, restaurantId]) => this.store.dispatch(loadDiscountCodeAction({ payload: { code, restaurantId } })));
+
+    this.actions$.pipe(
+      takeUntil(this.onDestroy$),
+      ofType(loadDiscountCodeSuccessAction),
+    ).subscribe(action => this.discountCode = action.payload)
   }
 
   private setUpSubmitOrder() {
-    this.submitButtonClicks
-      .pipe(
-        switchMapTo(
-          combineLatest([
-            this.authenticationService.user$.pipe(map((user) => user.id)),
-            this.cartService.selectedRestaurant$.pipe(
-              map((restaurant) => restaurant.id)
-            ),
-            this.cartService.selectedAddress$.pipe(
-              map((address) => address.id)
-            ),
-            this.cartService.selectedItems$.pipe(
-              map((items) =>
-                items.map((item) => ({
-                  id: item.food.id,
-                  quantity: item.quantity,
-                }))
-              )
-            ),
-          ]).pipe(
-            first(),
-            switchMap(([customerId, restaurantId, addressId, foods]) =>
-              this.customerService
-                .submitOrder({
-                  restaurantId,
-                  customerId,
-                  addressId,
-                  foods,
-                  discountCodeId: this.discountCode?.id,
-                  comment: this.comment.value,
-                })
-                .pipe(
-                  catchError((error) => {
-                    this.alertService.displayMessage(
-                      error?.error?.description ||
-                        'An error occurred while submitting order. Try again later',
-                      'error'
-                    );
-                    return EMPTY;
-                  })
-                )
-            ),
-            finalize(() => this.cartService.clearCart())
-          )
-        )
-      )
-      .subscribe((order) => {
-        this.alertService.displayMessage(
-          'Successfully submitted order.',
-          'success'
-        );
-        this.router.navigate(['../', order.id], {
-          relativeTo: this.activatedRoute,
-        });
-      });
+    this.submitButtonClicks.pipe(
+      switchMapTo(this.store.select(orderItemsSelector)
+        .pipe(
+          map(ordersData => ({ ...ordersData, ...{ discountCodeId: this.discountCode.id, comment: this.comment.value } })),
+          catchError(error => EMPTY)
+        ))
+    ).subscribe(orderCreate => this.store.dispatch(submitOrderAction({ payload: orderCreate })));
   }
 }

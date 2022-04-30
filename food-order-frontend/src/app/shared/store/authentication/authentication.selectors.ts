@@ -7,7 +7,12 @@ export const loggedInUserSelector = createFeatureSelector<User>(userStateKey);
 
 export const loggedInUserWithRouteParameter = (parameter: string) =>
     createSelector(
-        loggedInUserSelector,
+        loggedInUserIdSelector,
         selectRouteParam(parameter),
-        (user, routeParameter) => ({ userId: user.id, param: routeParameter })
+        (userId, routeParameter) => ({ userId, param: routeParameter })
     )
+
+export const loggedInUserIdSelector = createSelector(
+    loggedInUserSelector,
+    user => user.id
+)
