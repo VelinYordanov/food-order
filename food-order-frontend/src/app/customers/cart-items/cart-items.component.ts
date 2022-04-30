@@ -1,9 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 import { CartItem } from 'src/app/restaurants/models/cart-item';
 import { CartService } from 'src/app/shared/services/cart.service';
+import { decreaseFoodQuantityAction, increaseFoodQuantityAction, removeFoodFromCartAction } from '../store/cart/cart.actions';
+import { selectedItemsSelector, selectedRestaurantSelector } from '../store/cart/cart.selectors';
 
 @Component({
   selector: 'app-cart-items',
@@ -16,11 +19,11 @@ export class CartItemsComponent implements OnInit {
   selectedRestaurant$: Observable<OrderRestaurant>;
   items$: Observable<CartItem[]>;
 
-  constructor(private cartService: CartService) { }
+  constructor(private store: Store) { }
 
   ngOnInit(): void {
-    this.items$ = this.cartService.selectedItems$;
-    this.selectedRestaurant$ = this.cartService.selectedRestaurant$;
+    this.items$ = this.store.select(selectedItemsSelector);
+    this.selectedRestaurant$ = this.store.select(selectedRestaurantSelector);
   }
 
   calculateItemPrice(item: CartItem) {
@@ -38,14 +41,14 @@ export class CartItemsComponent implements OnInit {
   }
 
   increaseQuantity(item: CartItem) {
-    this.cartService.increaseQuantity(item.food);
+    this.store.dispatch(increaseFoodQuantityAction({ payload: item.food }));
   }
 
   decreaseQuantity(item: CartItem) {
-    this.cartService.decreaseQuantity(item.food);
+    this.store.dispatch(decreaseFoodQuantityAction({ payload: item.food }));
   }
 
   removeFromCart(item: CartItem) {
-    this.cartService.removeFood(item.food);
+    this.store.dispatch(removeFoodFromCartAction({ payload: item }));
   }
 }
