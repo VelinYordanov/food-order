@@ -12,3 +12,13 @@ export const cartItemsSumSelector = createSelector(
     selectedItemsSelector,
     state => state.reduce((sum, current) => sum + current.quantity, 0)
 )
+
+export const selectedAddressSelector = createSelector(
+    cartStateSelector,
+    state => state.selectedAddress
+);
+
+export const selectedRestaurantSelector = createSelector(
+    cartStateSelector,
+    state => state.selectedRestaurant
+);
