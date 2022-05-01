@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { CartService } from 'src/app/shared/services/cart.service';
 import { UtilService } from 'src/app/shared/services/util.service';
 import { Order } from '../models/order';
 import { OrderFoodResponse } from '../models/order-food-response';
 import { Status } from '../models/status';
+import { loadCartAction, selectRestaurantAction } from '../store/cart/cart.actions';
 
 @Component({
   selector: 'app-customer-order',
@@ -15,7 +17,7 @@ export class CustomerOrderComponent implements OnInit {
   @Input() order: Order;
 
   constructor(
-    private cartService: CartService,
+    private store: Store,
     private utilService: UtilService,
     private router: Router
   ) { }
@@ -43,8 +45,8 @@ export class CustomerOrderComponent implements OnInit {
 
   loadCart(order: Order) {
     const cartItems = order.foods.map((food) => ({ food, quantity: food.quantity }));
-    this.cartService.setRestaurant(order.restaurant);
-    this.cartService.loadCart(cartItems);
+    this.store.dispatch(selectRestaurantAction({ payload: order.restaurant }));
+    this.store.dispatch(loadCartAction({ payload: cartItems }));
     this.router.navigate(['restaurants', order.restaurant.id]);
   }
 
