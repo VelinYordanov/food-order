@@ -1,22 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { EMPTY, Observable, Subject } from 'rxjs';
 import {
   catchError,
   startWith,
   switchMap,
+  takeUntil,
   withLatestFrom,
 } from 'rxjs/operators';
 import { Page } from 'src/app/shared/models/page';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { CartService } from 'src/app/shared/services/cart.service';
-import { UtilService } from 'src/app/shared/services/util.service';
+import { loggedInUserIdSelector } from 'src/app/shared/store/authentication/authentication.selectors';
 import { Order } from '../models/order';
-import { OrderFoodResponse } from '../models/order-food-response';
-import { Status } from '../models/status';
 import { CustomerService } from '../services/customer.service';
+import { loadCustomerOrdersAction, loadCustomerOrdersSuccessAction } from '../store/cart/cart.actions';
 
 @Component({
   selector: 'app-customer-orders',
@@ -24,35 +23,33 @@ import { CustomerService } from '../services/customer.service';
   styleUrls: ['./customer-orders.component.scss'],
 })
 export class CustomerOrdersComponent implements OnInit, OnDestroy {
-  private pageSelects$ = new Subject<number>();
+  private readonly pageSelects$ = new Subject<number>();
+  private readonly onDestroy$ = new Subject<void>();
+
   pagedOrders$: Observable<Page<Order>>;
 
   constructor(
-    private authenticationService: AuthenticationService,
-    private customerService: CustomerService,
-    private alertService: AlertService,
-  ) {}
+    private store: Store,
+    private actions$: Actions,
+  ) { }
 
   ngOnInit(): void {
-    this.pagedOrders$ = this.pageSelects$.pipe(
+    this.pagedOrders$ = this.actions$
+      .pipe(
+        takeUntil(this.onDestroy$),
+        ofType(loadCustomerOrdersSuccessAction)
+      );
+
+    this.pageSelects$.pipe(
+      takeUntil(this.onDestroy$),
       startWith(0),
-      withLatestFrom(this.authenticationService.user$),
-      switchMap(([page, customer]) =>
-        this.customerService.getOrders(customer.id, page).pipe(
-          catchError((error) => {
-            this.alertService.displayMessage(
-              error?.error?.description ||
-                'An error occurred while loading orders. Try again later.',
-              'error'
-            );
-            return EMPTY;
-          })
-        )
-      )
-    );
+      withLatestFrom(this.store.select(loggedInUserIdSelector)),
+    ).subscribe(([page, customerId]) => this.store.dispatch(loadCustomerOrdersAction({ payload: { page, customerId } })))
   }
 
   ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     this.pageSelects$.complete();
   }
 

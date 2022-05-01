@@ -5,7 +5,7 @@ import { of } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { CustomerService } from "../../services/customer.service";
-import { clearCartAction, loadDiscountCodeAction, loadDiscountCodeErrorAction, loadDiscountCodeSuccessAction, submitOrderAction, submitOrderErrorAction, submitOrderSuccessAction } from "./cart.actions";
+import { clearCartAction, loadCustomerOrdersAction, loadCustomerOrdersErrorAction, loadCustomerOrdersSuccessAction, loadDiscountCodeAction, loadDiscountCodeErrorAction, loadDiscountCodeSuccessAction, submitOrderAction, submitOrderErrorAction, submitOrderSuccessAction } from "./cart.actions";
 
 @Injectable()
 export class CartEffects {
@@ -79,4 +79,24 @@ export class CartEffects {
             ofType(submitOrderSuccessAction, submitOrderErrorAction),
             map(action => clearCartAction()),
         ))
+
+    loadCustomerOrders$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadCustomerOrdersAction),
+            switchMap(({ payload }) => this.customerService.getOrders(payload.customerId, payload.page)
+                .pipe(
+                    map(result => loadCustomerOrdersSuccessAction({ payload: result })),
+                    catchError(error => of(loadCustomerOrdersErrorAction({ payload: error })))
+                ))
+        ));
+
+    loadCustomerOrdersErrors$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadCustomerOrdersErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(
+                payload?.error?.description ||
+                'An error occurred while loading orders. Try again later.',
+                'error'
+            ))
+        ), { dispatch: false })
 }
