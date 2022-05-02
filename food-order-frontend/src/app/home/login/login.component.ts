@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subject, EMPTY } from 'rxjs';
-import { tap, switchMap, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { tap, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { loginCustomerAction, loginCustomerErrorAction, loginCustomerSuccessAction, loginRestaurantAction, loginRestaurantErrorAction, loginRestaurantSuccessAction } from 'src/app/shared/store/authentication/authentication.actions';
@@ -48,27 +48,23 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.actions.pipe(
       takeUntil(this.onDestroy$),
       ofType(loginCustomerSuccessAction, loginCustomerErrorAction, loginRestaurantSuccessAction, loginRestaurantErrorAction),
-      tap(_ => this.loginForm.enable()),
-      switchMap(x => EMPTY)
-    ).subscribe();
+    ).subscribe(_ => this.loginForm.enable());
 
     this.actions.pipe(
       takeUntil(this.onDestroy$),
       ofType(loginCustomerSuccessAction, loginRestaurantSuccessAction),
-      tap(_ => {
-        if (this.loginForm.get('isRestaurant').value) {
-          this.router.navigate(['restaurant', 'profile']);
-        } else {
-          this.router.navigate(['customer', 'profile']);
-        }
-      }),
-      switchMap(x => EMPTY)
-    ).subscribe()
+    ).subscribe(_ => {
+      if (this.loginForm.get('isRestaurant').value) {
+        this.router.navigate(['restaurant', 'profile']);
+      } else {
+        this.router.navigate(['customer', 'profile']);
+      }
+    })
   }
 
   ngOnDestroy(): void {
-      this.onDestroy$.next();
-      this.onDestroy$.complete();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   submit() {
