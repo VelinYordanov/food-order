@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, takeUntil, tap } from 'rxjs/operators';
 import { CustomerRegisterDto } from '../models/customer-register-dto';
 import { AsyncValidatorsService } from '../../shared/validators/async-validators.service';
 import { matchingPasswords } from '../../shared/validators/matching-passwords.validator';
@@ -16,7 +16,7 @@ import { Actions, ofType } from '@ngrx/effects';
   templateUrl: './register-customer.component.html',
   styleUrls: ['./register-customer.component.scss'],
 })
-export class RegisterCustomerComponent implements OnInit {
+export class RegisterCustomerComponent implements OnInit, OnDestroy {
   registerForm: FormGroup;
   errorStateMatcher: ErrorStateMatcher;
 
@@ -28,6 +28,7 @@ export class RegisterCustomerComponent implements OnInit {
   readonly maxNameLength = 100;
 
   private registerFormSubmitsSubject = new Subject<CustomerRegisterDto>();
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private store: Store,
@@ -96,8 +97,15 @@ export class RegisterCustomerComponent implements OnInit {
       });
 
     this.actions$.pipe(
+      takeUntil(this.onDestroy$),
       ofType(registerCustomerSuccessAction, registerCustomerErrorAction)
     ).subscribe(_ => this.registerForm.enable());
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+    this.registerFormSubmitsSubject.complete();
   }
 
   submit() {
