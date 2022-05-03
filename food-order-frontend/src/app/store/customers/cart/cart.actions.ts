@@ -13,7 +13,7 @@ import { LoadDiscountCodePayload } from "../../models/load-discount-code-payload
 
 export const selectRestaurantAction = createAction('[Cart] Select Restaurant', props<{ payload: OrderRestaurant }>());
 export const selectAddressAction = createAction('[Cart] Select Address', props<{ payload: Address }>());
-export const addFoodToCartAction = createAction('[Cart] Add Food', props<{ payload: CartItem }>());
+export const addFoodToCartAction = createAction('[Cart] Add Food', props<{ payload: CartFood }>());
 export const removeFoodFromCartAction = createAction('[Cart] Remove Food', props<{ payload: CartItem }>());
 export const loadCartAction = createAction('[Cart] Load Cart', props<{ payload: CartItem[] }>());
 export const increaseFoodQuantityAction = createAction('[Cart] Increase Food Quantity', props<{ payload: CartFood }>());

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { EMPTY, Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/services/alert.service';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { loadRestaurantsAction } from 'src/app/store/restaurants/restaurants.actions';
+import { selectRestaurants } from 'src/app/store/restaurants/restaurants.selectors';
 import { RestaurantListItem } from '../models/restaurant-list-item';
-import { RestaurantService } from '../services/restaurant.service';
 
 @Component({
   selector: 'app-restaurant-list',
@@ -14,16 +14,10 @@ export class RestaurantListComponent implements OnInit {
   restaurants$: Observable<RestaurantListItem[]>;
 
   constructor(
-    private restaurantService: RestaurantService,
-    private alertService: AlertService) { }
+    private store: Store) { }
 
   ngOnInit(): void {
-    this.restaurants$ = this.restaurantService.getRestaurantsList()
-      .pipe(
-        catchError(error => {
-          this.alertService.displayMessage(error?.error?.desccription || 'An error occurred while loading restaurants data. Try again later.', 'error');
-          return EMPTY;
-        })
-      );
+    this.store.dispatch(loadRestaurantsAction());
+    this.restaurants$ = this.store.select(selectRestaurants);
   }
 }

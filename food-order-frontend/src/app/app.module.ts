@@ -35,6 +35,8 @@ import { customersReducer } from './store/customers/customers.reducer';
 import { AddressesEffects } from './store/customers/addresses/addresses.effects';
 import { EnumEffects } from './store/enums/enums.effects';
 import { CartEffects } from './store/customers/cart/cart.effects';
+import { restaurantsReducer } from './store/restaurants/restaurants.reducers';
+import { RestaurantsEffects } from './store/restaurants/restaurants.effects';
 
 @NgModule({
   declarations: [
@@ -63,8 +65,8 @@ import { CartEffects } from './store/customers/cart/cart.effects';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
-    StoreModule.forRoot({ customers: customersReducer, user: authenticationReducer, router: routerReducer, enums: enumsReducer }),
-    EffectsModule.forRoot([AuthenticationEffects, AddressesEffects, EnumEffects, CartEffects]),
+    StoreModule.forRoot({ customers: customersReducer, user: authenticationReducer, router: routerReducer, enums: enumsReducer, restaurants: restaurantsReducer }),
+    EffectsModule.forRoot([AuthenticationEffects, AddressesEffects, EnumEffects, CartEffects, RestaurantsEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
     StoreRouterConnectingModule.forRoot({ navigationActionTiming: NavigationActionTiming.PostActivation, }),
   ],

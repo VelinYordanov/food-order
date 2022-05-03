@@ -1,48 +1,50 @@
 import { ViewportScroller } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { EMPTY } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { CartService } from 'src/app/shared/services/cart.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { addFoodToCartAction, selectRestaurantAction } from 'src/app/store/customers/cart/cart.actions';
+import { loadRestaurantAction } from 'src/app/store/restaurants/restaurants.actions';
+import { selectCurrentRestaurant } from 'src/app/store/restaurants/restaurants.selectors';
+import { selectRouteParam } from 'src/app/store/router/router.selectors';
 import { Category } from '../models/category';
 import { Food } from '../models/food';
 import { Restaurant } from '../models/restaurant';
-import { RestaurantService } from '../services/restaurant.service';
 
 @Component({
   selector: 'app-restaurant-details',
   templateUrl: './restaurant-details.component.html',
   styleUrls: ['./restaurant-details.component.scss']
 })
-export class RestaurantDetailsComponent implements OnInit {
+export class RestaurantDetailsComponent implements OnInit, OnDestroy {
   restaurant: Restaurant;
   categoriesToView: Category[];
 
+  private onDestroy$ = new Subject<void>();
+
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private restaurantService: RestaurantService,
-    private cartService: CartService,
-    private alertService: AlertService,
+    private store: Store,
     private viewScroller: ViewportScroller) { }
 
   ngOnInit(): void {
-    this.activatedRoute.paramMap
+    this.store.select(selectRouteParam('id'))
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(id => this.store.dispatch(loadRestaurantAction({ payload: id })));
+
+    this.store.select(selectCurrentRestaurant)
       .pipe(
-        map(paramMap => paramMap.get('id')),
-        switchMap(id =>
-          this.restaurantService.getRestaurantData(id)
-            .pipe(
-              tap(restaurant => this.cartService.setRestaurant(restaurant)),
-              catchError(error => {
-                this.alertService.displayMessage(error?.error?.description || 'An error ocurred while loading restaurant data. Try again later.', 'error');
-                return EMPTY;
-              })
-            ))
-      ).subscribe(restaurant => {
+        takeUntil(this.onDestroy$),
+        filter(restaurant => !!restaurant))
+      .subscribe(restaurant => {
+        this.store.dispatch(selectRestaurantAction({ payload: restaurant }));
         this.restaurant = restaurant;
         this.categoriesToView = this.restaurant.categories.filter(category => this.restaurant.foods.some(food => !!food.categories.find(c => c.id === category.id)));
       });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getFoodsForCategory(category: Category): Food[] {
@@ -54,6 +56,6 @@ export class RestaurantDetailsComponent implements OnInit {
   }
 
   addFoodToCart(food: Food) {
-    this.cartService.addItemToCart(food);
+    this.store.dispatch(addFoodToCartAction({ payload: food }))
   }
 }
