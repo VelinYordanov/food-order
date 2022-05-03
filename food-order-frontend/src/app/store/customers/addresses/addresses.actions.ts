@@ -1,7 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import { Address } from "../../../customers/models/address";
-import { LoadCustomerAddressPayload } from "../models/load-customer-address-payload";
-import { UpdateAddressPayload } from "../models/update-address-payload";
+import { LoadCustomerAddressPayload } from "../../models/load-customer-address-payload";
+import { UpdateAddressPayload } from "../../models/update-address-payload";
 
 export const loadAddressesAction = createAction('[Addresses API] Load Addresses', props<{ payload: string }>());
 export const loadAddressesSuccessAction = createAction('[Addresses API] Load Addresses Success', props<{ payload: Address[] }>());

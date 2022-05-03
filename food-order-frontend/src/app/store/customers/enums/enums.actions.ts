@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { EnumStoreData } from "../models/enum-store-data";
+import { EnumStoreData } from "../../models/enum-store-data";
 
 export const loadCitiesAction = createAction('[Enum] Load Cities');
 export const loadCitiesRequestAction = createAction('[Enum] Load Cities Request');

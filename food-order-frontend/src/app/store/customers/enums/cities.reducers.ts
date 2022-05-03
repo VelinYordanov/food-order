@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { EnumStoreData } from "../models/enum-store-data";
+import { EnumStoreData } from "../../models/enum-store-data";
 import { loadCitiesErrorAction, loadCitiesRequestAction, loadCitiesSuccessAction } from "./enums.actions";
 
 const initialState: EnumStoreData = {

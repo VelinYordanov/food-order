@@ -4,12 +4,12 @@ import { takeUntil } from 'rxjs/operators';
 import { Order } from 'src/app/customers/models/order';
 import { EnumData } from 'src/app/shared/models/enum-data';
 import { Store } from '@ngrx/store';
-import { activateAction, deactivateAction, orderUpdateAction, subscribeToOrderUpdatesAction } from 'src/app/shared/store/notifications/notification.actions';
 import { Actions, ofType } from '@ngrx/effects';
-import { loggedInUserWithRouteParameter } from 'src/app/shared/store/authentication/authentication.selectors';
+import { loggedInUserWithRouteParameter } from 'src/app/store/authentication/authentication.selectors';
 import { loadOrderStatusesAction } from 'src/app/store/customers/enums/enums.actions';
 import { orderTypesSelector } from 'src/app/store/customers/enums/enums.selectors';
 import { loadOrderAction, loadOrderSuccessAction } from 'src/app/store/customers/cart/cart.actions';
+import { activateAction, subscribeToOrderUpdatesAction, orderUpdateAction, deactivateAction } from 'src/app/store/notifications/notification.actions';
 
 @Component({
   selector: 'app-successful-order',

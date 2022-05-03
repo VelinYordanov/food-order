@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { StorageService } from './shared/services/storage.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
-import { updateUserAction } from './shared/store/authentication/authentication.actions';
+import { updateUserAction } from './store/authentication/authentication.actions';
 import { AuthenticationService } from './shared/services/authentication.service';
 
 @Component({

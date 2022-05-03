@@ -1,7 +1,7 @@
 import { createAction, props } from "@ngrx/store";
 import { JwtToken } from "src/app/home/models/jwt-token";
 import { LoginUser } from "src/app/home/models/login-user";
-import { User } from "../../models/user";
+import { User } from "../../shared/models/user";
 
 export const loginCustomerAction = createAction('[Authentication] Login Customer', props<{ payload: LoginUser }>());
 export const loginCustomerSuccessAction = createAction('[Authentication] Login Customer Success', props<{ payload: JwtToken }>());

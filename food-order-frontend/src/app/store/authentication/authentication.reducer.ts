@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { User } from "../../models/user";
+import { User } from "../../shared/models/user";
 import { updateUserAction } from "./authentication.actions";
 
 const initialState: User = null;

@@ -9,7 +9,7 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 import { Page } from 'src/app/shared/models/page';
-import { loggedInUserIdSelector } from 'src/app/shared/store/authentication/authentication.selectors';
+import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
 import { loadCustomerOrdersAction, loadCustomerOrdersSuccessAction } from 'src/app/store/customers/cart/cart.actions';
 import { Order } from '../models/order';
 

@@ -6,8 +6,8 @@ import { filter, map, scan, takeUntil, tap } from 'rxjs/operators';
 import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 import { User } from '../models/user';
 import { CartService } from '../services/cart.service';
-import { updateUserAction } from '../store/authentication/authentication.actions';
-import { loggedInUserSelector } from '../store/authentication/authentication.selectors';
+import { updateUserAction } from '../../store/authentication/authentication.actions';
+import { loggedInUserSelector } from '../../store/authentication/authentication.selectors';
 
 @Component({
   selector: 'app-navigation',

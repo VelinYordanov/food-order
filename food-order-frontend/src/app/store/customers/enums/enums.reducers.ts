@@ -1,6 +1,6 @@
 import { state } from "@angular/animations";
 import { combineReducers, createReducer, on } from "@ngrx/store";
-import { EnumState } from "../models/enum-state";
+import { EnumState } from "../../models/enum-state";
 import { addressTypesReducer } from "./address-types.reducers";
 import { citiesReducer } from "./cities.reducers";
 import { loadAddressTypesAction, loadAddressTypesErrorAction, loadAddressTypesRequestAction, loadAddressTypesSuccessAction, loadCitiesAction, loadCitiesErrorAction, loadCitiesRequestAction, loadCitiesSuccessAction, loadOrderStatusesAction, loadOrderStatusesErrorAction, loadOrderStatusesSuccessAction } from "./enums.actions";

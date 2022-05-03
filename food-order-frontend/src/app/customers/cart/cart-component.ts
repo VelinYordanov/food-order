@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
+import { loggedInUserSelector } from 'src/app/store/authentication/authentication.selectors';
 import { cartItemsSumSelector } from 'src/app/store/customers/cart/cart.selectors';
 
 @Component({

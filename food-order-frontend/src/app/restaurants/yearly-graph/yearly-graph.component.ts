@@ -13,7 +13,7 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
+import { loggedInUserSelector } from 'src/app/store/authentication/authentication.selectors';
 import { RestaurantService } from '../services/restaurant.service';
 
 const MY_FORMATS = {

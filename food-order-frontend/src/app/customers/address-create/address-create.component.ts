@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { first, tap } from 'rxjs/operators';
 import { User } from 'src/app/shared/models/user';
-import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
+import { loggedInUserSelector } from 'src/app/store/authentication/authentication.selectors';
 import { Address } from '../models/address';
 import { createAddressAction } from '../../store/customers/addresses/addresses.actions';
 

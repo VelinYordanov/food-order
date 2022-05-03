@@ -6,8 +6,8 @@ import { of } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
 import { deleteAddressPromptAction } from "src/app/store/customers/addresses/addresses.actions";
 import { LoginService } from "src/app/home/services/login-service.service";
-import { AlertService } from "../../services/alert.service";
-import { StorageService } from "../../services/storage.service";
+import { AlertService } from "../../shared/services/alert.service";
+import { StorageService } from "../../shared/services/storage.service";
 import { loginCustomerAction, loginCustomerErrorAction, loginCustomerSuccessAction, loginRestaurantAction, loginRestaurantErrorAction, loginRestaurantSuccessAction, updateUserAction } from "./authentication.actions";
 
 @Injectable()

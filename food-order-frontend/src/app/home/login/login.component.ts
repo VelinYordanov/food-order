@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { tap, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { loginCustomerAction, loginCustomerErrorAction, loginCustomerSuccessAction, loginRestaurantAction, loginRestaurantErrorAction, loginRestaurantSuccessAction } from 'src/app/shared/store/authentication/authentication.actions';
+import { loginCustomerAction, loginCustomerErrorAction, loginCustomerSuccessAction, loginRestaurantAction, loginRestaurantErrorAction, loginRestaurantSuccessAction } from 'src/app/store/authentication/authentication.actions';
 import { Actions, ofType } from '@ngrx/effects';
 
 @Component({

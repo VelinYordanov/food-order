@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { CartState } from "../models/cart-state";
+import { CartState } from "../../models/cart-state";
 import { cartSelectedFoodsReducer } from "./cart-selected-foods.reducers";
 import { addFoodToCartAction, clearCartAction, decreaseFoodQuantityAction, increaseFoodQuantityAction, loadCartAction, removeFoodFromCartAction, selectAddressAction, selectRestaurantAction } from "./cart.actions";
 

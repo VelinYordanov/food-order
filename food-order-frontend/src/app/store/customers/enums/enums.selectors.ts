@@ -1,8 +1,8 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { EnumData } from "src/app/shared/models/enum-data";
 import { customersStateKey } from "../customers.reducer";
-import { CustomersState } from "../models/customers-state";
-import { EnumStoreData } from "../models/enum-store-data";
+import { CustomersState } from "../../models/customers-state";
+import { EnumStoreData } from "../../models/enum-store-data";
 
 const customersSelector = createFeatureSelector<CustomersState>(customersStateKey);
 

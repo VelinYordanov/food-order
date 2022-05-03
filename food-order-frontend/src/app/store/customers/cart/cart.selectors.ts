@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { loggedInUserIdSelector } from "src/app/shared/store/authentication/authentication.selectors";
-import { CartState } from "../models/cart-state";
+import { loggedInUserIdSelector } from "src/app/store/authentication/authentication.selectors";
+import { CartState } from "../../models/cart-state";
 
 const cartStateSelector = createFeatureSelector<CartState>('cart');
 
