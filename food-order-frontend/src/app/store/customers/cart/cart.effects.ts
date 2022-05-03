@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { of } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
+import { CustomerService } from "src/app/customers/services/customer.service";
 import { AlertService } from "src/app/shared/services/alert.service";
-import { CustomerService } from "../../services/customer.service";
 import { clearCartAction, loadCustomerOrdersAction, loadCustomerOrdersErrorAction, loadCustomerOrdersSuccessAction, loadDiscountCodeAction, loadDiscountCodeErrorAction, loadDiscountCodeSuccessAction, loadOrderAction, loadOrderErrorAction, loadOrderSuccessAction, submitOrderAction, submitOrderErrorAction, submitOrderSuccessAction } from "./cart.actions";
 
 @Injectable()
