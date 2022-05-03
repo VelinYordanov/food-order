@@ -25,7 +25,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private store: Store,
-    private router: Router,
     private actions: Actions
   ) { }
 
@@ -49,17 +48,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$),
       ofType(loginCustomerSuccessAction, loginCustomerErrorAction, loginRestaurantSuccessAction, loginRestaurantErrorAction),
     ).subscribe(_ => this.loginForm.enable());
-
-    this.actions.pipe(
-      takeUntil(this.onDestroy$),
-      ofType(loginCustomerSuccessAction, loginRestaurantSuccessAction),
-    ).subscribe(_ => {
-      if (this.loginForm.get('isRestaurant').value) {
-        this.router.navigate(['restaurant', 'profile']);
-      } else {
-        this.router.navigate(['customer', 'profile']);
-      }
-    })
   }
 
   ngOnDestroy(): void {

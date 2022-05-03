@@ -48,5 +48,5 @@ export class CustomerOrdersEffects {
         this.actions$.pipe(
             ofType(loadOrderErrorAction),
             tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while loading offer. Try again later.', 'error'))
-        ))
+        ), { dispatch: false })
 }

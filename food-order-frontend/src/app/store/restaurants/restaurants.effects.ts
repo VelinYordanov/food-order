@@ -28,7 +28,7 @@ export class RestaurantsEffects {
         this.actions$.pipe(
             ofType(loadRestaurantsErrorAction),
             tap(({ payload }) => this.alertService.displayMessage(payload?.error?.desccription || 'An error occurred while loading restaurants data. Try again later.', 'error'))
-        ));
+        ), { dispatch: false });
 
     loadRestaurant$ = createEffect(() =>
         this.actions$.pipe(
@@ -44,5 +44,5 @@ export class RestaurantsEffects {
         this.actions$.pipe(
             ofType(loadRestaurantErrorAction),
             tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error ocurred while loading restaurant data. Try again later.', 'error'))
-        ));
+        ), { dispatch: false });
 }

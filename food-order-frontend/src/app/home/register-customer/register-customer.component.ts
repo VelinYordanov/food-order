@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { EMPTY, Subject } from 'rxjs';
-import { catchError, exhaustMap, finalize, map, tap } from 'rxjs/operators';
-import { CustomerService } from 'src/app/customers/services/customer.service';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { Subject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { CustomerRegisterDto } from '../models/customer-register-dto';
 import { AsyncValidatorsService } from '../../shared/validators/async-validators.service';
 import { matchingPasswords } from '../../shared/validators/matching-passwords.validator';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { RegisterErrorStateMatcher} from '../services/register-error-state-matcher';
+import { RegisterErrorStateMatcher } from '../services/register-error-state-matcher';
+import { Store } from '@ngrx/store';
+import { registerCustomerAction, registerCustomerErrorAction, registerCustomerSuccessAction } from 'src/app/store/authentication/authentication.actions';
+import { Actions, ofType } from '@ngrx/effects';
 
 @Component({
   selector: 'app-register-customer',
@@ -31,13 +30,11 @@ export class RegisterCustomerComponent implements OnInit {
   private registerFormSubmitsSubject = new Subject<CustomerRegisterDto>();
 
   constructor(
+    private store: Store,
     private formBuilder: FormBuilder,
-    private customerSerice: CustomerService,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-    private router: Router,
+    private actions$: Actions,
     private asyncValidators: AsyncValidatorsService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.errorStateMatcher = new RegisterErrorStateMatcher();
@@ -84,35 +81,23 @@ export class RegisterCustomerComponent implements OnInit {
         null,
         [Validators.required, Validators.pattern(/^[0-9]+$/)],
       ],
-    }, {validators:[matchingPasswords()]});
+    }, { validators: [matchingPasswords()] });
 
     this.registerFormSubmitsSubject
       .pipe(
-        tap({
-          next: (_) => this.registerForm.disable(),
-        }),
+        tap(_ => this.registerForm.disable()),
         map(customer => {
           delete (customer as any).repeatPassword;
           return customer;
-        }),
-        exhaustMap((customer) =>
-          this.customerSerice.registerCustomer(customer).pipe(
-            catchError((error) => {
-              this.alertService.displayMessage(
-                error?.error?.description ||
-                  'An error occurred while registering the user. Try again laer.',
-                'error'
-              );
-              return EMPTY;
-            }),
-            finalize(() => this.registerForm.enable())
-          )
-        )
+        })
       )
-      .subscribe((result) => {
-        this.authenticationService.login(result.token);
-        this.router.navigate(['customer', 'profile']);
+      .subscribe(result => {
+        this.store.dispatch(registerCustomerAction({ payload: result }))
       });
+
+    this.actions$.pipe(
+      ofType(registerCustomerSuccessAction, registerCustomerErrorAction)
+    ).subscribe(_ => this.registerForm.enable());
   }
 
   submit() {
