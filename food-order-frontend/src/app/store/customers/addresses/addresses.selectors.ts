@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { selectQueryParam, selectRouteParam } from "src/app/store/router/router.selectors";
-import { customersStateKey } from "../customers.reducer";
+import { selectRouteParam } from "src/app/store/router/router.selectors";
 import { CustomersState } from "../../models/customers-state";
+import { customersStateKey } from "../customers.reducer";
 
 export const selectCustomers = createFeatureSelector<CustomersState>(customersStateKey);
 

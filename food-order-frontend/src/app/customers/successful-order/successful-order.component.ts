@@ -6,8 +6,8 @@ import { EnumData } from 'src/app/shared/models/enum-data';
 import { Store } from '@ngrx/store';
 import { Actions, ofType } from '@ngrx/effects';
 import { loggedInUserWithRouteParameter } from 'src/app/store/authentication/authentication.selectors';
-import { loadOrderStatusesAction } from 'src/app/store/customers/enums/enums.actions';
-import { orderTypesSelector } from 'src/app/store/customers/enums/enums.selectors';
+import { loadOrderStatusesAction } from 'src/app/store/enums/enums.actions';
+import { orderTypesSelector } from 'src/app/store/enums/enums.selectors';
 import { loadOrderAction, loadOrderSuccessAction } from 'src/app/store/customers/cart/cart.actions';
 import { activateAction, subscribeToOrderUpdatesAction, orderUpdateAction, deactivateAction } from 'src/app/store/notifications/notification.actions';
 

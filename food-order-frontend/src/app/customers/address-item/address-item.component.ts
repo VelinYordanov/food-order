@@ -4,8 +4,8 @@ import { Subject } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { deleteAddressPromptAction } from '../../store/customers/addresses/addresses.actions';
 import { EnumData } from 'src/app/shared/models/enum-data';
-import { loadCitiesAction, loadAddressTypesAction } from 'src/app/store/customers/enums/enums.actions';
-import { citiesSelector, addressTypesSelector } from 'src/app/store/customers/enums/enums.selectors';
+import { loadCitiesAction, loadAddressTypesAction } from 'src/app/store/enums/enums.actions';
+import { citiesSelector, addressTypesSelector } from 'src/app/store/enums/enums.selectors';
 
 @Component({
   selector: 'app-address-item',

@@ -8,6 +8,7 @@ import { User } from '../models/user';
 import { CartService } from '../services/cart.service';
 import { updateUserAction } from '../../store/authentication/authentication.actions';
 import { loggedInUserSelector } from '../../store/authentication/authentication.selectors';
+import { cartItemsSumSelector, selectedRestaurantSelector } from 'src/app/store/customers/cart/cart.selectors';
 
 @Component({
   selector: 'app-navigation',
@@ -22,18 +23,12 @@ export class NavigationComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
 
   constructor(
-    private cartService: CartService,
     private router: Router,
     private store: Store) { }
 
   ngOnInit(): void {
-    this.cartService.selectedRestaurant$.subscribe(restaurant => this.selectedRestaurant = restaurant);
-
-    this.cartService.selectedItems$
-      .pipe(
-        map(items => items.map(x => x.quantity).reduce((acc, current) => acc + current, 0)),
-      ).subscribe(numberOfItems => this.numberOfItems = numberOfItems);
-
+    this.store.select(selectedRestaurantSelector).pipe(takeUntil(this.onDestroy$)).subscribe(restaurant => this.selectedRestaurant = restaurant);
+    this.store.select(cartItemsSumSelector).pipe(takeUntil(this.onDestroy$)).subscribe(numberOfItems => this.numberOfItems = numberOfItems);
     this.store.select(loggedInUserSelector)
       .pipe(
         takeUntil(this.onDestroy$)

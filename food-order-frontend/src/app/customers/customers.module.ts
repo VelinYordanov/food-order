@@ -16,9 +16,6 @@ import { AddressSelectComponent } from './address-select/address-select.componen
 import { CheckoutComponent } from './checkout/checkout.component';
 import { SuccessfulOrderComponent } from './successful-order/successful-order.component';
 import { SharedModule } from '../shared.module';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { AddressesEffects } from '../store/customers/addresses/addresses.effects';
 
 @NgModule({
   declarations: [

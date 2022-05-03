@@ -1,19 +1,12 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { EnumData } from "src/app/shared/models/enum-data";
-import { customersStateKey } from "../customers.reducer";
-import { CustomersState } from "../../models/customers-state";
-import { EnumStoreData } from "../../models/enum-store-data";
-
-const customersSelector = createFeatureSelector<CustomersState>(customersStateKey);
+import { EnumState } from "../models/enum-state";
+import { EnumStoreData } from "../models/enum-store-data";
 
 const isLoading = (state: EnumStoreData) => state.isLoading;
 const getEntities = (state: EnumStoreData) => state.entities;
 const getEntityById = (state: EnumStoreData, id) => state.entities.find(data => data.id === id);
 
-const enumsSelector = createSelector(
-    customersSelector,
-    state => state.enums
-)
+const enumsSelector = createFeatureSelector<EnumState>('enums');
 
 export const citiesEnumStoreDataSelector = createSelector(
     enumsSelector,

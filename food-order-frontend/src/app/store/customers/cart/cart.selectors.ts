@@ -1,8 +1,14 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { loggedInUserIdSelector } from "src/app/store/authentication/authentication.selectors";
-import { CartState } from "../../models/cart-state";
+import { CustomersState } from "../../models/customers-state";
+import { customersStateKey } from "../customers.reducer";
 
-const cartStateSelector = createFeatureSelector<CartState>('cart');
+const customersStateSelector = createFeatureSelector<CustomersState>(customersStateKey);
+
+export const cartStateSelector = createSelector(
+    customersStateSelector,
+    state => state.cart
+);
 
 export const selectedItemsSelector = createSelector(
     cartStateSelector,

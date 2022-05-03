@@ -30,6 +30,11 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { authenticationReducer } from './store/authentication/authentication.reducer';
 import { AuthenticationEffects } from './store/authentication/authentication.effects';
 import { NavigationActionTiming, routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import { enumsReducer } from './store/enums/enums.reducers';
+import { customersReducer } from './store/customers/customers.reducer';
+import { AddressesEffects } from './store/customers/addresses/addresses.effects';
+import { EnumEffects } from './store/enums/enums.effects';
+import { CartEffects } from './store/customers/cart/cart.effects';
 
 @NgModule({
   declarations: [
@@ -58,8 +63,8 @@ import { NavigationActionTiming, routerReducer, StoreRouterConnectingModule } fr
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
-    StoreModule.forRoot({ user: authenticationReducer, router: routerReducer }),
-    EffectsModule.forRoot([AuthenticationEffects]),
+    StoreModule.forRoot({ customers: customersReducer, user: authenticationReducer, router: routerReducer, enums: enumsReducer }),
+    EffectsModule.forRoot([AuthenticationEffects, AddressesEffects, EnumEffects, CartEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
     StoreRouterConnectingModule.forRoot({ navigationActionTiming: NavigationActionTiming.PostActivation, }),
   ],
