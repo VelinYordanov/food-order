@@ -4,7 +4,7 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
 import { of } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
-import { deleteAddressPromptAction } from "src/app/customers/store/addresses/addresses.actions";
+import { deleteAddressPromptAction } from "src/app/store/customers/addresses/addresses.actions";
 import { LoginService } from "src/app/home/services/login-service.service";
 import { AlertService } from "../../services/alert.service";
 import { StorageService } from "../../services/storage.service";

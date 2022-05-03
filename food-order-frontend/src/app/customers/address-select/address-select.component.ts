@@ -9,8 +9,8 @@ import { Address } from 'src/app/customers/models/address';
 import { CartService } from 'src/app/shared/services/cart.service';
 import { UtilService } from 'src/app/shared/services/util.service';
 import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
-import { loadAddressesAction, loadAddressesSuccessAction } from '../store/addresses/addresses.actions';
-import { selectAddresses } from '../store/addresses/addresses.selectors';
+import { loadAddressesAction, loadAddressesSuccessAction } from '../../store/customers/addresses/addresses.actions';
+import { selectAddresses } from '../../store/customers/addresses/addresses.selectors';
 
 @Component({
   selector: 'app-address-select',

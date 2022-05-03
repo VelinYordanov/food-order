@@ -1,12 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { CartService } from 'src/app/shared/services/cart.service';
 import { UtilService } from 'src/app/shared/services/util.service';
+import { loadCartAction, selectRestaurantAction } from 'src/app/store/customers/cart/cart.actions';
 import { Order } from '../models/order';
 import { OrderFoodResponse } from '../models/order-food-response';
 import { Status } from '../models/status';
-import { loadCartAction, selectRestaurantAction } from '../store/cart/cart.actions';
 
 @Component({
   selector: 'app-customer-order',

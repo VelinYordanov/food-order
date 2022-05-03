@@ -4,9 +4,8 @@ import { Observable } from 'rxjs';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { OrderRestaurant } from 'src/app/customers/models/order-restaurant';
 import { CartItem } from 'src/app/restaurants/models/cart-item';
-import { CartService } from 'src/app/shared/services/cart.service';
-import { decreaseFoodQuantityAction, increaseFoodQuantityAction, removeFoodFromCartAction } from '../store/cart/cart.actions';
-import { selectedItemsSelector, selectedRestaurantSelector } from '../store/cart/cart.selectors';
+import { increaseFoodQuantityAction, decreaseFoodQuantityAction, removeFoodFromCartAction } from 'src/app/store/customers/cart/cart.actions';
+import { selectedItemsSelector, selectedRestaurantSelector } from 'src/app/store/customers/cart/cart.selectors';
 
 @Component({
   selector: 'app-cart-items',

@@ -14,8 +14,8 @@ import {
 import { Address } from 'src/app/customers/models/address';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { UtilService } from 'src/app/shared/services/util.service';
-import { loadDiscountCodeAction, loadDiscountCodeSuccessAction, submitOrderAction } from '../store/cart/cart.actions';
-import { cartItemsSumSelector, orderItemsSelector, selectedAddressSelector, selectedRestaurantIdSelector } from '../store/cart/cart.selectors';
+import { loadDiscountCodeAction, loadDiscountCodeSuccessAction, submitOrderAction } from 'src/app/store/customers/cart/cart.actions';
+import { cartItemsSumSelector, selectedAddressSelector, selectedRestaurantIdSelector, orderItemsSelector } from 'src/app/store/customers/cart/cart.selectors';
 
 @Component({
   selector: 'app-checkout',

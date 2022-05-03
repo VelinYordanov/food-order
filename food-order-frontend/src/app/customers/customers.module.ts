@@ -18,10 +18,7 @@ import { SuccessfulOrderComponent } from './successful-order/successful-order.co
 import { SharedModule } from '../shared.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { AddressesEffects } from './store/addresses/addresses.effects';
-import { addressesReducer } from './store/addresses/addresses.reducer';
-import { customersReducers, customersStateKey } from './store/customers.reducer';
-import { EnumEffects } from './store/enums/enums.effects';
+import { AddressesEffects } from '../store/customers/addresses/addresses.effects';
 
 @NgModule({
   declarations: [
@@ -44,8 +41,6 @@ import { EnumEffects } from './store/enums/enums.effects';
     ReactiveFormsModule,
     AngularMaterialModule,
     SharedModule,
-    StoreModule.forFeature(customersStateKey, customersReducers),
-    EffectsModule.forFeature([AddressesEffects, EnumEffects])
   ],
 })
-export class CustomersModule {}
+export class CustomersModule { }

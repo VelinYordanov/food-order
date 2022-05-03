@@ -2,20 +2,16 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { EMPTY, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
-  catchError,
   startWith,
-  switchMap,
   takeUntil,
   withLatestFrom,
 } from 'rxjs/operators';
 import { Page } from 'src/app/shared/models/page';
-import { AlertService } from 'src/app/shared/services/alert.service';
 import { loggedInUserIdSelector } from 'src/app/shared/store/authentication/authentication.selectors';
+import { loadCustomerOrdersAction, loadCustomerOrdersSuccessAction } from 'src/app/store/customers/cart/cart.actions';
 import { Order } from '../models/order';
-import { CustomerService } from '../services/customer.service';
-import { loadCustomerOrdersAction, loadCustomerOrdersSuccessAction } from '../store/cart/cart.actions';
 
 @Component({
   selector: 'app-customer-orders',

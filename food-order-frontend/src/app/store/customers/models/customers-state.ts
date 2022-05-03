@@ -1,4 +1,4 @@
-import { Address } from "../../models/address";
+import { Address } from "src/app/customers/models/address";
 import { CartState } from "./cart-state";
 import { EnumState } from "./enum-state";
 

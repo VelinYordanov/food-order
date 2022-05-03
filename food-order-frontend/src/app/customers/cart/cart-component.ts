@@ -1,11 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { first, map, takeUntil } from 'rxjs/operators';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { CartService } from 'src/app/shared/services/cart.service';
-import { cartItemsSumSelector } from '../store/cart/cart.selectors';
+import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
+import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
+import { cartItemsSumSelector } from 'src/app/store/customers/cart/cart.selectors';
 
 @Component({
   selector: 'app-cart',
@@ -17,16 +16,14 @@ export class CartComponent implements OnInit {
 
   constructor(
     private router: Router, 
-    private store: Store,
-    private authenticationService : AuthenticationService) {}
+    private store: Store) {}
 
   ngOnInit(): void {
     this.numberOfFoods$ = this.store.select(cartItemsSumSelector);
   }
 
   goToAddress() {
-    // TODO: use store here
-    this.authenticationService.user$
+    this.store.select(loggedInUserSelector)
     .pipe(
       first(),
     ).subscribe(user => user ? this.router.navigate(['customer', 'order', 'address']) : this.router.navigate(['login']));

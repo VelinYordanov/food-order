@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { first, tap } from 'rxjs/operators';
 import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
 import { Address } from '../models/address';
-import { loadAddressesAction } from '../store/addresses/addresses.actions';
-import { selectAddresses } from '../store/addresses/addresses.selectors';
+import { loadAddressesAction } from '../../store/customers/addresses/addresses.actions';
+import { selectAddresses } from '../../store/customers/addresses/addresses.selectors';
 
 @Component({
   selector: 'app-customer-profile',

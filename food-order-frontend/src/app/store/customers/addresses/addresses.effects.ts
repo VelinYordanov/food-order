@@ -6,7 +6,7 @@ import { EMPTY, of } from 'rxjs';
 import { switchMap, map, catchError, tap, withLatestFrom } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
-import { CustomerService } from '../../services/customer.service';
+import { CustomerService } from '../../../customers/services/customer.service';
 import { createAddressAction, createAddressErrorAction, createAddressSuccessAction, deleteAddressAction, deleteAddressErrorAction, deleteAddressPromptAction, deleteAddressSuccessAction, loadAddressesAction, loadAddressesErrorAction, loadAddressesSuccessAction, loadCustomerAddressAction, loadCustomerAddressErrorAction, loadCustomerAddressSuccessAction, updateAddressAction, updateAddressErrorAction, updateAddressSuccessAction } from './addresses.actions';
 
 @Injectable()

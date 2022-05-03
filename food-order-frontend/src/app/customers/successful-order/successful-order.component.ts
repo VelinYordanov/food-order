@@ -5,11 +5,11 @@ import { Order } from 'src/app/customers/models/order';
 import { EnumData } from 'src/app/shared/models/enum-data';
 import { Store } from '@ngrx/store';
 import { activateAction, deactivateAction, orderUpdateAction, subscribeToOrderUpdatesAction } from 'src/app/shared/store/notifications/notification.actions';
-import { loadOrderStatusesAction } from '../store/enums/enums.actions';
 import { Actions, ofType } from '@ngrx/effects';
-import { orderTypesSelector } from '../store/enums/enums.selectors';
 import { loggedInUserWithRouteParameter } from 'src/app/shared/store/authentication/authentication.selectors';
-import { loadOrderAction, loadOrderSuccessAction } from '../store/cart/cart.actions';
+import { loadOrderStatusesAction } from 'src/app/store/customers/enums/enums.actions';
+import { orderTypesSelector } from 'src/app/store/customers/enums/enums.selectors';
+import { loadOrderAction, loadOrderSuccessAction } from 'src/app/store/customers/cart/cart.actions';
 
 @Component({
   selector: 'app-successful-order',

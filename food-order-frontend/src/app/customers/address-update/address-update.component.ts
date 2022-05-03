@@ -3,9 +3,9 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { Address } from '../models/address';
 import { Store } from '@ngrx/store';
-import { loadCustomerAddressAction, updateAddressAction } from '../store/addresses/addresses.actions';
+import { loadCustomerAddressAction, updateAddressAction } from '../../store/customers/addresses/addresses.actions';
 import { loggedInUserWithRouteParameter } from 'src/app/shared/store/authentication/authentication.selectors';
-import { selectAddressById } from '../store/addresses/addresses.selectors';
+import { selectAddressById } from '../../store/customers/addresses/addresses.selectors';
 
 @Component({
   selector: 'app-address-update',

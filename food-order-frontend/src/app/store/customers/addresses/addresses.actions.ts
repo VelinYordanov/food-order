@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Address } from "../../models/address";
+import { Address } from "../../../customers/models/address";
 import { LoadCustomerAddressPayload } from "../models/load-customer-address-payload";
 import { UpdateAddressPayload } from "../models/update-address-payload";
 

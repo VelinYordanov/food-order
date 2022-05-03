@@ -4,7 +4,7 @@ import { first, tap } from 'rxjs/operators';
 import { User } from 'src/app/shared/models/user';
 import { loggedInUserSelector } from 'src/app/shared/store/authentication/authentication.selectors';
 import { Address } from '../models/address';
-import { createAddressAction } from '../store/addresses/addresses.actions';
+import { createAddressAction } from '../../store/customers/addresses/addresses.actions';
 
 @Component({
   selector: 'app-address-create',

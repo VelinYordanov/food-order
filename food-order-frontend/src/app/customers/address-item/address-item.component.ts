@@ -2,10 +2,10 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Address } from '../models/address';
 import { Subject } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { loadAddressTypesAction, loadCitiesAction } from '../store/enums/enums.actions';
-import { deleteAddressPromptAction } from '../store/addresses/addresses.actions';
-import { addressTypesSelector, citiesSelector } from '../store/enums/enums.selectors';
+import { deleteAddressPromptAction } from '../../store/customers/addresses/addresses.actions';
 import { EnumData } from 'src/app/shared/models/enum-data';
+import { loadCitiesAction, loadAddressTypesAction } from 'src/app/store/customers/enums/enums.actions';
+import { citiesSelector, addressTypesSelector } from 'src/app/store/customers/enums/enums.selectors';
 
 @Component({
   selector: 'app-address-item',

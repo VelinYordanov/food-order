@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { Address } from "../../models/address";
+import { Address } from "../../../customers/models/address";
 import { deleteAddressSuccessAction, loadAddressesSuccessAction, loadCustomerAddressSuccessAction } from "./addresses.actions";
 
 export const initialState: Address[] = [];
