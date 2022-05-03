@@ -48,10 +48,21 @@ export const selectedItemsAsOrderFoodSelector = createSelector(
     }))
 );
 
+export const selectDiscountCode = createSelector(
+    cartStateSelector,
+    state => state.selectedDiscountCode
+)
+
+export const selectDiscountCodeId = createSelector(
+    selectDiscountCode,
+    state => state.id
+)
+
 export const orderItemsSelector = createSelector(
     loggedInUserIdSelector,
     selectedRestaurantIdSelector,
     selectedAddressIdSelector,
     selectedItemsAsOrderFoodSelector,
-    (customerId, restaurantId, addressId, foods) => ({ customerId, restaurantId, addressId, foods })
+    selectDiscountCodeId,
+    (customerId, restaurantId, addressId, foods, discountCodeId) => ({ customerId, restaurantId, addressId, foods, discountCodeId })
 );

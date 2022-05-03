@@ -27,11 +27,3 @@ export const loadDiscountCodeErrorAction = createAction('[Cart] Load Discount Co
 export const submitOrderAction = createAction('[Cart] Submit Order', props<{ payload: OrderCreate }>());
 export const submitOrderSuccessAction = createAction('[Cart] Submit Order Success', props<{ payload: Order }>());
 export const submitOrderErrorAction = createAction('[Cart] Submit Order Error', props<{ payload: any }>());
-
-export const loadCustomerOrdersAction = createAction('[Cart] Load Customer Orders', props<{ payload: LoadCustomerOrdersPayload }>());
-export const loadCustomerOrdersSuccessAction = createAction('[Cart] Load Customer Orders Success', props<{ payload: Page<Order> }>());
-export const loadCustomerOrdersErrorAction = createAction('[Cart] Load Customer Orders Error', props<{ payload: any }>());
-
-export const loadOrderAction = createAction('[Cart] Load Customer Order', props<{ payload: LoadCustomerOrderPayload }>());
-export const loadOrderSuccessAction = createAction('[Cart] Load Customer Order Success', props<{ payload: Order }>());
-export const loadOrderErrorAction = createAction('[Cart] Load Customer Order Error', props<{ payload: any }>());

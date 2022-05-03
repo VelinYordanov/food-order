@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, Observable, Subject } from 'rxjs';
 import {
@@ -14,8 +13,8 @@ import {
 import { Address } from 'src/app/customers/models/address';
 import { DiscountCode } from 'src/app/customers/models/discount-code';
 import { UtilService } from 'src/app/shared/services/util.service';
-import { loadDiscountCodeAction, loadDiscountCodeSuccessAction, submitOrderAction } from 'src/app/store/customers/cart/cart.actions';
-import { cartItemsSumSelector, selectedAddressSelector, selectedRestaurantIdSelector, orderItemsSelector } from 'src/app/store/customers/cart/cart.selectors';
+import { loadDiscountCodeAction, submitOrderAction } from 'src/app/store/customers/cart/cart.actions';
+import { cartItemsSumSelector, selectedAddressSelector, selectedRestaurantIdSelector, orderItemsSelector, selectDiscountCode } from 'src/app/store/customers/cart/cart.selectors';
 
 @Component({
   selector: 'app-checkout',
@@ -38,7 +37,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   constructor(
     private utilService: UtilService,
     private store: Store,
-    private actions$: Actions
   ) { }
 
   ngOnInit(): void {
@@ -79,17 +77,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         withLatestFrom(this.store.select(selectedRestaurantIdSelector)),
       ).subscribe(([code, restaurantId]) => this.store.dispatch(loadDiscountCodeAction({ payload: { code, restaurantId } })));
 
-    this.actions$.pipe(
-      takeUntil(this.onDestroy$),
-      ofType(loadDiscountCodeSuccessAction),
-    ).subscribe(action => this.discountCode = action.payload)
+    this.store.select(selectDiscountCode)
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(discountCode => this.discountCode = discountCode);
   }
 
   private setUpSubmitOrder() {
     this.submitButtonClicks.pipe(
       switchMapTo(this.store.select(orderItemsSelector)
         .pipe(
-          map(ordersData => ({ ...ordersData, ...{ discountCodeId: this.discountCode.id, comment: this.comment.value } })),
+          map(ordersData => ({ ...ordersData, ...{ comment: this.comment.value } })),
           catchError(error => EMPTY)
         ))
     ).subscribe(orderCreate => this.store.dispatch(submitOrderAction({ payload: orderCreate })));

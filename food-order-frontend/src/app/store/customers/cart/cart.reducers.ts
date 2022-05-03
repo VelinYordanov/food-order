@@ -1,16 +1,18 @@
 import { createReducer, on } from "@ngrx/store";
 import { CartState } from "../../models/cart-state";
 import { cartSelectedFoodsReducer } from "./cart-selected-foods.reducers";
-import { addFoodToCartAction, clearCartAction, decreaseFoodQuantityAction, increaseFoodQuantityAction, loadCartAction, removeFoodFromCartAction, selectAddressAction, selectRestaurantAction } from "./cart.actions";
+import { addFoodToCartAction, clearCartAction, decreaseFoodQuantityAction, increaseFoodQuantityAction, loadCartAction, loadDiscountCodeSuccessAction, removeFoodFromCartAction, selectAddressAction, selectRestaurantAction } from "./cart.actions";
 
 const initialState: CartState = {
     selectedRestaurant: null,
     selectedAddress: null,
-    selectedItems: []
+    selectedItems: [],
+    selectedDiscountCode: null
 };
 
 export const cartReducer = createReducer(
     initialState,
+    on(loadDiscountCodeSuccessAction, (state, action) => ({ ...state, ...{ selectedDiscountCode: action.payload } })),
     on(selectRestaurantAction, (state, action) => ({ ...state, ...{ selectedRestaurant: action.payload } })),
     on(selectAddressAction, (state, action) => ({ ...state, ...{ selectedAddress: action.payload } })),
     on(clearCartAction, (state, action) => initialState),

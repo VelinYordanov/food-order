@@ -4,13 +4,15 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import {
+  map,
   startWith,
   takeUntil,
   withLatestFrom,
 } from 'rxjs/operators';
 import { Page } from 'src/app/shared/models/page';
 import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
-import { loadCustomerOrdersAction, loadCustomerOrdersSuccessAction } from 'src/app/store/customers/cart/cart.actions';
+import { loadCustomerOrdersAction } from 'src/app/store/customers/customer-orders/customer-orders.actions';
+import { selectCustomerOrders } from 'src/app/store/customers/customer-orders/customer-orders.selectors';
 import { Order } from '../models/order';
 
 @Component({
@@ -26,15 +28,10 @@ export class CustomerOrdersComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private actions$: Actions,
   ) { }
 
   ngOnInit(): void {
-    this.pagedOrders$ = this.actions$
-      .pipe(
-        takeUntil(this.onDestroy$),
-        ofType(loadCustomerOrdersSuccessAction)
-      );
+    this.pagedOrders$ = this.store.select(selectCustomerOrders);
 
     this.pageSelects$.pipe(
       takeUntil(this.onDestroy$),
