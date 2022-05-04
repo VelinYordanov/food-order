@@ -8,7 +8,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { loggedInUserWithRouteParameter } from 'src/app/store/authentication/authentication.selectors';
 import { loadOrderStatusesAction } from 'src/app/store/enums/enums.actions';
 import { orderTypesSelector } from 'src/app/store/enums/enums.selectors';
-import { activateAction, subscribeToOrderUpdatesAction, orderUpdateAction, deactivateAction } from 'src/app/store/notifications/notification.actions';
+import { activateAction, subscribeToOrderUpdatesAction, orderUpdateAction, deactivateAction, unsubscribeFromOrderUpdatesAction } from 'src/app/store/notifications/notification.actions';
 import { loadOrderAction, loadOrderSuccessAction } from 'src/app/store/customers/customer-orders/customer-orders.actions';
 import { selectCurrentCustomerOrder } from 'src/app/store/customers/customer-orders/customer-orders.selectors';
 
@@ -57,6 +57,7 @@ export class SuccessfulOrderComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.store.dispatch(unsubscribeFromOrderUpdatesAction());
     this.store.dispatch(deactivateAction());
   }
 

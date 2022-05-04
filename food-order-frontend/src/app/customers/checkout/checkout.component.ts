@@ -5,9 +5,12 @@ import { EMPTY, Observable, Subject } from 'rxjs';
 import {
   catchError,
   filter,
+  first,
   map,
+  switchMap,
   switchMapTo,
   takeUntil,
+  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
@@ -84,8 +87,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   private setUpSubmitOrder() {
     this.submitButtonClicks.pipe(
-      switchMapTo(this.store.select(orderItemsSelector)
+      switchMap(_ => this.store.select(orderItemsSelector)
         .pipe(
+          first(),
           map(ordersData => ({ ...ordersData, ...{ comment: this.comment.value } })),
           catchError(error => EMPTY)
         ))

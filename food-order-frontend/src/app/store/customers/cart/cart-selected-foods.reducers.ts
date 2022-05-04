@@ -30,6 +30,8 @@ function addFoodToCart(foods: CartItem[], food: CartFood) {
             if (item.food.id === food.id) {
                 return { quantity: item.quantity + 1, food };
             }
+
+            return item;
         })
     }
 

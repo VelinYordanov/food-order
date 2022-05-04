@@ -1,19 +1,21 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
+import { Store } from "@ngrx/store";
 import { of } from "rxjs";
-import { catchError, map, switchMap, tap } from "rxjs/operators";
+import { catchError, map, switchMap, tap, withLatestFrom } from "rxjs/operators";
 import { CustomerService } from "src/app/customers/services/customer.service";
 import { AlertService } from "src/app/shared/services/alert.service";
+import { selectCurrentRoute } from "../../router/router.selectors";
 import { clearCartAction, loadDiscountCodeAction, loadDiscountCodeErrorAction, loadDiscountCodeSuccessAction, submitOrderAction, submitOrderErrorAction, submitOrderSuccessAction } from "./cart.actions";
 
 @Injectable()
 export class CartEffects {
     constructor(
         private actions$: Actions,
+        private store: Store,
         private alertService: AlertService,
         private router: Router,
-        private activatedRoute: ActivatedRoute,
         private customerService: CustomerService) { }
 
     loadDiscountCode$ = createEffect(() =>
@@ -56,11 +58,11 @@ export class CartEffects {
                     'Successfully submitted order.',
                     'success'
                 );
-                this.router.navigate(['../', action.payload.id], {
-                    relativeTo: this.activatedRoute,
-                });
-            })
-        ), { dispatch: false })
+
+                this.router.navigate(['/customer/order/', action.payload.id]);
+            }),
+            map(action => clearCartAction())
+        ))
 
     submitOrderErrors$ = createEffect(() =>
         this.actions$.pipe(
@@ -73,10 +75,4 @@ export class CartEffects {
                 );
             })
         ), { dispatch: false })
-
-    submitOrderSuccessesAndErrors$ = createEffect(() =>
-        this.actions$.pipe(
-            ofType(submitOrderSuccessAction, submitOrderErrorAction),
-            map(action => clearCartAction()),
-        ))
 }

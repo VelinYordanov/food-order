@@ -1,15 +1,15 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
-import { filter, first, takeUntil, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { first, tap } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
 import { CartService } from 'src/app/shared/services/cart.service';
 import { UtilService } from 'src/app/shared/services/util.service';
 import { loggedInUserSelector } from 'src/app/store/authentication/authentication.selectors';
-import { loadAddressesAction, loadAddressesSuccessAction } from '../../store/customers/addresses/addresses.actions';
+import { selectAddressAction } from 'src/app/store/customers/cart/cart.actions';
+import { loadAddressesAction } from '../../store/customers/addresses/addresses.actions';
 import { selectAddresses } from '../../store/customers/addresses/addresses.selectors';
 
 @Component({
@@ -17,21 +17,16 @@ import { selectAddresses } from '../../store/customers/addresses/addresses.selec
   templateUrl: './address-select.component.html',
   styleUrls: ['./address-select.component.scss'],
 })
-export class AddressSelectComponent
-  implements OnInit, AfterViewInit, OnDestroy {
+export class AddressSelectComponent implements OnInit {
   addressForm: FormGroup;
   addresses$: Observable<Address[]>;
-
-  private onDestroy$ = new Subject<void>();
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private formBuilder: FormBuilder,
-    private cartService: CartService,
     private utilService: UtilService,
     private store: Store,
-    private actions: Actions
   ) { }
 
   ngOnInit(): void {
@@ -41,29 +36,13 @@ export class AddressSelectComponent
 
     this.store.select(loggedInUserSelector)
       .pipe(
-        first(),
-        tap(user => this.store.dispatch(loadAddressesAction({ payload: user.id })))
-      );
+        first()
+      ).subscribe(user => this.store.dispatch(loadAddressesAction({ payload: user.id })));
 
-    this.addresses$ = this.store.select(selectAddresses);
-
-    this.actions
-      .pipe(
-        takeUntil(this.onDestroy$),
-        ofType(loadAddressesSuccessAction),
-        tap(({ payload }) => payload.length && this.addressForm.get('address').patchValue(payload[0]))
-      );
-  }
-
-  ngAfterViewInit(): void {
-    this.cartService.selectedAddress$
-      .pipe(
-        takeUntil(this.onDestroy$),
-        filter(x => !!x),
-      )
-      .subscribe(
-        (address) => this.addressForm.get('address').setValue(address)
-      );
+    this.addresses$ = this.store.select(selectAddresses)
+    .pipe(
+      tap(addresses => addresses.length && this.addressForm.get('address').patchValue(addresses[0]))
+    );
   }
 
   getAddressData(address: Address) {
@@ -71,9 +50,8 @@ export class AddressSelectComponent
   }
 
   confirmAddress() {
-    this.cartService.updateSelectedAddress(
-      this.addressForm.get('address').value
-    );
+    this.store.dispatch(selectAddressAction({ payload: this.addressForm.get('address').value }));
+
     this.router.navigate(['../', 'checkout'], {
       relativeTo: this.activatedRoute,
     });
@@ -81,10 +59,5 @@ export class AddressSelectComponent
 
   compareAddresses(address1: Address, address2: Address) {
     return address1?.id === address2?.id;
-  }
-
-  ngOnDestroy(): void {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 }

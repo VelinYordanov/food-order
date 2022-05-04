@@ -27,7 +27,7 @@ export const selectedAddressSelector = createSelector(
 
 export const selectedAddressIdSelector = createSelector(
     selectedAddressSelector,
-    address => address.id
+    address => address?.id
 );
 
 export const selectedRestaurantSelector = createSelector(
@@ -37,7 +37,7 @@ export const selectedRestaurantSelector = createSelector(
 
 export const selectedRestaurantIdSelector = createSelector(
     selectedRestaurantSelector,
-    restaurant => restaurant.id
+    restaurant => restaurant?.id
 );
 
 export const selectedItemsAsOrderFoodSelector = createSelector(
@@ -55,7 +55,7 @@ export const selectDiscountCode = createSelector(
 
 export const selectDiscountCodeId = createSelector(
     selectDiscountCode,
-    state => state.id
+    state => state?.id
 )
 
 export const orderItemsSelector = createSelector(

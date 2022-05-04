@@ -41,7 +41,7 @@
         </li>
         <li *ngIf="selectedRestaurant && numberOfItems">
             <div class="shopping-cart">
-                <a href="/restaurants/{{selectedRestaurant.id}}">
+                <a routerLink="/restaurants/{{selectedRestaurant.id}}">
                     <mat-icon>shopping_cart</mat-icon>
                 </a>
                 <span *ngIf="numberOfItems"

@@ -37,7 +37,7 @@ export class CustomerOrdersEffects {
     loadCustomerOrder$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadOrderAction),
-            switchMap(({ payload }) => this.customerService.getOrderById(payload.customerId, payload.customerId)
+            switchMap(({ payload }) => this.customerService.getOrderById(payload.customerId, payload.orderId)
                 .pipe(
                     map(result => loadOrderSuccessAction({ payload: result })),
                     catchError(error => of(loadOrderErrorAction({ payload: error })))
