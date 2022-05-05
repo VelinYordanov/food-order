@@ -1,12 +1,13 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EMPTY, Subject } from 'rxjs';
-import { catchError, switchMap, switchMapTo } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { first, switchMap, takeUntil } from 'rxjs/operators';
+import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
+import { editDiscountCodeAction, editDiscountCodeSuccessAction } from 'src/app/store/restaurants/discount-codes/discount-codes.actions';
 import { DiscountCodeItem } from '../models/discount-code-item';
-import { RestaurantService } from '../services/restaurant.service';
 
 @Component({
   selector: 'app-edit-discount-code',
@@ -20,15 +21,15 @@ export class EditDiscountCodeComponent implements OnInit, OnDestroy {
   validToMinDate = this.getStartDate();
 
   private formSubmits$ = new Subject<void>();
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private formBuilder: FormBuilder,
-    private restaurantService: RestaurantService,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
+    private store: Store,
+    private actions$: Actions,
     private dialogRef: MatDialogRef<EditDiscountCodeComponent>,
     @Inject(MAT_DIALOG_DATA) public discountCode: DiscountCodeItem
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.discountCodeForm = this.formBuilder.group({
@@ -62,36 +63,27 @@ export class EditDiscountCodeComponent implements OnInit, OnDestroy {
 
     this.formSubmits$
       .pipe(
-        switchMapTo(this.authenticationService.user$),
-        switchMap((restaurant) =>
-          this.restaurantService
-            .editDiscountCode(
-              this.discountCode.id,
-              restaurant.id,
-              this.discountCodeForm.getRawValue()
-            )
-            .pipe(
-              catchError((error) => {
-                this.alertService.displayMessage(
-                  error?.error?.description ||
-                    'An error occurred while editting discount code. Try again later.',
-                  'error'
-                );
-                return EMPTY;
-              })
-            )
-        )
+        switchMap(_ => this.store.select(loggedInUserIdSelector).pipe(first()))
       )
-      .subscribe((discountCode) => {
-        this.alertService.displayMessage(
-          `Successfully editted discount code ${discountCode.code}`,
-          'success'
-        );
-        this.dialogRef.close(discountCode);
+      .subscribe((restaurantId) => {
+        const payload = {
+          restaurantId,
+          discountCode: this.discountCodeForm.getRawValue(),
+          discountCodeId: this.discountCode.id
+        }
+
+        this.store.dispatch(editDiscountCodeAction({ payload }));
       });
+
+    this.actions$.pipe(
+      takeUntil(this.onDestroy$),
+      ofType(editDiscountCodeSuccessAction)
+    ).subscribe(action => this.dialogRef.close(action.payload));
   }
 
   ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     this.formSubmits$.complete();
   }
 

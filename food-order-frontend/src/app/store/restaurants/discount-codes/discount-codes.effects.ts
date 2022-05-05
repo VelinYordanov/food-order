@@ -6,7 +6,7 @@ import { catchError, filter, map, switchMap, tap, withLatestFrom } from "rxjs/op
 import { RestaurantService } from "src/app/restaurants/services/restaurant.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { loggedInUserIdSelector } from "../../authentication/authentication.selectors";
-import { deleteDiscountCodeAction, deleteDiscountCodeErrorAction, deleteDiscountCodePromptAction, deleteDiscountCodeSuccessAction, loadDiscountCodesAction, loadDiscountCodesErrorAction, loadDiscountCodesSuccesAction } from "./discount-codes.actions";
+import { deleteDiscountCodeAction, deleteDiscountCodeErrorAction, deleteDiscountCodePromptAction, deleteDiscountCodeSuccessAction, editDiscountCodeAction, editDiscountCodeErrorAction, editDiscountCodeSuccessAction, loadDiscountCodesAction, loadDiscountCodesErrorAction, loadDiscountCodesSuccesAction } from "./discount-codes.actions";
 
 @Injectable()
 export class DiscountCodesEffects {
@@ -27,7 +27,7 @@ export class DiscountCodesEffects {
                 ))
         ))
 
-    loadDsicountCodesErrors$ = createEffect(() =>
+    loadDiscountCodesErrors$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadDiscountCodesErrorAction),
             tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while loading discount codes. Try again later.', 'error'))
@@ -71,6 +71,35 @@ export class DiscountCodesEffects {
             ofType(deleteDiscountCodeSuccessAction),
             tap(action => this.alertService.displayMessage(
                 `Successfully deleted discount code ${action.payload.code}`,
+                'success'
+            ))
+        ), { dispatch: false });
+
+    editDiscountCode$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(editDiscountCodeAction),
+            switchMap(({ payload }) => this.restaurantService.editDiscountCode(payload.discountCodeId, payload.restaurantId, payload.discountCode)
+                .pipe(
+                    map(discountCode => editDiscountCodeSuccessAction({ payload: discountCode })),
+                    catchError(error => of(editDiscountCodeErrorAction({ payload: error })))
+                ))
+        ));
+
+    editDiscountCodeErrors$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(editDiscountCodeErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(
+                payload?.error?.description ||
+                'An error occurred while editting discount code. Try again later.',
+                'error'
+            ))
+        ), { dispatch: false });
+
+    editDiscountCodeSuccesses$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(editDiscountCodeSuccessAction),
+            tap(({ payload }) => this.alertService.displayMessage(
+                `Successfully editted discount code ${payload.code}`,
                 'success'
             ))
         ), { dispatch: false });
