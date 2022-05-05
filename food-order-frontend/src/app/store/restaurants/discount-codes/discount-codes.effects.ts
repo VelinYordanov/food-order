@@ -6,7 +6,7 @@ import { catchError, filter, map, switchMap, tap, withLatestFrom } from "rxjs/op
 import { RestaurantService } from "src/app/restaurants/services/restaurant.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { loggedInUserIdSelector } from "../../authentication/authentication.selectors";
-import { deleteDiscountCodeAction, deleteDiscountCodeErrorAction, deleteDiscountCodePromptAction, deleteDiscountCodeSuccessAction } from "./discount-codes.actions";
+import { deleteDiscountCodeAction, deleteDiscountCodeErrorAction, deleteDiscountCodePromptAction, deleteDiscountCodeSuccessAction, loadDiscountCodesAction, loadDiscountCodesErrorAction, loadDiscountCodesSuccesAction } from "./discount-codes.actions";
 
 @Injectable()
 export class DiscountCodesEffects {
@@ -16,6 +16,22 @@ export class DiscountCodesEffects {
         private restaurantService: RestaurantService,
         private alertService: AlertService
     ) { }
+
+    loadDiscountCodes$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadDiscountCodesAction),
+            switchMap(action => this.restaurantService.getDiscountCodes(action.payload)
+                .pipe(
+                    map(discountCodes => loadDiscountCodesSuccesAction({ payload: discountCodes })),
+                    catchError(error => of(loadDiscountCodesErrorAction({ payload: error })))
+                ))
+        ))
+
+    loadDsicountCodesErrors$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadDiscountCodesErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while loading discount codes. Try again later.', 'error'))
+        ), { dispatch: false });
 
     discountCodeDeletePrompts$ = createEffect(() =>
         this.actions$.pipe(
@@ -57,5 +73,5 @@ export class DiscountCodesEffects {
                 `Successfully deleted discount code ${action.payload.code}`,
                 'success'
             ))
-        ), { dispatch: false })
+        ), { dispatch: false });
 }

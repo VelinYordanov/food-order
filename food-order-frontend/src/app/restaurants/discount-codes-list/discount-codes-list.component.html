@@ -1,16 +1,19 @@
 <h2>Discount codes:</h2>
 <section *ngIf="discountCodes$ | async; let discountCodes">
-    <div class="add-button-wrapper">
-        <button mat-button color="primary" class="add-button" routerLink="add">
-            <mat-icon>add</mat-icon>
-            <span>Add Discount Code</span>
-        </button>
+  <div class="add-button-wrapper">
+    <button mat-button color="primary" class="add-button" routerLink="add">
+      <mat-icon>add</mat-icon>
+      <span>Add Discount Code</span>
+    </button>
+  </div>
+  <div
+    class="discount-codes"
+    [class.flex-after]="!isGridComplete(discountCodes)"
+  >
+    <div *ngFor="let discountCode of discountCodes">
+      <app-discount-code-item
+        [discountCode]="discountCode"
+      ></app-discount-code-item>
     </div>
-    <div class="discount-codes"
-        [class.flex-after]="!isGridComplete(discountCodes)">
-        <div *ngFor="let discountCode of discountCodes">
-            <app-discount-code-item [discountCode]="discountCode"
-                (onDelete)="removeDiscountCode($event, discountCodes)"></app-discount-code-item>
-        </div>
-    </div>
+  </div>
 </section>
