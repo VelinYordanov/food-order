@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
 import { of } from "rxjs";
@@ -6,7 +7,7 @@ import { catchError, filter, map, switchMap, tap, withLatestFrom } from "rxjs/op
 import { RestaurantService } from "src/app/restaurants/services/restaurant.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { loggedInUserIdSelector } from "../../authentication/authentication.selectors";
-import { deleteDiscountCodeAction, deleteDiscountCodeErrorAction, deleteDiscountCodePromptAction, deleteDiscountCodeSuccessAction, editDiscountCodeAction, editDiscountCodeErrorAction, editDiscountCodeSuccessAction, loadDiscountCodesAction, loadDiscountCodesErrorAction, loadDiscountCodesSuccesAction } from "./discount-codes.actions";
+import { createDiscountCodeAction, createDiscountCodeErrorAction, createDiscountCodeSuccessAction, deleteDiscountCodeAction, deleteDiscountCodeErrorAction, deleteDiscountCodePromptAction, deleteDiscountCodeSuccessAction, editDiscountCodeAction, editDiscountCodeErrorAction, editDiscountCodeSuccessAction, loadDiscountCodesAction, loadDiscountCodesErrorAction, loadDiscountCodesSuccesAction } from "./discount-codes.actions";
 
 @Injectable()
 export class DiscountCodesEffects {
@@ -14,7 +15,8 @@ export class DiscountCodesEffects {
         private store: Store,
         private actions$: Actions,
         private restaurantService: RestaurantService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private router: Router
     ) { }
 
     loadDiscountCodes$ = createEffect(() =>
@@ -32,6 +34,39 @@ export class DiscountCodesEffects {
             ofType(loadDiscountCodesErrorAction),
             tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while loading discount codes. Try again later.', 'error'))
         ), { dispatch: false });
+
+    createDiscountCode$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(createDiscountCodeAction),
+            switchMap(({ payload }) => this.restaurantService.createDiscountCode(payload.restaurantId, payload.discountCode)
+                .pipe(
+                    map(result => createDiscountCodeSuccessAction()),
+                    catchError(error => of(createDiscountCodeErrorAction({ payload: error })))
+                ))
+        ));
+
+    createDiscountCodeSuccesses$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(createDiscountCodeSuccessAction),
+            tap(action => {
+                this.alertService.displayMessage(
+                    'Successfully created discount code',
+                    'success'
+                );
+
+                this.router.navigate(['restaurants/discount-codes']);
+            })
+        ), { dispatch: false });
+
+    createDiscountCodeErrors$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(createDiscountCodeErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(
+                payload?.error?.description ||
+                'An error occurred while creating discount code. Try again later.',
+                'error'
+            ))
+        ));
 
     discountCodeDeletePrompts$ = createEffect(() =>
         this.actions$.pipe(

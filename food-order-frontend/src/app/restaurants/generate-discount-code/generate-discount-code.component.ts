@@ -1,17 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { EMPTY, Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
 import {
-  catchError,
   filter,
-  switchMap,
-  tap,
   withLatestFrom,
 } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { RestaurantService } from '../services/restaurant.service';
+import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
+import { createDiscountCodeAction } from 'src/app/store/restaurants/discount-codes/discount-codes.actions';
 
 @Component({
   selector: 'app-generate-discount-code',
@@ -27,13 +23,8 @@ export class GenerateDiscountCodeComponent implements OnInit {
   private formSubmits$ = new Subject<void>();
 
   constructor(
-    private formBuilder: FormBuilder,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-    private restaurantService: RestaurantService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    private store: Store,
+    private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
     this.discountCodeForm = this.formBuilder.group({
@@ -68,29 +59,11 @@ export class GenerateDiscountCodeComponent implements OnInit {
     this.formSubmits$
       .pipe(
         filter((_) => this.discountCodeForm.valid),
-        withLatestFrom(this.authenticationService.user$),
-        switchMap(([_, restaurant]) =>
-          this.restaurantService
-            .createDiscountCode(restaurant.id, this.discountCodeForm.value)
-            .pipe(
-              catchError((error) => {
-                this.alertService.displayMessage(
-                  error?.error?.description ||
-                    'An error occurred while creating discount code. Try again later.',
-                  'error'
-                );
-                return EMPTY;
-              })
-            )
-        )
+        withLatestFrom(this.store.select(loggedInUserIdSelector))
       )
-      .subscribe((discountCode) => {
-        this.alertService.displayMessage(
-          'Successfully created discount code',
-          'success'
-        );
-
-        this.router.navigate(['..'], { relativeTo: this.activatedRoute });
+      .subscribe(([_, restaurantId]) => {
+        const payload = { restaurantId, discountCode: this.discountCodeForm.value }
+        this.store.dispatch(createDiscountCodeAction({ payload }));
       });
   }
 
