@@ -15,13 +15,18 @@ export const cartSelectedFoodsReducer = createReducer(
 )
 
 function modifyCount(items: CartItem[], item: CartFood, countModification: CountModification): CartItem[] {
-    return items.map(x => {
-        if (x.food.id === item.id) {
-            return { ...x, ...{ quantity: (countModification === CountModification.Increment ? (x.quantity + 1) : (x.quantity - 1)) } }
+    return items.reduce((acc, current) => {
+        if (current.food.id === item.id) {
+            const newQuantity = countModification === CountModification.Increment ? (current.quantity + 1) : (current.quantity - 1);
+            if (newQuantity <= 0) {
+                return acc;
+            }
+
+            acc.push({ ...current, ...{ quantity: newQuantity } });
         }
 
-        return x;
-    })
+        return acc;
+    }, []);
 }
 
 function addFoodToCart(foods: CartItem[], food: CartFood) {
