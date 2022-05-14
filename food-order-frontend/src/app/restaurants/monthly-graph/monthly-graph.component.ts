@@ -1,14 +1,15 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { Actions } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
-import { EMPTY } from 'rxjs';
-import { catchError, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
-import { RestaurantService } from '../services/restaurant.service';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
+import { loadMonthlyGraphAction } from 'src/app/store/restaurants/graphs/graphs.actions';
+import { selectMonthlyGraphData } from 'src/app/store/restaurants/graphs/graphs.selectors';
 
 const MY_FORMATS = {
   display: {
@@ -20,7 +21,7 @@ const MY_FORMATS = {
   selector: 'app-monthly-graph',
   templateUrl: './monthly-graph.component.html',
   styleUrls: ['./monthly-graph.component.scss'],
-  providers:[DatePipe, { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }]
+  providers: [DatePipe, { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }]
 })
 export class MonthlyGraphComponent implements OnInit {
   public date: FormControl = new FormControl();
@@ -45,35 +46,33 @@ export class MonthlyGraphComponent implements OnInit {
   public lineChartPlugins = [];
 
   constructor(
-    private authenticationService: AuthenticationService,
-    private restaurantService: RestaurantService,
-    private alertService: AlertService,
+    private store: Store,
+    private actions$: Actions,
     private datePipe: DatePipe
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.date.valueChanges
-    .pipe(
-        withLatestFrom(this.authenticationService.user$),
-        map(([date, restaurant]) => [date.month() + 1, date.year(), restaurant]),
-        switchMap(([month, year, restaurant]) =>
-          this.restaurantService.getMonthyGraphData(restaurant.id, month, year)
-          .pipe(
-            catchError((error) => {
-              this.alertService.displayMessage(
-                error?.error?.description ||
-                  'An error occurred while loading monthly graph. Try again later.',
-                'error'
-              );
-              return EMPTY;
-            }),
-            tap(_ => this.lineChartData[0].label = this.getLabel(month, year)),
-          )
-        )
-      )
-      .subscribe(graphData => {
+      .pipe(
+        switchMap(date =>
+          this.store.select(selectMonthlyGraphData(date.year(), date.month() + 1))
+            .pipe(
+              map(data => [date.year(), date.month() + 1, data])
+            ))
+      ).subscribe(([year, month, graphData]) => {
+        this.lineChartData[0].label = this.getLabel(month, year);
         this.lineChartLabels = graphData.map(data => this.datePipe.transform(data.x, 'dd.MM.yyyy'));
         this.lineChartData[0].data = graphData.map(data => data.y);
+      });
+
+    this.date.valueChanges
+      .pipe(
+        withLatestFrom(this.store.select(loggedInUserIdSelector)),
+        map(([date, restaurantId]) => [date.month() + 1, date.year(), restaurantId])
+      )
+      .subscribe(([month, year, restaurantId]) => {
+        const payload = { restaurantId, month, year };
+        this.store.dispatch(loadMonthlyGraphAction({ payload }));
       });
   }
 

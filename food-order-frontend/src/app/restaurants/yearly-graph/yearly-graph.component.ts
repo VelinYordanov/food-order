@@ -4,17 +4,14 @@ import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { Store } from '@ngrx/store';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
-import { EMPTY } from 'rxjs';
 import {
-  catchError,
   map,
   switchMap,
-  tap,
   withLatestFrom,
 } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { loggedInUserSelector } from 'src/app/store/authentication/authentication.selectors';
-import { RestaurantService } from '../services/restaurant.service';
+import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
+import { loadYearlyGraphAction } from 'src/app/store/restaurants/graphs/graphs.actions';
+import { selectYearlyGraphData } from 'src/app/store/restaurants/graphs/graphs.selectors';
 
 const MY_FORMATS = {
   display: {
@@ -52,33 +49,30 @@ export class YearlyGraphComponent implements OnInit {
 
   constructor(
     private store: Store,
-    private restaurantService: RestaurantService,
-    private alertService: AlertService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.date.valueChanges
       .pipe(
         map((date) => date.year()),
-        withLatestFrom(this.store.select(loggedInUserSelector)),
-        switchMap(([year, restaurant]) =>
-          this.restaurantService.getYearlyGraph(restaurant.id, year).pipe(
-            catchError((error) => {
-              this.alertService.displayMessage(
-                error?.error?.description ||
-                  'An error occurred while loading yearly graph. Try again later.',
-                'error'
-              );
-              return EMPTY;
-            }),
-            tap((_) => (this.lineChartData[0].label = this.getLabel(year)))
-          )
-        )
-      )
-      .subscribe((graphData) => {
-        this.lineChartLabels = graphData.map((data) => data.x);
-        this.lineChartData[0].data = graphData.map((data) => data.y);
+        withLatestFrom(this.store.select(loggedInUserIdSelector)))
+      .subscribe(([year, restaurantId]) => {
+        const payload = { restaurantId, year };
+        this.store.dispatch(loadYearlyGraphAction({ payload }));
       });
+
+    this.date.valueChanges
+      .pipe(
+        map(date => date.year()),
+        switchMap(year => this.store.select(selectYearlyGraphData(year))
+          .pipe(
+            map(graphData => [year, graphData])
+          )
+        )).subscribe(([year, graphData]) => {
+          this.lineChartData[0].label = this.getLabel(year);
+          this.lineChartLabels = graphData.map((data) => data.x);
+          this.lineChartData[0].data = graphData.map((data) => data.y);
+        })
   }
 
   getLabel(year: number) {
