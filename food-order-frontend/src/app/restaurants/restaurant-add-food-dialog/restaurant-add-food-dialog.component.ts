@@ -1,17 +1,20 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EMPTY, Observable, of, Subject } from 'rxjs';
-import { catchError, filter, finalize, first, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { price } from 'src/app/shared/validators/price-validator';
+import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
+import { addCategoryToRestaurantPromptAction, addCategoryToRestaurantSuccessAction, addFoodToRestaurantAction, addFoodToRestaurantErrorAction, addFoodToRestaurantSuccessAction } from 'src/app/store/restaurants/restaurants.actions';
 import { Category } from '../models/category';
 import { Food } from '../models/food';
-import { RestaurantService } from '../services/restaurant.service';
+import { Actions, ofType } from "@ngrx/effects";
+import { selectRestaurantCategories } from 'src/app/store/restaurants/restaurants.selectors';
+import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
   selector: 'app-restaurant-add-food-dialog',
@@ -25,34 +28,66 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
 
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  private addButtonClicks = new Subject<Food>();
+  private readonly addButtonClicks = new Subject<Food>();
+  private readonly addCategoryClicks = new Subject<string>();
+  private readonly onDestroy$ = new Subject<void>();
 
   constructor(
-    private formBuilder: FormBuilder,
+    private store: Store,
+    private actions$: Actions,
     private alertService: AlertService,
-    private restaurantService: RestaurantService,
-    private authenticationService: AuthenticationService,
-    private dialogRef: MatDialogRef<RestaurantAddFoodDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private categories: Category[],
+    private formBuilder: FormBuilder,
+    private dialogRef: MatDialogRef<RestaurantAddFoodDialogComponent>
   ) { }
 
   ngOnInit(): void {
+    this.addCategoryClicks
+      .pipe(
+        filter(categoryName => {
+          const categoriesArray = this.foodForm.get('categories') as FormArray;
+          if (categoriesArray.value.find(x => x.name.toLowerCase() === categoryName.toLowerCase())) {
+            this.alertService.displayMessage(`Category ${categoryName} is already added.`, 'error');
+            return false;
+          }
+
+          return true;
+        }),
+        withLatestFrom(this.store.select(selectRestaurantCategories), this.store.select(loggedInUserIdSelector)),
+      ).subscribe(([categoryName, categories, restaurantId]) => {
+        const category = categories.find(c => c.name === categoryName);
+        if (category) {
+          const categoriesArray = this.foodForm.get('categories') as FormArray;
+          categoriesArray.push(this.formBuilder.group(category));
+          return
+        }
+
+        const payload = { restaurantId, categoryName };
+        this.store.dispatch(addCategoryToRestaurantPromptAction({ payload }))
+      });
+
+    this.actions$.pipe(
+      takeUntil(this.onDestroy$),
+      ofType(addCategoryToRestaurantSuccessAction)
+    ).subscribe(action => {
+      const categoriesArray = this.foodForm.get('categories') as FormArray;
+      categoriesArray.push(this.formBuilder.group(action.payload));
+    })
+
     this.addButtonClicks.pipe(
-      withLatestFrom(this.authenticationService.user$),
-      tap(_ => this.foodForm.disable()),
-      switchMap(([food, restaurant]) =>
-        this.restaurantService.addFood(restaurant.id, food)
-          .pipe(
-            finalize(() => this.foodForm.enable()),
-            catchError(error => {
-              this.alertService.displayMessage(error?.error?.description || 'An error occurred while adding food. Try again later.', 'error');
-              return EMPTY;
-            }),
-          ))
-    ).subscribe(food => {
-      this.alertService.displayMessage(`Successfully added food ${food.name}`, 'success');
-      this.dialogRef.close(food);
+      withLatestFrom(this.store.select(loggedInUserIdSelector)),
+    ).subscribe(([food, restaurantId]) => {
+      this.foodForm.disable();
+      const payload = { food, restaurantId };
+      this.store.dispatch(addFoodToRestaurantAction({ payload }));
     });
+
+    this.actions$.pipe(
+      ofType(addFoodToRestaurantSuccessAction, addFoodToRestaurantErrorAction)
+    ).subscribe(action => this.foodForm.enable());
+
+    this.actions$.pipe(
+      ofType(addFoodToRestaurantSuccessAction)
+    ).subscribe(action => this.dialogRef.close(action.payload))
 
     this.foodForm = this.formBuilder.group({
       name: [null, Validators.required],
@@ -65,24 +100,26 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
 
     this.filteredCategories$ = this.categoryFormControl.valueChanges
       .pipe(
-        map(value =>
-          this.categories
-            .filter(category => category.name.includes(value)))
+        withLatestFrom(this.store.select(selectRestaurantCategories)),
+        map(([value, categories]) => categories.filter(category => category.name.includes(value)))
       );
   }
 
   ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     this.addButtonClicks.complete();
+    this.addCategoryClicks.complete();
   }
 
   addCategory(event: MatChipInputEvent) {
+    this.addCategoryClicks.next(event.value);
     const value = event.value;
-    this.addCategoryToFood(value).subscribe(_ => event.input.value = '');
   }
 
   selected(event: MatAutocompleteSelectedEvent, categoryInput) {
+    this.addCategoryClicks.next(event.option.value);
     const value = event.option.value;
-    this.addCategoryToFood(value).subscribe(_ => categoryInput.value = '');
   }
 
   add() {
@@ -101,48 +138,5 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
     if (index !== -1) {
       categories.removeAt(index);
     }
-  }
-
-  private addCategoryToFood(value: string): Observable<Category> {
-    let category = this.categories.find(x => x.name.toLowerCase() === value.toLowerCase());
-    let category$: Observable<Category> = of(category);
-
-    if (!category) {
-      category$ = this.alertService.displayQuestion(`Category ${value} does not exist. Do you want to create it?`)
-        .pipe(
-          filter(x => !!x),
-          switchMap(_ => this.createCategory(value)
-            .pipe(
-              catchError(error => {
-                this.alertService.displayMessage(error?.error?.description || 'An error occurred while creating category.', 'error');
-                return EMPTY;
-              })
-            ))
-        )
-    }
-
-    return category$.pipe(
-      tap(resultCategory => {
-        const categoriesArray = this.foodForm.get('categories') as FormArray;
-        if (categoriesArray.value.find(x => x.name.toLowerCase() === value.toLowerCase())) {
-          this.alertService.displayMessage(`Category ${resultCategory?.name} is already added.`, 'error');
-          return;
-        }
-
-        categoriesArray.push(this.formBuilder.group(resultCategory));
-      })
-    );
-  }
-
-  private createCategory(categoryName: string) {
-    return this.authenticationService.user$
-      .pipe(
-        first(user => !!user),
-        switchMap(user =>
-          this.restaurantService.addCategoryToRestaurant(user.id, categoryName)
-            .pipe(
-              tap(category => this.categories.push(category)),
-            ))
-      )
   }
 }

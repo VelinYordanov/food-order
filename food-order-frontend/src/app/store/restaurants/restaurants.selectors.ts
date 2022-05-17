@@ -13,3 +13,13 @@ export const selectCurrentRestaurant = createSelector(
     restaurantsSelector,
     state => state.currentRestaurant
 );
+
+export const selectRestaurantCategories = createSelector(
+    selectCurrentRestaurant,
+    state => state.categories
+)
+
+export const selectRestaurantFoods = createSelector(
+    selectCurrentRestaurant,
+    state => state.foods
+)

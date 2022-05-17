@@ -4,7 +4,7 @@ import { deleteDiscountCodeSuccessAction } from "./discount-codes/discount-codes
 import { discountCodesReducer } from "./discount-codes/discount-codes.reducers";
 import { loadMonthlyGraphSuccesAction, loadYearlyGraphSuccesAction } from "./graphs/graphs.actions";
 import { graphsReducer } from "./graphs/graphs.reducers";
-import { loadRestaurantErrorAction, loadRestaurantsSuccessAction, loadRestaurantSuccessAction } from "./restaurants.actions";
+import { addCategoryToRestaurantSuccessAction, addFoodToRestaurantSuccessAction, loadRestaurantErrorAction, loadRestaurantsSuccessAction, loadRestaurantSuccessAction } from "./restaurants.actions";
 
 const initialState: RestaurantsState = {
     restaurants: [],
@@ -23,7 +23,9 @@ export const restaurantsReducer = createReducer(
     on(deleteDiscountCodeSuccessAction, (state, action) => ({ ...state, ...{ discountCodes: discountCodesReducer(state.discountCodes, action) } })),
     on(loadMonthlyGraphSuccesAction,
         loadYearlyGraphSuccesAction,
-        (state, action) => ({ ...state, graphData: graphsReducer(state.graphData, action) }))
+        (state, action) => ({ ...state, graphData: graphsReducer(state.graphData, action) })),
+    on(addFoodToRestaurantSuccessAction, (state, action) => ({ ...state, currentRestaurant: { ...state.currentRestaurant, foods: [...state.currentRestaurant.foods, action.payload] } })),
+    on(addCategoryToRestaurantSuccessAction, (state, action) => ({ ...state, currentRestaurant: { ...state.currentRestaurant, categories: [...state.currentRestaurant.categories, action.payload] } }))
 )
 
 export const restaurantsStateKey = 'restaurants';
