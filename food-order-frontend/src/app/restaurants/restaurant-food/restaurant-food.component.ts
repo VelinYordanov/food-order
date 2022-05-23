@@ -5,13 +5,17 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { EMPTY, Observable, of, Subject } from 'rxjs';
-import { catchError, filter, first, map, switchMap, switchMapTo, tap } from 'rxjs/operators';
+import { catchError, filter, first, map, mapTo, switchMap, switchMapTo, takeUntil, tap } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Category } from '../models/category';
 import { Food } from '../models/food';
 import { price } from 'src/app/shared/validators/price-validator';
 import { RestaurantService } from '../services/restaurant.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
+import { Store } from '@ngrx/store';
+import { deleteFoodFromRestaurantPromptAction, editRestaurantFoodAction, editRestaurantFoodErrorAction, editRestaurantFoodSuccessAction } from 'src/app/store/restaurants/restaurants.actions';
+import { Actions, ofType } from '@ngrx/effects';
+import { PrompPayload } from 'src/app/store/models/prompt-payload';
 
 @Component({
   selector: 'app-restaurant-food',
@@ -21,8 +25,6 @@ import { AuthenticationService } from 'src/app/shared/services/authentication.se
 export class RestaurantFoodComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() food: Food;
   @Input() categories: Category[];
-  @Output('delete') onDelete = new EventEmitter<void>();
-  @Output('edit') onEdit = new EventEmitter<Food>();
 
   filteredCategories$: Observable<Category[]>;
 
@@ -33,11 +35,12 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit, OnDestroy
 
   private readonly editClicks$ = new Subject<void>();
   private readonly deleteClicks$ = new Subject<void>();
+  private readonly onDestroy$ = new Subject<void>();
 
   constructor(
     private formBuilder: FormBuilder,
-    private restaurantService: RestaurantService,
-    private authenticationService: AuthenticationService,
+    private store: Store,
+    private actions$: Actions,
     private alertService: AlertService,
     private cdr: ChangeDetectorRef) { }
 
@@ -65,6 +68,8 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnDestroy(): void {
     this.editClicks$.complete();
     this.deleteClicks$.complete();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   ngAfterViewInit(): void {
@@ -140,15 +145,6 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit, OnDestroy
     this.deleteClicks$.next();
   }
 
-  deleteFood() {
-    return this.authenticationService.user$
-      .pipe(
-        first(user => !!user),
-        switchMap(user =>
-          this.restaurantService.deleteFood(user.id, this.food.id))
-      )
-  }
-
   private addCategoryToFood(value: string) {
     const category = this.categories.find(x => x.name.toLowerCase() === value.toLowerCase());
 
@@ -171,34 +167,30 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit, OnDestroy
       .pipe(
         tap(_ => this.validateForm()),
         filter(_ => this.foodForm.valid),
-        switchMapTo(this.authenticationService.user$),
-        switchMap(user =>
-          this.restaurantService.editFood(user.id, this.food.id, this.foodForm.value)
-            .pipe(
-              catchError(error => {
-                this.alertService.displayMessage(error?.error?.description || 'An error occurred while editting food. Try again later.', 'error');
-                return EMPTY;
-              })
-            ))
-      ).subscribe(result => {
-        this.alertService.displayMessage('Successfully editted food.', 'success');
-        this.onEdit.emit(result);
-        this.toggleForm();
+      ).subscribe(_ => {
+        const payload = { ...this.foodForm.value, id: this.food.id };
+        this.store.dispatch(editRestaurantFoodAction({ payload }));
       });
+
+    this.actions$.pipe(
+      takeUntil(this.onDestroy$),
+      ofType(editRestaurantFoodSuccessAction, editRestaurantFoodErrorAction)
+    ).subscribe(_ => this.toggleForm());
   }
 
   private setupDeletes() {
     this.deleteClicks$
       .pipe(
-        switchMap(_ => this.alertService.displayRequestQuestion<void>(
-          `Are you sure you want to delete food ${this.food.name}?`,
-          this.deleteFood(),
-          `Successfully deleted food ${this.food.name}`,
-          `An error ocurred while deleting food ${this.food.name}. Try again later`
-        )
-        .pipe(
-          catchError(error => EMPTY)
-        ))
-      ).subscribe(_ => this.onDelete.next())
+        mapTo(this.food.id),
+      ).subscribe(id => {
+        const payload: PrompPayload<string> = {
+          promptQuestion: `Are you sure you want to delete food ${this.food.name}?`,
+          successText: `Successfully deleted food ${this.food.name}`,
+          errorText: `An error ocurred while deleting food ${this.food.name}. Try again later`,
+          data: id
+        };
+
+        this.store.dispatch(deleteFoodFromRestaurantPromptAction({ payload }));
+      })
   }
 }

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, of } from 'rxjs';
-import { switchMap, map, catchError, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, map, catchError, tap, withLatestFrom, filter } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { loggedInUserSelector } from 'src/app/store/authentication/authentication.selectors';
 import { CustomerService } from '../../../customers/services/customer.service';
@@ -68,10 +68,14 @@ export class AddressesEffects {
     deleteAddressPrompts$ = createEffect(() =>
         this.actions$.pipe(
             ofType(deleteAddressPromptAction),
-            tap(action => this.alertService.displayQuestionWithLoader(
-                "Are you sure you want to delete this address?",
-                () => this.store.dispatch(deleteAddressAction({ payload: action.payload }))))
-        ), { dispatch: false })
+            switchMap(action => this.alertService.displayQuestionWithLoader(
+                "Are you sure you want to delete this address?")
+                .pipe(
+                    filter(x => !!x),
+                    map(x => action)
+                )),
+            map(action => deleteAddressAction({ payload: action.payload }))
+        ))
 
     deleteAddresses$ = createEffect(() =>
         this.actions$.pipe(

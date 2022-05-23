@@ -10,7 +10,7 @@ import { AlertResult } from 'src/app/shared/models/alert-result';
 export class AlertService {
   constructor(@Inject(SwalToken) private swal) { }
 
-  displayQuestionWithLoader(question: string, action: Function) {
+  displayQuestionWithLoader(question: string) {
     return from(this.swal.fire({
       title: question,
       icon: 'question',
@@ -18,13 +18,15 @@ export class AlertService {
       showLoaderOnConfirm: true,
       allowOutsideClick: () => !this.swal.isLoading(),
       preConfirm: () => {
-        action();
-
         // We are using a promise that remains pending to keep the loader open.
         // It should be turned off manually.
         return new Promise((_, __) => { });
       }
-    }))
+    })).pipe(
+      map(result => result as AlertResult<boolean>),
+      filter(result => result.isConfirmed),
+      map(result => result.value)
+    )
   }
 
   displayRequestQuestion<T>(questionTitle: string, action: Observable<any>, successTitle: string, errorBackupTitle: string): Observable<T> {

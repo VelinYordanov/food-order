@@ -61,8 +61,16 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
           return
         }
 
-        const payload = { restaurantId, categoryName };
-        this.store.dispatch(addCategoryToRestaurantPromptAction({ payload }))
+        const data = { restaurantId, categoryName };
+
+        const payload = {
+          promptQuestion: `Category ${categoryName} does not exist. Do you want to create it?`,
+          errorText: 'An error occurred while creating category.',
+          successText: "Successfuly added category.",
+          data: data
+        };
+
+        this.store.dispatch(addCategoryToRestaurantPromptAction({ payload }));
       });
 
     this.actions$.pipe(
