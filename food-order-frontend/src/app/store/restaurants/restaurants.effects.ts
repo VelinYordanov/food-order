@@ -6,7 +6,7 @@ import { catchError, filter, map, switchMap, tap, withLatestFrom } from "rxjs/op
 import { RestaurantService } from "src/app/restaurants/services/restaurant.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { loggedInUserIdSelector } from "../authentication/authentication.selectors";
-import { addCategoryToRestaurantAction, addCategoryToRestaurantErrorAction, addCategoryToRestaurantPromptAction, addCategoryToRestaurantSuccessAction, addFoodToRestaurantAction, addFoodToRestaurantErrorAction, addFoodToRestaurantSuccessAction, deleteCategoryFromRestaurantAction, deleteCategoryFromRestaurantErrorAction, deleteCategoryFromRestaurantPromptAction, deleteCategoryFromRestaurantSuccessAction, editRestaurantAction, editRestaurantErrorAction, editRestaurantFoodAction, editRestaurantFoodErrorAction, editRestaurantFoodSuccessAction, editRestaurantSuccessAction, loadRestaurantAction, loadRestaurantErrorAction, loadRestaurantsAction, loadRestaurantsErrorAction, loadRestaurantsSuccessAction, loadRestaurantSuccessAction } from "./restaurants.actions";
+import { addCategoryToRestaurantAction, addCategoryToRestaurantErrorAction, addCategoryToRestaurantPromptAction, addCategoryToRestaurantSuccessAction, addFoodToRestaurantAction, addFoodToRestaurantErrorAction, addFoodToRestaurantSuccessAction, deleteCategoryFromRestaurantAction, deleteCategoryFromRestaurantErrorAction, deleteCategoryFromRestaurantPromptAction, deleteCategoryFromRestaurantSuccessAction, editRestaurantAction, editRestaurantErrorAction, editRestaurantFoodAction, editRestaurantFoodErrorAction, editRestaurantFoodSuccessAction, editRestaurantSuccessAction, loadRestaurantAction, loadRestaurantErrorAction, loadRestaurantOrdersAction, loadRestaurantOrdersErrorAction, loadRestaurantOrdersSuccessAction, loadRestaurantsAction, loadRestaurantsErrorAction, loadRestaurantsSuccessAction, loadRestaurantSuccessAction, updateRestaurantOrderAction, updateRestaurantOrderErrorAction, updateRestaurantOrderSuccessAction } from "./restaurants.actions";
 
 @Injectable()
 export class RestaurantsEffects {
@@ -180,5 +180,41 @@ export class RestaurantsEffects {
         this.actions$.pipe(
             ofType(editRestaurantErrorAction),
             tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while editting restaurant. Try again later.', 'error'))
+        ), { dispatch: false });
+
+    loadRestaurantOrders$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadRestaurantOrdersAction),
+            withLatestFrom(this.store.select(loggedInUserIdSelector)),
+            switchMap(([action, restaurantId]) =>
+                this.restaurantService.getOrders(restaurantId, action.payload)
+                    .pipe(
+                        map(result => loadRestaurantOrdersSuccessAction({ payload: result })),
+                        catchError(error => of(loadRestaurantOrdersErrorAction({ payload: error })))
+                    ))
+        ))
+
+    loadRestaurantOrdersErrors$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(loadRestaurantOrdersErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while loading orders. Try again later.', 'error'))
+        ), { dispatch: false });
+
+    updateRestaurantOrderStatus$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateRestaurantOrderAction),
+            withLatestFrom(this.store.select(loggedInUserIdSelector)),
+            switchMap(([action, restaurantId]) =>
+                this.restaurantService.changeOrderStatus(restaurantId, action.payload.orderId, action.payload.orderStatus)
+                    .pipe(
+                        map(result => updateRestaurantOrderSuccessAction({ payload: { orderId: action.payload.orderId, orderStatus: result } })),
+                        catchError(error => of(updateRestaurantOrderErrorAction({ payload: error })))
+                    ))
+        ))
+
+    updateRestaurantOrderStatusError$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateRestaurantOrderErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(payload?.error?.description || 'An error occurred while changing order status. Try again later.', 'error'))
         ), { dispatch: false });
 }

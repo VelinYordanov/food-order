@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { EMPTY, Subject } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
@@ -8,6 +9,7 @@ import { Status } from 'src/app/customers/models/status';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { UtilService } from 'src/app/shared/services/util.service';
+import { updateRestaurantOrderAction } from 'src/app/store/restaurants/restaurants.actions';
 import { RestaurantService } from '../services/restaurant.service';
 
 @Component({
@@ -24,32 +26,13 @@ export class RestaurantOrderComponent implements OnInit, OnDestroy {
   private statusChanges$ = new Subject<Status>();
 
   constructor(
+    private store: Store,
     private utilService: UtilService,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-    private restaurantService: RestaurantService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.statusChanges$
-      .pipe(
-        withLatestFrom(this.authenticationService.user$),
-        switchMap(([status, restaurant]) =>
-          this.restaurantService
-            .changeOrderStatus(restaurant.id, this.order.id, { status })
-            .pipe(
-              catchError((error) => {
-                this.alertService.displayMessage(
-                  error?.error?.description ||
-                    'An error occurred while changing order status. Try again later.',
-                  'error'
-                );
-                return EMPTY;
-              })
-            )
-        )
-      )
-      .subscribe((orderStatus) => (this.order.status = orderStatus.status));
+    this.statusChanges$.subscribe(statusChange =>
+      this.store.dispatch(updateRestaurantOrderAction({ payload: { orderId: this.order.id, orderStatus: { status: statusChange } } })))
   }
 
   ngOnDestroy(): void {

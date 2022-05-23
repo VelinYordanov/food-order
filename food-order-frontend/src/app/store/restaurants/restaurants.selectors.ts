@@ -23,3 +23,10 @@ export const selectRestaurantFoods = createSelector(
     selectCurrentRestaurant,
     state => state.foods
 )
+
+export const selectRestaurantOrdersByPage = function (pageNumber: number) {
+    return createSelector(
+        restaurantsSelector,
+        state => ({ ...state.orders, content: state.orders[pageNumber] })
+    )
+}
