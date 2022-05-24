@@ -1,16 +1,12 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { EMPTY, Subject } from 'rxjs';
-import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { Address } from 'src/app/customers/models/address';
 import { Order } from 'src/app/customers/models/order';
 import { OrderFoodResponse } from 'src/app/customers/models/order-food-response';
 import { Status } from 'src/app/customers/models/status';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { UtilService } from 'src/app/shared/services/util.service';
 import { updateRestaurantOrderAction } from 'src/app/store/restaurants/restaurants.actions';
-import { RestaurantService } from '../services/restaurant.service';
 
 @Component({
   selector: 'app-restaurant-order',

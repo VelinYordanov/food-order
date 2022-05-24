@@ -85,21 +85,12 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(RestaurantAddFoodDialogComponent, {
-      data: this.restaurant.categories
-    });
+    this.dialog.open(RestaurantAddFoodDialogComponent);
 
-    dialogRef.afterClosed()
-      .subscribe(food => {
-        if (food) {
-          this.restaurant.foods.push(food);
-          food.categories
-            .filter(category => !this.restaurant.categories
-              .some(c => c.id === category.id))
-            .forEach(category => this.restaurant.categories.push(category));
-          this.search.updateValueAndValidity();
-        }
-      });
+    // dialogRef.afterClosed()
+    //   .subscribe(food => {
+    //       this.search.updateValueAndValidity();
+    //     });
   }
 
   toggleForm() {
@@ -125,7 +116,7 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   private setupRestaurantEdits() {
     this.editRestaurantClicksSubject
       .pipe(
-        mapTo(this.restaurantForm.value)
+        map(_ => this.restaurantForm.value)
       ).subscribe(restaurant => this.store.dispatch(editRestaurantAction({ payload: restaurant })));
 
     this.store.select(selectCurrentRestaurant)

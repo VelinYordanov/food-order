@@ -15,16 +15,11 @@ export class AlertService {
       title: question,
       icon: 'question',
       showCancelButton: true,
-      showLoaderOnConfirm: true,
-      allowOutsideClick: () => !this.swal.isLoading(),
-      preConfirm: () => {
-        // We are using a promise that remains pending to keep the loader open.
-        // It should be turned off manually.
-        return new Promise((_, __) => { });
-      }
+      allowOutsideClick: () => !this.swal.isLoading()
     })).pipe(
       map(result => result as AlertResult<boolean>),
       filter(result => result.isConfirmed),
+      tap(_ => this.swal.showLoading()),
       map(result => result.value)
     )
   }

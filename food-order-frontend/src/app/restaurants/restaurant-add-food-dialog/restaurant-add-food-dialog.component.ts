@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
@@ -26,7 +26,9 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
   categoryFormControl: FormControl;
   filteredCategories$: Observable<Category[]>;
 
-  separatorKeysCodes: number[] = [ENTER, COMMA];
+  @ViewChild('categoryInput') categoryInput: ElementRef<HTMLInputElement>;
+
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   private readonly addButtonClicks = new Subject<Food>();
   private readonly addCategoryClicks = new Subject<string>();
@@ -54,10 +56,11 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
         }),
         withLatestFrom(this.store.select(selectRestaurantCategories), this.store.select(loggedInUserIdSelector)),
       ).subscribe(([categoryName, categories, restaurantId]) => {
-        const category = categories.find(c => c.name === categoryName);
+        const category = categories.find(c => c.name.toLowerCase() === categoryName.toLowerCase());
         if (category) {
           const categoriesArray = this.foodForm.get('categories') as FormArray;
           categoriesArray.push(this.formBuilder.group(category));
+          this.clearInput();
           return
         }
 
@@ -78,7 +81,8 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
       ofType(addCategoryToRestaurantSuccessAction)
     ).subscribe(action => {
       const categoriesArray = this.foodForm.get('categories') as FormArray;
-      categoriesArray.push(this.formBuilder.group(action.payload));
+      categoriesArray.push(this.formBuilder.group(action.payload.data));
+      this.clearInput();
     })
 
     this.addButtonClicks.pipe(
@@ -95,7 +99,7 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
 
     this.actions$.pipe(
       ofType(addFoodToRestaurantSuccessAction)
-    ).subscribe(action => this.dialogRef.close(action.payload))
+    ).subscribe(action => this.dialogRef.close())
 
     this.foodForm = this.formBuilder.group({
       name: [null, Validators.required],
@@ -122,12 +126,10 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
 
   addCategory(event: MatChipInputEvent) {
     this.addCategoryClicks.next(event.value);
-    const value = event.value;
   }
 
   selected(event: MatAutocompleteSelectedEvent, categoryInput) {
     this.addCategoryClicks.next(event.option.value);
-    const value = event.option.value;
   }
 
   add() {
@@ -146,5 +148,10 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
     if (index !== -1) {
       categories.removeAt(index);
     }
+  }
+
+  private clearInput() {
+    this.categoryFormControl.setValue(null);
+    this.categoryInput.nativeElement.value = '';
   }
 }

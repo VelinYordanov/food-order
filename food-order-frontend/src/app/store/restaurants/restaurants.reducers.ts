@@ -8,7 +8,7 @@ import { deleteDiscountCodeSuccessAction } from "./discount-codes/discount-codes
 import { discountCodesReducer } from "./discount-codes/discount-codes.reducers";
 import { loadMonthlyGraphSuccesAction, loadYearlyGraphSuccesAction } from "./graphs/graphs.actions";
 import { graphsReducer } from "./graphs/graphs.reducers";
-import { addCategoryToRestaurantSuccessAction, addFoodToRestaurantSuccessAction, deleteCategoryFromRestaurantSuccessAction, deleteFoodFromRestaurantAction, deleteFoodFromRestaurantSuccessAction, editRestaurantFoodAction, editRestaurantFoodSuccessAction, loadRestaurantErrorAction, loadRestaurantOrdersSuccessAction, loadRestaurantsSuccessAction, loadRestaurantSuccessAction, updateRestaurantOrderSuccessAction } from "./restaurants.actions";
+import { addCategoryToRestaurantSuccessAction, addFoodToRestaurantSuccessAction, deleteCategoryFromRestaurantSuccessAction, deleteFoodFromRestaurantAction, deleteFoodFromRestaurantSuccessAction, editRestaurantFoodAction, editRestaurantFoodSuccessAction, editRestaurantSuccessAction, loadRestaurantErrorAction, loadRestaurantOrdersSuccessAction, loadRestaurantsSuccessAction, loadRestaurantSuccessAction, updateRestaurantOrderSuccessAction } from "./restaurants.actions";
 
 const initialState: RestaurantsState = {
     restaurants: [],
@@ -32,7 +32,7 @@ const initialState: RestaurantsState = {
 export const restaurantsReducer = createReducer(
     initialState,
     on(loadRestaurantsSuccessAction, (state, action) => ({ ...state, ...{ restaurants: action.payload } })),
-    on(loadRestaurantSuccessAction, (state, action) => ({ ...state, ...{ currentRestaurant: action.payload } })),
+    on(loadRestaurantSuccessAction, editRestaurantSuccessAction, (state, action) => ({ ...state, ...{ currentRestaurant: action.payload } })),
     on(loadRestaurantErrorAction, (state, action) => ({ ...state, ...{ currentRestaurant: null } })),
     on(deleteDiscountCodeSuccessAction, (state, action) => ({ ...state, ...{ discountCodes: discountCodesReducer(state.discountCodes, action) } })),
     on(loadMonthlyGraphSuccesAction,

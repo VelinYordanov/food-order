@@ -14,5 +14,5 @@ export const loggedInUserWithRouteParameter = (parameter: string) =>
 
 export const loggedInUserIdSelector = createSelector(
     loggedInUserSelector,
-    user => user.id
+    user => user?.id
 )

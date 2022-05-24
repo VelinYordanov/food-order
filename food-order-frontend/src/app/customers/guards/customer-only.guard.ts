@@ -3,7 +3,6 @@ import { UrlTree, Router, CanLoad, Route, UrlSegment } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
-import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { loggedInUserSelector } from 'src/app/store/authentication/authentication.selectors';
 
 @Injectable({
