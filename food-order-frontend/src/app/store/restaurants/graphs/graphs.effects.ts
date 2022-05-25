@@ -39,7 +39,7 @@ export class GraphsEffects {
             ofType(loadYearlyGraphAction),
             switchMap(action => this.restaurantService.getYearlyGraph(action.payload.restaurantId, action.payload.year)
                 .pipe(
-                    map(result => loadYearlyGraphSuccesAction({ payload: result })),
+                    map(result => loadYearlyGraphSuccesAction({ payload: { graphData: result, year: action.payload.year} })),
                     catchError(error => of(loadYearlyGraphErrorAction({ payload: error })))
                 ))
         ));

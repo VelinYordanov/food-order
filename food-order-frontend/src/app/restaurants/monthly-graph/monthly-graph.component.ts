@@ -6,7 +6,7 @@ import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
-import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
 import { loadMonthlyGraphAction } from 'src/app/store/restaurants/graphs/graphs.actions';
 import { selectMonthlyGraphData } from 'src/app/store/restaurants/graphs/graphs.selectors';

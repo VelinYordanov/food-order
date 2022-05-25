@@ -8,9 +8,7 @@ import {
   first,
   map,
   switchMap,
-  switchMapTo,
   takeUntil,
-  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';

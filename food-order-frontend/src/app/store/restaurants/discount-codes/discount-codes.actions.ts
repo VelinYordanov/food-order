@@ -1,15 +1,15 @@
 import { createAction, props } from "@ngrx/store";
 import { DiscountCode } from "src/app/customers/models/discount-code";
+import { DiscountCodeDto } from "src/app/restaurants/models/discount-code-dto";
 import { DiscountCodeItem } from "src/app/restaurants/models/discount-code-item";
-import { CreateDiscountCodePayload } from "../../models/create-discount-code-payload";
 import { DiscountCodeEditPayload } from "../../models/discount-code-edit-payload";
 
-export const loadDiscountCodesAction = createAction('[Discount Codes] Load Discount Codes', props<{ payload: string }>());
+export const loadDiscountCodesAction = createAction('[Discount Codes] Load Discount Codes');
 export const loadDiscountCodesSuccesAction = createAction('[Discount Codes] Load Discount Codes Success', props<{ payload: DiscountCodeItem[] }>());
 export const loadDiscountCodesErrorAction = createAction('[Discount Codes] Load Discount Codes Error', props<{ payload: any }>());
 
-export const createDiscountCodeAction = createAction('[Discount Codes] Create Discount Code', props<{ payload: CreateDiscountCodePayload }>());
-export const createDiscountCodeSuccessAction = createAction('[Discount Codes] Create Discount Code Success');
+export const createDiscountCodeAction = createAction('[Discount Codes] Create Discount Code', props<{ payload: DiscountCodeDto }>());
+export const createDiscountCodeSuccessAction = createAction('[Discount Codes] Create Discount Code Success', props<{ payload: DiscountCodeItem }>());
 export const createDiscountCodeErrorAction = createAction('[Discount Codes] Create Discount Code Error', props<{ payload: any }>());
 
 export const deleteDiscountCodePromptAction = createAction('[Discount Codes] Delete Discount Code Prompt', props<{ payload: DiscountCodeItem }>());

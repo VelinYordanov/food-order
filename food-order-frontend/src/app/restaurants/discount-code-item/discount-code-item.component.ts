@@ -1,18 +1,11 @@
 import {
   Component,
-  EventEmitter,
   Input,
-  OnDestroy,
-  OnInit,
-  Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { filter, withLatestFrom } from 'rxjs/operators';
-import { DiscountCode } from 'src/app/customers/models/discount-code';
-import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
-import { deleteDiscountCodeAction, deleteDiscountCodePromptAction } from 'src/app/store/restaurants/discount-codes/discount-codes.actions';
+import { filter } from 'rxjs/operators';
+import { deleteDiscountCodePromptAction } from 'src/app/store/restaurants/discount-codes/discount-codes.actions';
 import { EditDiscountCodeComponent } from '../edit-discount-code/edit-discount-code.component';
 import { DiscountCodeItem } from '../models/discount-code-item';
 
@@ -30,17 +23,10 @@ export class DiscountCodeItemComponent {
   ) { }
 
   openEditDialog(): void {
-    const dialogRef = this.dialog.open(EditDiscountCodeComponent, {
+    this.dialog.open(EditDiscountCodeComponent, {
       data: this.discountCode,
       autoFocus: false,
     });
-
-    dialogRef.afterClosed()
-      .pipe(
-        filter(x => !!x)
-      ).subscribe((edittedDiscountCode) => {
-        this.discountCode = edittedDiscountCode;
-      });
   }
 
   delete() {

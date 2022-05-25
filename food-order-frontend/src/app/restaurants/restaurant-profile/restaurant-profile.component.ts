@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
-import { map, mapTo, startWith, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { map, startWith, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { Category } from '../models/category';
 import { Restaurant } from '../models/restaurant';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -86,11 +86,6 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
 
   openDialog(): void {
     this.dialog.open(RestaurantAddFoodDialogComponent);
-
-    // dialogRef.afterClosed()
-    //   .subscribe(food => {
-    //       this.search.updateValueAndValidity();
-    //     });
   }
 
   toggleForm() {

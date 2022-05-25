@@ -6,7 +6,7 @@ import { catchError, filter, map, switchMap, tap, withLatestFrom } from "rxjs/op
 import { RestaurantService } from "src/app/restaurants/services/restaurant.service";
 import { AlertService } from "src/app/shared/services/alert.service";
 import { loggedInUserIdSelector } from "../authentication/authentication.selectors";
-import { addCategoryToRestaurantAction, addCategoryToRestaurantErrorAction, addCategoryToRestaurantPromptAction, addCategoryToRestaurantSuccessAction, addFoodToRestaurantAction, addFoodToRestaurantErrorAction, addFoodToRestaurantSuccessAction, deleteCategoryFromRestaurantAction, deleteCategoryFromRestaurantErrorAction, deleteCategoryFromRestaurantPromptAction, deleteCategoryFromRestaurantSuccessAction, editRestaurantAction, editRestaurantErrorAction, editRestaurantFoodAction, editRestaurantFoodErrorAction, editRestaurantFoodSuccessAction, editRestaurantSuccessAction, loadRestaurantAction, loadRestaurantErrorAction, loadRestaurantOrdersAction, loadRestaurantOrdersErrorAction, loadRestaurantOrdersSuccessAction, loadRestaurantsAction, loadRestaurantsErrorAction, loadRestaurantsSuccessAction, loadRestaurantSuccessAction, updateRestaurantOrderAction, updateRestaurantOrderErrorAction, updateRestaurantOrderSuccessAction } from "./restaurants.actions";
+import { addCategoryToRestaurantAction, addCategoryToRestaurantErrorAction, addCategoryToRestaurantPromptAction, addCategoryToRestaurantSuccessAction, addFoodToRestaurantAction, addFoodToRestaurantErrorAction, addFoodToRestaurantSuccessAction, deleteCategoryFromRestaurantAction, deleteCategoryFromRestaurantErrorAction, deleteCategoryFromRestaurantPromptAction, deleteCategoryFromRestaurantSuccessAction, deleteFoodFromRestaurantAction, deleteFoodFromRestaurantErrorAction, deleteFoodFromRestaurantPromptAction, deleteFoodFromRestaurantSuccessAction, editRestaurantAction, editRestaurantErrorAction, editRestaurantFoodAction, editRestaurantFoodErrorAction, editRestaurantFoodSuccessAction, editRestaurantSuccessAction, loadRestaurantAction, loadRestaurantErrorAction, loadRestaurantOrdersAction, loadRestaurantOrdersErrorAction, loadRestaurantOrdersSuccessAction, loadRestaurantsAction, loadRestaurantsErrorAction, loadRestaurantsSuccessAction, loadRestaurantSuccessAction, updateRestaurantOrderAction, updateRestaurantOrderErrorAction, updateRestaurantOrderSuccessAction } from "./restaurants.actions";
 
 @Injectable()
 export class RestaurantsEffects {
@@ -132,6 +132,39 @@ export class RestaurantsEffects {
         this.actions$.pipe(
             ofType(addFoodToRestaurantSuccessAction),
             tap(({ payload }) => this.alertService.displayMessage(`Successfully added food ${payload.name}`, 'success'))
+        ), { dispatch: false });
+
+    deleteFoodFromRestaurantPrompts$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(deleteFoodFromRestaurantPromptAction),
+            switchMap(action => this.alertService.displayQuestionWithLoader(action.payload.promptQuestion)
+                .pipe(
+                    filter(x => !!x),
+                    map(_ => deleteFoodFromRestaurantAction({ payload: action.payload }))
+                ))
+        ));
+
+    deleteFoodFromRestaurant$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(deleteFoodFromRestaurantAction),
+            withLatestFrom(this.store.select(loggedInUserIdSelector)),
+            switchMap(([action, restaurantId]) => this.restaurantService.deleteFood(restaurantId, action.payload.data)
+                .pipe(
+                    map(result => deleteFoodFromRestaurantSuccessAction({ payload: { successText: action.payload.successText, data: action.payload.data } })),
+                    catchError(error => of(deleteFoodFromRestaurantErrorAction({ payload: { error, errorText: action.payload.errorText } })))
+                ))
+        ));
+
+    deleteFoodFromRestaurantErrors$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(deleteFoodFromRestaurantErrorAction),
+            tap(({ payload }) => this.alertService.displayMessage(payload.errorText, 'error'))
+        ), { dispatch: false });
+
+    deleteFoodFromRestaurantSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(deleteFoodFromRestaurantSuccessAction),
+            tap(({ payload }) => this.alertService.displayMessage(payload.successText, 'success'))
         ), { dispatch: false });
 
     editRestaurantFood$ = createEffect(() =>

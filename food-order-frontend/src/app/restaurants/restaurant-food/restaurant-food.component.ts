@@ -5,7 +5,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, mapTo, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, takeUntil, tap } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Category } from '../models/category';
 import { Food } from '../models/food';
@@ -179,7 +179,7 @@ export class RestaurantFoodComponent implements OnInit, AfterViewInit, OnDestroy
   private setupDeletes() {
     this.deleteClicks$
       .pipe(
-        mapTo(this.food.id),
+        map(_ => this.food.id),
       ).subscribe(id => {
         const payload: PrompPayload<string> = {
           promptQuestion: `Are you sure you want to delete food ${this.food.name}?`,

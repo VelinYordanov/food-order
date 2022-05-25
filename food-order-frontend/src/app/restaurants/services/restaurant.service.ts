@@ -22,7 +22,7 @@ import { RestaurantRegisterDto } from '../../home/models/restaurant-register-dto
 })
 export class RestaurantService {
   private readonly BASE_URL: string = 'api/restaurants';
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
 
   getRestaurantsList() {
     return this.httpClient.get<RestaurantListItem[]>(`${this.BASE_URL}`);
@@ -91,7 +91,7 @@ export class RestaurantService {
   }
 
   createDiscountCode(restaurantId: string, discountCode: DiscountCodeDto) {
-    return this.httpClient.post(
+    return this.httpClient.post<DiscountCodeItem>(
       `${this.BASE_URL}/${restaurantId}/discount-codes`,
       discountCode
     );
@@ -121,7 +121,7 @@ export class RestaurantService {
   }
 
   getMonthyGraphData(restaurantId: string, month: number, year: number) {
-    return this.httpClient.get<GraphData<Date, number>[]>(
+    return this.httpClient.get<GraphData<string, number>[]>(
       `${this.BASE_URL}/${restaurantId}/orders/monthly-graph`,
       { params: { month: String(month), year: String(year) } }
     );

@@ -4,9 +4,7 @@ import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import {
   filter,
-  withLatestFrom,
 } from 'rxjs/operators';
-import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
 import { createDiscountCodeAction } from 'src/app/store/restaurants/discount-codes/discount-codes.actions';
 
 @Component({
@@ -59,12 +57,8 @@ export class GenerateDiscountCodeComponent implements OnInit {
     this.formSubmits$
       .pipe(
         filter((_) => this.discountCodeForm.valid),
-        withLatestFrom(this.store.select(loggedInUserIdSelector))
       )
-      .subscribe(([_, restaurantId]) => {
-        const payload = { restaurantId, discountCode: this.discountCodeForm.value }
-        this.store.dispatch(createDiscountCodeAction({ payload }));
-      });
+      .subscribe(_ => this.store.dispatch(createDiscountCodeAction({ payload: this.discountCodeForm.value })));
   }
 
   submit() {

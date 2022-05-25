@@ -22,7 +22,8 @@ export class DiscountCodesEffects {
     loadDiscountCodes$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadDiscountCodesAction),
-            switchMap(action => this.restaurantService.getDiscountCodes(action.payload)
+            withLatestFrom(this.store.select(loggedInUserIdSelector)),
+            switchMap(([action, restaurantId]) => this.restaurantService.getDiscountCodes(restaurantId)
                 .pipe(
                     map(discountCodes => loadDiscountCodesSuccesAction({ payload: discountCodes })),
                     catchError(error => of(loadDiscountCodesErrorAction({ payload: error })))
@@ -38,9 +39,10 @@ export class DiscountCodesEffects {
     createDiscountCode$ = createEffect(() =>
         this.actions$.pipe(
             ofType(createDiscountCodeAction),
-            switchMap(({ payload }) => this.restaurantService.createDiscountCode(payload.restaurantId, payload.discountCode)
+            withLatestFrom(this.store.select(loggedInUserIdSelector)),
+            switchMap(([action, restaurantId]) => this.restaurantService.createDiscountCode(restaurantId, action.payload)
                 .pipe(
-                    map(result => createDiscountCodeSuccessAction()),
+                    map(result => createDiscountCodeSuccessAction({ payload: result })),
                     catchError(error => of(createDiscountCodeErrorAction({ payload: error })))
                 ))
         ));
@@ -54,7 +56,7 @@ export class DiscountCodesEffects {
                     'success'
                 );
 
-                this.router.navigate(['restaurants/discount-codes']);
+                this.router.navigate(['restaurant/discount-codes']);
             })
         ), { dispatch: false });
 

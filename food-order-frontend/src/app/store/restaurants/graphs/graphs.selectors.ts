@@ -23,13 +23,13 @@ const selectYearlyGraphs = createSelector(
 export const selectMonthlyGraphData = function (year: number, month: number) {
     return createSelector(
         selectMonthlyGraphs,
-        state => state[`${year}-${month}`]
+        state => state[`${year}-${month}`] || []
     )
 }
 
 export const selectYearlyGraphData = function (year: number) {
     return createSelector(
-        selectMonthlyGraphs,
-        state => state[year]
+        selectYearlyGraphs,
+        state => state[year] || []
     )
 }
