@@ -7,9 +7,7 @@ import { Color, Label } from 'ng2-charts';
 import {
   map,
   switchMap,
-  withLatestFrom,
 } from 'rxjs/operators';
-import { loggedInUserIdSelector } from 'src/app/store/authentication/authentication.selectors';
 import { loadYearlyGraphAction } from 'src/app/store/restaurants/graphs/graphs.actions';
 import { selectYearlyGraphData } from 'src/app/store/restaurants/graphs/graphs.selectors';
 
@@ -54,12 +52,8 @@ export class YearlyGraphComponent implements OnInit {
   ngOnInit(): void {
     this.date.valueChanges
       .pipe(
-        map((date) => date.year()),
-        withLatestFrom(this.store.select(loggedInUserIdSelector)))
-      .subscribe(([year, restaurantId]) => {
-        const payload = { restaurantId, year };
-        this.store.dispatch(loadYearlyGraphAction({ payload }));
-      });
+        map((date) => date.year()))
+      .subscribe(year => this.store.dispatch(loadYearlyGraphAction({ payload: year })));
 
     this.date.valueChanges
       .pipe(

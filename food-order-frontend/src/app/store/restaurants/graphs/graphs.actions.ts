@@ -8,6 +8,6 @@ export const loadMonthlyGraphAction = createAction('[Graphs] Load Monthly Graph'
 export const loadMonthlyGraphSuccesAction = createAction('[Graphs] Load Monthly Graph Success', props<{ payload: GraphData<string, number>[] }>());
 export const loadMonthlyGraphErrorAction = createAction('[Graphs] Load Monthly Graph Error', props<{ payload: any }>());
 
-export const loadYearlyGraphAction = createAction('[Graphs] Load Yearly Graph', props<{ payload: YearlyGraphState }>());
+export const loadYearlyGraphAction = createAction('[Graphs] Load Yearly Graph', props<{ payload: number }>());
 export const loadYearlyGraphSuccesAction = createAction('[Graphs] Load Yearly Graph Success', props<{ payload: YearlyGraphPayload }>());
 export const loadYearlyGraphErrorAction = createAction('[Graphs] Load Yearly Graph Error', props<{ payload: any }>());

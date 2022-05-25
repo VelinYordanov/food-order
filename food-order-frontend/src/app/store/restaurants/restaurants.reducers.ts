@@ -67,12 +67,17 @@ function updateRestaurantOrderStatus(state: RestaurantsState, action: { payload:
     const orderPage = Object.getOwnPropertyNames(state.orders.orders)
         .find(i => state.orders.orders[i].find(o => o.id === action.payload.orderId))
 
+    console.log(orderPage);
+
     const orders = state.orders.orders[orderPage];
-    const order = orders.find(o => o.id === action.payload.orderId);
+    const orderIndex = orders.findIndex(o => o.id === action.payload.orderId);
+    const order = orders[orderIndex];
     const newOrder = { ...order, status: action.payload.orderStatus.status };
-    const newOrders = orders.filter(o => o.id === action.payload.orderId);
-    const restaurantOrders = { ...state.orders.orders, orderPage: newOrders };
-    newOrders.push(newOrder);
+    const newOrders = orders.slice();
+    newOrders[orderIndex] = newOrder;
+    const restaurantOrders = { ...state.orders.orders };
+    restaurantOrders[orderPage] = newOrders;
+
     return {
         ...state, orders: { ...state.orders, orders: restaurantOrders }
     }
