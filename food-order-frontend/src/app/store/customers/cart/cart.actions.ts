@@ -17,7 +17,7 @@ export const increaseFoodQuantityAction = createAction('[Cart] Increase Food Qua
 export const decreaseFoodQuantityAction = createAction('[Cart] Decrease Food Quantity', props<{ payload: CartFood }>());
 export const clearCartAction = createAction('[Cart] Clear');
 
-export const loadDiscountCodeAction = createAction('[Cart] Load Discount Code', props<{ payload: LoadDiscountCodePayload }>());
+export const loadDiscountCodeAction = createAction('[Cart] Load Discount Code', props<{ payload: string }>());
 export const loadDiscountCodeSuccessAction = createAction('[Cart] Load Discount Code Success', props<{ payload: DiscountCode }>());
 export const loadDiscountCodeErrorAction = createAction('[Cart] Load Discount Code Error', props<{ payload: any }>());
 

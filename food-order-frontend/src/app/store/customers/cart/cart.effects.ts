@@ -6,8 +6,9 @@ import { of } from "rxjs";
 import { catchError, map, switchMap, tap, withLatestFrom } from "rxjs/operators";
 import { CustomerService } from "src/app/customers/services/customer.service";
 import { AlertService } from "src/app/shared/services/alert.service";
-import { selectCurrentRoute } from "../../router/router.selectors";
+import { loggedInUserIdSelector } from "../../authentication/authentication.selectors";
 import { clearCartAction, loadDiscountCodeAction, loadDiscountCodeErrorAction, loadDiscountCodeSuccessAction, submitOrderAction, submitOrderErrorAction, submitOrderSuccessAction } from "./cart.actions";
+import { selectedRestaurantIdSelector } from "./cart.selectors";
 
 @Injectable()
 export class CartEffects {
@@ -21,8 +22,9 @@ export class CartEffects {
     loadDiscountCode$ = createEffect(() =>
         this.actions$.pipe(
             ofType(loadDiscountCodeAction),
-            switchMap(action =>
-                this.customerService.getDiscountCode(action.payload.restaurantId, action.payload.code)
+            withLatestFrom(this.store.select(selectedRestaurantIdSelector)),
+            switchMap(([action, restaurantId]) =>
+                this.customerService.getDiscountCode(restaurantId, action.payload)
                     .pipe(
                         map(result => loadDiscountCodeSuccessAction({ payload: result })),
                         catchError(error => of(loadDiscountCodeErrorAction({ payload: error })))
@@ -38,7 +40,7 @@ export class CartEffects {
                 'An error occurred while looking up discount code. Try again later.',
                 'error'
             ))
-        ));
+        ), { dispatch: false });
 
     submitOrder$ = createEffect(() =>
         this.actions$.pipe(

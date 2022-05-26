@@ -75,8 +75,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       .pipe(
         map((_) => this.discountCodeFormControl.value),
         filter((code) => !!code),
-        withLatestFrom(this.store.select(selectedRestaurantIdSelector)),
-      ).subscribe(([code, restaurantId]) => this.store.dispatch(loadDiscountCodeAction({ payload: { code, restaurantId } })));
+      ).subscribe(code => this.store.dispatch(loadDiscountCodeAction({ payload: code })));
 
     this.store.select(selectDiscountCode)
       .pipe(takeUntil(this.onDestroy$))

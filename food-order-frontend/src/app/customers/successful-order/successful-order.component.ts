@@ -24,8 +24,7 @@ export class SuccessfulOrderComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
 
   constructor(
-    private store: Store,
-    private actions$: Actions) { }
+    private store: Store) { }
 
   ngOnInit(): void {
     this.store.dispatch(activateAction());
@@ -47,11 +46,6 @@ export class SuccessfulOrderComponent implements OnInit, OnDestroy {
         this.store.dispatch(loadOrderAction({ payload }));
         this.store.dispatch(subscribeToOrderUpdatesAction({ payload }));
       });
-
-    this.actions$.pipe(
-      takeUntil(this.onDestroy$),
-      ofType(orderUpdateAction)
-    ).subscribe(action => this.order.status = action.payload.status);
   }
 
   ngOnDestroy(): void {
