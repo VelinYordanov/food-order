@@ -5,7 +5,6 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { first, tap } from 'rxjs/operators';
 import { Address } from 'src/app/customers/models/address';
-import { CartService } from 'src/app/shared/services/cart.service';
 import { UtilService } from 'src/app/shared/services/util.service';
 import { loggedInUserSelector } from 'src/app/store/authentication/authentication.selectors';
 import { selectAddressAction } from 'src/app/store/customers/cart/cart.actions';
