@@ -15,6 +15,7 @@
                            [length]="pagedOrders.totalElements"
                            [pageSize]="pagedOrders.size"
                            [hidePageSize]="true"
+                           [pageIndex]="pagedOrders.number"
                            (page)="onPageChange($event)">
             </mat-paginator>
         </div>

@@ -55,7 +55,7 @@ function editFood(state: RestaurantsState, action: { payload: Food }): Restauran
 
 function loadRestaurantOrders(state: RestaurantsState, action: { payload: Page<Order> }): RestaurantsState {
     const page = action.payload;
-    const orders = {};
+    const orders = { ...state.orders.orders };
     orders[page.number] = page.content;
 
     return {
