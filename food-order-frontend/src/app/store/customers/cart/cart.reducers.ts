@@ -13,7 +13,7 @@ const initialState: CartState = {
 export const cartReducer = createReducer(
     initialState,
     on(loadDiscountCodeSuccessAction, (state, action) => ({ ...state, ...{ selectedDiscountCode: action.payload } })),
-    on(selectRestaurantAction, (state, action) => action.payload.id === state.selectedRestaurant.id ? {...state} : ({ ...initialState, ...{ selectedRestaurant: action.payload } })),
+    on(selectRestaurantAction, (state, action) => action.payload.id === state?.selectedRestaurant?.id ? {...state} : ({ ...initialState, ...{ selectedRestaurant: action.payload } })),
     on(selectAddressAction, (state, action) => ({ ...state, ...{ selectedAddress: action.payload } })),
     on(clearCartAction, (state, action) => initialState),
     on(

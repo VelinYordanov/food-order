@@ -22,7 +22,9 @@ function modifyCount(items: CartItem[], item: CartFood, countModification: Count
                 return acc;
             }
 
-            acc.push({ ...current, ...{ quantity: newQuantity } });
+            acc.push({ ...current, quantity: newQuantity });
+        } else {
+            acc.push(current);
         }
 
         return acc;
