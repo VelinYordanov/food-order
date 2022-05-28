@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { of } from "rxjs";
-import { catchError, map, switchMap, tap } from "rxjs/operators";
+import { catchError, filter, map, switchMap, tap } from "rxjs/operators";
 import { CustomerService } from "src/app/customers/services/customer.service";
 import { LoginService } from "src/app/home/services/login-service.service";
 import { RestaurantService } from "src/app/restaurants/services/restaurant.service";
@@ -121,6 +121,13 @@ export class AuthenticationEffects {
                 'An error occurred while registering the user. Try again later.',
                 'error'
             ))
+        ), { dispatch: false });
+
+    logouts$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(updateUserAction),
+            filter(x => !x.payload),
+            tap(action => this.storageService.removeItem('jwt-user'))
         ), { dispatch: false });
 
     private login(token: string) {

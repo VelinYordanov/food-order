@@ -67,8 +67,6 @@ function updateRestaurantOrderStatus(state: RestaurantsState, action: { payload:
     const orderPage = Object.getOwnPropertyNames(state.orders.orders)
         .find(i => state.orders.orders[i].find(o => o.id === action.payload.orderId))
 
-    console.log(orderPage);
-
     const orders = state.orders.orders[orderPage];
     const orderIndex = orders.findIndex(o => o.id === action.payload.orderId);
     const order = orders[orderIndex];

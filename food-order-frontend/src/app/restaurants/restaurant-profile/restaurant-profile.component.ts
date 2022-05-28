@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
-import { map, startWith, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, startWith, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { Category } from '../models/category';
 import { Restaurant } from '../models/restaurant';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -128,7 +128,8 @@ export class RestaurantProfileComponent implements OnInit, OnDestroy {
   private setupRestaurantProfile() {
     this.store.select(loggedInUserIdSelector)
       .pipe(
-        takeUntil(this.cancel$)
+        takeUntil(this.cancel$),
+        filter(x => !!x)
       ).subscribe(id => this.store.dispatch(loadRestaurantAction({ payload: id })));
   }
 

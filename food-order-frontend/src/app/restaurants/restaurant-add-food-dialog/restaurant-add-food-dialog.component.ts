@@ -112,8 +112,9 @@ export class RestaurantAddFoodDialogComponent implements OnInit, OnDestroy {
 
     this.filteredCategories$ = this.categoryFormControl.valueChanges
       .pipe(
+        filter(x => !!x),
         withLatestFrom(this.store.select(selectRestaurantCategories)),
-        map(([value, categories]) => categories.filter(category => category.name.includes(value)))
+        map(([value, categories]) => categories.filter(category => category.name.toLowerCase().includes(value.toLowerCase())))
       );
   }
 
