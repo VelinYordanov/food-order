@@ -22,7 +22,6 @@ export class AppComponent implements OnInit {
 
       if (user) {
         this.store.dispatch(updateUserAction({ payload: user }));
-        this.store.dispatch(updateUserAction({ payload: user }));
       }
     }
   }

@@ -24,7 +24,7 @@ import { RestaurantRegisterComponent } from './home/restaurant-register/restaura
 import { RegisterCustomerComponent } from './home/register-customer/register-customer.component';
 import { RxStomp } from '@stomp/rx-stomp';
 import * as SockJs from 'sockjs-client';
-import { StoreModule } from '@ngrx/store';
+import { ActionReducer, MetaReducer, StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { authenticationReducer } from './store/authentication/authentication.reducer';
@@ -41,6 +41,12 @@ import { CustomerOrdersEffects } from './store/customers/customer-orders/custome
 import { NotificationEffects } from './store/notifications/notification.effects';
 import { DiscountCodesEffects } from './store/restaurants/discount-codes/discount-codes.effects';
 import { GraphsEffects } from './store/restaurants/graphs/graphs.effects';
+import { localStorageSync } from 'ngrx-store-localstorage';
+
+export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
+  return localStorageSync({keys: ['customers', 'user', 'router', 'enums', 'restaurants'], rehydrate: true})(reducer);
+}
+const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer];
 
 @NgModule({
   declarations: [
@@ -69,7 +75,7 @@ import { GraphsEffects } from './store/restaurants/graphs/graphs.effects';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
-    StoreModule.forRoot({ customers: customersReducer, user: authenticationReducer, router: routerReducer, enums: enumsReducer, restaurants: restaurantsReducer }),
+    StoreModule.forRoot({ customers: customersReducer, user: authenticationReducer, router: routerReducer, enums: enumsReducer, restaurants: restaurantsReducer }, { metaReducers }),
     EffectsModule.forRoot([AuthenticationEffects, AddressesEffects, EnumEffects, CartEffects, RestaurantsEffects, CustomerOrdersEffects, NotificationEffects, DiscountCodesEffects, GraphsEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
     StoreRouterConnectingModule.forRoot({ navigationActionTiming: NavigationActionTiming.PostActivation, }),
